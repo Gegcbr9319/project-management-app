@@ -1,5 +1,9 @@
 import React from 'react';
 
 export function SignInPage() {
-  return <div></div>;
+  return (
+    <>
+      <h2>Sign In</h2>
+    </>
+  );
 }
