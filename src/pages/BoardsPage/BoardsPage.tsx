@@ -1,5 +1,9 @@
 import React from 'react';
 
 export function BoardsPage() {
-  return <div></div>;
+  return (
+    <>
+      <h2>Boards</h2>
+    </>
+  );
 }
