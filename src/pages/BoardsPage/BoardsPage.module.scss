@@ -1,0 +1,15 @@
+.button {
+  margin-top: 5px;
+  color: white;
+  background-color: rgb(91, 91, 91);
+  font-style: italic;
+  border-radius: 15px;
+  transition: 0.3;
+  width: 100px;
+  height: 30px;
+}
+
+.button:hover {
+  color: rgb(246, 6, 6);
+  background-color: rgb(11, 12, 1);
+}
