@@ -1,1 +1,2 @@
-export const API_BASE: string = process.env.API_BASE || 'https://rss-pm-app.onrender.com/';
+export const API_BASE: string =
+  process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com/';
