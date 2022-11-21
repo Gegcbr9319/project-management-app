@@ -2,8 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NewUserDto, UserAuthDto } from 'model/user';
 import * as API from 'api';
 import { userSignedIn } from './authSlice';
-import { useJwt } from 'react-jwt';
 import { TokenContent } from 'model/auth';
+import jwtDecode from 'jwt-decode';
 
 export const signUp = createAsyncThunk(
   'auth/signUp',
@@ -31,9 +31,8 @@ export const signIn = createAsyncThunk(
     try {
       const { login, password } = userAuthData;
       const { token } = await API.signIn({ login, password });
-      const { decodedToken } = useJwt<TokenContent>(token);
-      const { id } = decodedToken!;
-      const { name } = await API.getUser(id);
+      const { id } = jwtDecode<TokenContent>(token);
+      const { name } = await API.getUser(id, token);
 
       dispatch(
         userSignedIn({
