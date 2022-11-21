@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Button from '@mui/material/Button';
@@ -12,10 +12,7 @@ import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { AuthState } from 'model/auth';
-import { useSelector } from 'react-redux';
-import { AppState } from 'store';
+import { Link as RouterLink } from 'react-router-dom';
 
 const nameValidation = { name: yup.string().required('Name is required') };
 const loginValidation = { login: yup.string().required('Login is required') };
@@ -33,8 +30,7 @@ interface UserFormProps {
   initialValues: FormData;
   submit: {
     text: string;
-    callback: (data: FormData) => void;
-    redirectTo: string;
+    callback: (data: FormData) => Promise<void>;
   };
   auxLink?: {
     text: string;
@@ -52,16 +48,6 @@ export function UserForm({
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  const navigate = useNavigate();
-  const { isAuthenticated } = useSelector(({ auth }: AppState): AuthState => auth);
-
-  // redirect only after auth state is updated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate(submit.redirectTo);
-    }
-  }, [isAuthenticated]);
-
   const { name, login, password } = initialValues;
   const validationSchema = yup.object(
     Object.assign(
@@ -76,10 +62,9 @@ export function UserForm({
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(data: FormData, { setSubmitting, resetForm }) => {
-        submit.callback(data);
+      onSubmit={async (data: FormData, { setSubmitting }) => {
+        await submit.callback(data);
         setSubmitting(false);
-        resetForm({ values: initialValues });
       }}
     >
       {({ submitForm, isSubmitting, errors, dirty }) => (

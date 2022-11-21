@@ -4,9 +4,11 @@ import { signUp } from 'store/auth/authThunks';
 import { NewUserDto } from 'model/user';
 import { AppDispatch } from 'store';
 import { UserForm } from 'components/UserForm';
+import { useNavigate } from 'react-router-dom';
 
 export function SignUpPage() {
   const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
 
   return (
     <UserForm
@@ -18,8 +20,10 @@ export function SignUpPage() {
       }}
       submit={{
         text: 'Sign Up',
-        callback: (newUserData) => dispatch(signUp(newUserData as NewUserDto)),
-        redirectTo: '/boards',
+        callback: async (newUserData) => {
+          await dispatch(signUp(newUserData as NewUserDto));
+          navigate('/boards');
+        },
       }}
       auxLink={{
         text: 'Already have an account? Sign in',
