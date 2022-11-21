@@ -19,7 +19,7 @@ export function SignUpPage() {
       submit={{
         text: 'Sign Up',
         callback: (newUserData) => dispatch(signUp(newUserData as NewUserDto)),
-        redirectTo: '/main',
+        redirectTo: '/boards',
       }}
       auxLink={{
         text: 'Already have an account? Sign in',

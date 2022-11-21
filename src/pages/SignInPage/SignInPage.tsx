@@ -18,7 +18,7 @@ export function SignInPage() {
       submit={{
         text: 'Sign In',
         callback: (userAuthData) => dispatch(signIn(userAuthData as UserAuthDto)),
-        redirectTo: '/main',
+        redirectTo: '/boards',
       }}
       auxLink={{
         text: "Don't have an account? Sign up",

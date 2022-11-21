@@ -18,7 +18,7 @@ export const Navigation = () => {
   return (
     <header className={`${styles.header} ${isSticky ? styles.stickyHeader : ''}`}>
       <nav className={`${styles.navigation} ${isSticky ? styles.stickyNavigation : ''}`}>
-        <NavLink className={styles.link} to="/main">
+        <NavLink className={styles.link} to="/">
           <h1>Project Manager</h1>
         </NavLink>
         <div className={`${styles.links} .links`}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Button from '@mui/material/Button';
@@ -13,6 +13,9 @@ import { TextField } from 'formik-mui';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { AuthState } from 'model/auth';
+import { useSelector } from 'react-redux';
+import { AppState } from 'store';
 
 const nameValidation = { name: yup.string().required('Name is required') };
 const loginValidation = { login: yup.string().required('Login is required') };
@@ -50,6 +53,14 @@ export function UserForm({
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector(({ auth }: AppState): AuthState => auth);
+
+  // redirect only after auth state is updated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(submit.redirectTo);
+    }
+  }, [isAuthenticated]);
 
   const { name, login, password } = initialValues;
   const validationSchema = yup.object(
@@ -65,10 +76,10 @@ export function UserForm({
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(data: FormData, { setSubmitting }) => {
+      onSubmit={(data: FormData, { setSubmitting, resetForm }) => {
         submit.callback(data);
         setSubmitting(false);
-        navigate(submit.redirectTo);
+        resetForm({ values: initialValues });
       }}
     >
       {({ submitForm, isSubmitting, errors, dirty }) => (
