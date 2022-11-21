@@ -41,7 +41,7 @@ export function SignInPage() {
       onSubmit={(userAuthData: UserAuthDto, { setSubmitting }) => {
         dispatch(signIn(userAuthData));
         setSubmitting(false);
-        navigate('/');
+        navigate('/main');
       }}
     >
       {({ submitForm, isSubmitting }) => (

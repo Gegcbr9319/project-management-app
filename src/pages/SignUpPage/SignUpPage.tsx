@@ -43,7 +43,7 @@ export function SignUpPage() {
       onSubmit={(newUserData: NewUserDto, { setSubmitting }) => {
         dispatch(signUp(newUserData));
         setSubmitting(false);
-        navigate('/');
+        navigate('/main');
       }}
     >
       {({ submitForm, isSubmitting }) => (
