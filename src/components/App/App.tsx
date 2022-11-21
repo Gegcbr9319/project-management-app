@@ -4,6 +4,7 @@ import { SignUpPage, SignInPage, WelcomePage, PageNotFound, BoardsPage, BoardPag
 import { Navigation, Footer } from 'components';
 import styles from './App.module.scss';
 import { PrivateRoute } from 'components/PrivateRoute';
+import { SignOut } from 'components/SignOut';
 
 export function App() {
   return (
@@ -30,6 +31,14 @@ export function App() {
           />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route
+            path="/signout"
+            element={
+              <PrivateRoute>
+                <SignOut />
+              </PrivateRoute>
+            }
+          />
           <Route path="/404" element={<PageNotFound />} />
           <Route path="/*" element={<Navigate to="/404" replace />} />
         </Routes>
