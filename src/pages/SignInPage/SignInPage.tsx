@@ -44,7 +44,7 @@ export function SignInPage() {
         navigate('/main');
       }}
     >
-      {({ submitForm, isSubmitting }) => (
+      {({ submitForm, isSubmitting, errors, dirty }) => (
         <Container maxWidth="xs">
           <Box
             sx={{
@@ -94,7 +94,7 @@ export function SignInPage() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  disabled={isSubmitting}
+                  disabled={Object.keys(errors).length > 0 || !dirty || isSubmitting}
                   onClick={submitForm}
                 >
                   Sign In

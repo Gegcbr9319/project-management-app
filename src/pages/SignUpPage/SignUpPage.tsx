@@ -46,7 +46,7 @@ export function SignUpPage() {
         navigate('/main');
       }}
     >
-      {({ submitForm, isSubmitting }) => (
+      {({ submitForm, isSubmitting, errors, dirty }) => (
         <Container maxWidth="xs">
           <Box
             sx={{
@@ -99,7 +99,7 @@ export function SignUpPage() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  disabled={isSubmitting}
+                  disabled={Object.keys(errors).length > 0 || !dirty || isSubmitting}
                   onClick={submitForm}
                 >
                   Sign Up
