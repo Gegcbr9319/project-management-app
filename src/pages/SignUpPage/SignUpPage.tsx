@@ -66,10 +66,10 @@ export function SignUpPage() {
               <Form>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Field component={TextField} name="name" label="Name" fullWidth />
+                    <Field component={TextField} name="name" label="Name" fullWidth required />
                   </Grid>
                   <Grid item xs={12}>
-                    <Field component={TextField} name="login" label="Login" fullWidth />
+                    <Field component={TextField} name="login" label="Login" fullWidth required />
                   </Grid>
                   <Grid item xs={12}>
                     <Field
@@ -78,6 +78,7 @@ export function SignUpPage() {
                       name="password"
                       label="Password"
                       fullWidth
+                      required
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
