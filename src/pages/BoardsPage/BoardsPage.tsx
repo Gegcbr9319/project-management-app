@@ -4,24 +4,24 @@ import styles from './BoardsPage.module.scss';
 
 export const BoardsPage = () => {
   const [boardsCount, setBoardsCount] = useState(0);
-  const [boardArray, setBoardArray] = useState<number[]>([]);
-  const boardAdd = () => {
+  const [boardsArray, setBoardsArray] = useState<number[]>([]);
+
+  const boardsAdd = () => {
     setBoardsCount(boardsCount + 1);
-    setBoardArray([...boardArray, boardsCount]);
+    setBoardsArray([...boardsArray, boardsCount]);
   };
   console.log(boardsCount);
-  console.log(boardArray);
+  console.log(boardsArray);
   return (
     <>
       <h2>Boards</h2>
-      <button className={styles.button} onClick={boardAdd}>
+      <button className={styles.button} onClick={boardsAdd}>
         Add Board
       </button>
-      <div>
-        {boardArray?.map((index) => {
-          return <Board key={index} />;
+      <div className={styles.boards}>
+        {boardsArray?.map((index) => {
+          return <Board key={boardsArray[index]} />;
         })}
-        <Board />
       </div>
     </>
   );
