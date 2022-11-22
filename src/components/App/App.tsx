@@ -22,7 +22,7 @@ export function App() {
             }
           />
           <Route
-            path="/boards/:boardId"
+            path="/boards/:id"
             element={
               <PrivateRoute>
                 <BoardPage />
