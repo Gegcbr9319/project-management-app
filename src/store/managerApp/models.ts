@@ -34,15 +34,11 @@ export interface ITaskBase {
   users: string[];
 }
 
-export interface IOldTask extends ITaskBase {
-  userId: number;
-}
-
 export interface INewTask extends ITaskBase {
   userId: string;
 }
 
-export type ITask = (INewTask | IOldTask) & IId;
+export type ITask = INewTask & IId;
 
 export interface IFile extends IId {
   name: string;
@@ -167,7 +163,7 @@ export interface ICreateColumnsSetOptions extends IAuth {
 export type IGetTasksInColumnOptions = IGetColumnByIdOptions;
 
 export interface ICreateTaskOptions extends IGetColumnByIdOptions {
-  body: INewTask | IOldTask;
+  body: INewTask;
 }
 
 export interface IGetTaskByIdOptions extends IGetTasksInColumnOptions {
