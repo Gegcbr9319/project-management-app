@@ -1,3 +1,5 @@
+import jwt_decode from 'jwt-decode';
+
 export interface IDecodedToken {
   id: string;
   login: string;
@@ -5,68 +7,43 @@ export interface IDecodedToken {
   iat: number;
 }
 
-export class Token {
-  static #date = () => new Date().valueOf() / 1000;
-  #interval?: ReturnType<typeof setInterval>;
-  #decoded: IDecodedToken | null;
-  #isValid: boolean;
-  #value: string;
-  #login: string;
-  #id: string;
+export interface IToken {
+  timeout: ReturnType<typeof setTimeout>;
+  time: number;
+  value: string;
+  decoded: IDecodedToken | null;
+  isValid: boolean;
+}
+
+export class Token extends String implements IToken {
+  timeout: ReturnType<typeof setTimeout>;
+  time: number;
+  value: string;
+  decoded: IDecodedToken | null;
+  isValid: boolean;
 
   constructor(token?: string) {
-    this.#value = token ? token : localStorage.getItem('token') || '';
+    super(token);
+    this.value = token ? token : localStorage.getItem('token') || '';
+    this.value && localStorage.setItem('token', this.value);
     try {
-      this.#decoded = JSON.parse(Buffer.from(this.#value.split('.')[1], 'base64').toString());
+      this.decoded = jwt_decode(this.value);
     } catch {
-      this.#decoded = null;
+      this.decoded = {
+        id: '',
+        login: '',
+        exp: 0,
+        iat: 0,
+      };
     }
-    this.#login = this.#decoded?.login || '';
-    this.#id = this.#decoded?.id || '';
-    this.#isValid = this.#setIsValid();
-    this.#interval = setInterval(() => {
-      this.#isValid = this.#setIsValid();
-      if (!this.#isValid) {
-        clearInterval(this.#interval);
-        localStorage.removeItem('token');
-        this.#decoded = null;
-        this.#value = '';
-        this.#login = '';
-        this.#id = '';
-      }
-    }, 1000);
-  }
-
-  #setIsValid() {
-    if (!this.#decoded) return false;
-    return (
-      this.#decoded.exp > this.#decoded.iat &&
-      this.#decoded.exp > Token.#date() &&
-      this.#decoded.iat < Token.#date()
-    );
-  }
-
-  get value() {
-    let value;
-    if (this.#value) value = this.#value;
-    return value;
-  }
-
-  get login() {
-    let login;
-    if (this.#login) login = this.#login;
-    return login;
-  }
-
-  get id() {
-    let id;
-    if (this.#id) id = this.#id;
-    return id;
-  }
-
-  get isValid() {
-    let isValid;
-    if (this.#isValid) isValid = this.#isValid;
-    return isValid;
+    this.time = !this.decoded
+      ? 0
+      : Math.floor((this.decoded.exp - new Date().valueOf() / 1000) * 1000);
+    this.isValid = !this.decoded
+      ? false
+      : this.decoded.exp > this.decoded.iat &&
+        this.decoded.exp > new Date().valueOf() / 1000 &&
+        this.decoded.iat < new Date().valueOf() / 1000;
+    this.timeout = setTimeout(() => clearTimeout(this.timeout), 0);
   }
 }

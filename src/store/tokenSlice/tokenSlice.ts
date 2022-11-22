@@ -1,12 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Token } from './token';
+import { IToken, Token } from './token';
+
+const { value, time, decoded, isValid, timeout } = new Token();
+const initialState: IToken = { value, time, decoded, isValid, timeout };
 
 export const tokenSlice = createSlice({
   name: 'token',
-  initialState: new Token(),
+  initialState,
   reducers: {
     setToken(token, action) {
-      token = new Token(action.payload.value);
+      Object.assign(token, action.payload.token);
     },
   },
 });
