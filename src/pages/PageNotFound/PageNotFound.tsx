@@ -1,5 +1,9 @@
 import React from 'react';
 
 export function PageNotFound() {
-  return <div></div>;
+  return (
+    <>
+      <h2>404 Page</h2>
+    </>
+  );
 }
