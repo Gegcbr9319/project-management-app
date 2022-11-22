@@ -15,7 +15,7 @@ export interface IToken {
   isValid: boolean;
 }
 
-export class Token extends String implements IToken {
+export class Token implements IToken {
   timeout: ReturnType<typeof setTimeout>;
   time: number;
   value: string;
@@ -23,7 +23,6 @@ export class Token extends String implements IToken {
   isValid: boolean;
 
   constructor(token?: string) {
-    super(token);
     this.value = token ? token : localStorage.getItem('token') || '';
     this.value && localStorage.setItem('token', this.value);
     try {
