@@ -39,15 +39,15 @@ export const Board = () => {
             }}
           />
         </label>
-        <button className={styles.button} onClick={columnsAdd}>
-          Add Column
-        </button>
         {columnsCount !== 0 && <h3> Columns </h3>}
         <div className={styles.columns}>
           {columnsArray?.map((index) => {
             return <Column key={columnsArray[index]} />;
           })}
         </div>
+        <button className={styles.button} onClick={columnsAdd}>
+          Add Column
+        </button>
       </div>
     </>
   );

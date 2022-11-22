@@ -27,14 +27,14 @@ export const Column = () => {
             }}
           />
         </label>
-        <button className={styles.button} onClick={tasksAdd}>
-          Add task
-        </button>
         <div className={styles.tasks}>
           {tasksArray?.map((index) => {
             return <Task key={tasksArray[index]} />;
           })}
         </div>
+        <button className={styles.button} onClick={tasksAdd}>
+          Add task
+        </button>
       </div>
     </>
   );
