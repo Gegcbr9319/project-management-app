@@ -54,6 +54,9 @@ export interface IPoint extends IId {
   done: boolean;
 }
 
+/**
+ * Responses and RequestsOptoins models
+ */
 export type ISingUpResponse = IUser;
 
 export interface ISingInResponse {
