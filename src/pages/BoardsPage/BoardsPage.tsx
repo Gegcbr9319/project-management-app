@@ -1,27 +1,58 @@
-import React, { useState } from 'react';
-import { Board } from '../../components';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { IStore, useCreateBoardMutation, useGetBoardsSetByUserIdQuery } from 'store';
+import { Board } from 'components';
 import styles from './BoardsPage.module.scss';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const BoardsPage = () => {
-  const [boardsCount, setBoardsCount] = useState(0);
-  const [boardsArray, setBoardsArray] = useState<number[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { token } = useSelector((store: IStore) => store);
+  const {
+    data = [],
+    isLoading,
+    isError,
+    isSuccess,
+  } = useGetBoardsSetByUserIdQuery({
+    token,
+    userId: token.decoded?.id ? token.decoded.id : '',
+  });
+  const [createBoard] = useCreateBoardMutation();
 
   const boardsAdd = () => {
-    setBoardsCount(boardsCount + 1);
-    setBoardsArray([...boardsArray, boardsCount]);
+    createBoard({
+      token,
+      body: {
+        title: 'New board title',
+        description: 'Очень странная доска',
+        owner: token.decoded?.id ? token.decoded.id : '',
+        users: [],
+      },
+    });
   };
-  console.log(boardsCount);
-  console.log(boardsArray);
   return (
     <>
       <h2>Boards</h2>
-      <button className={styles.button} onClick={boardsAdd}>
+      <button className={styles.button} onClick={boardsAdd} disabled={isLoading}>
         Add Board
       </button>
       <div className={styles.boards}>
-        {boardsArray?.map((index) => {
-          return <Board key={boardsArray[index]} />;
+        {data?.map((board) => {
+          return (
+            <button key={board._id} onClick={() => navigate(location.pathname + '/' + board._id)}>
+              <Board />
+            </button>
+          );
         })}
+      </div>
+
+      <br />
+      <div>
+        <p>{`isLoading: ${isLoading}`}</p>
+        <p>{`isSuccess: ${isSuccess}`}</p>
+        <p>{`isError:   ${isError}`}</p>
+        <p>{`data: ${JSON.stringify(data)}`}</p>
       </div>
     </>
   );
