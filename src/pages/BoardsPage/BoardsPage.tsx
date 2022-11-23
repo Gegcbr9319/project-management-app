@@ -3,8 +3,11 @@ import { useSelector } from 'react-redux';
 import { IStore, useCreateBoardMutation, useGetBoardsSetByUserIdQuery } from 'store';
 import { Board } from 'components';
 import styles from './BoardsPage.module.scss';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const BoardsPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { token } = useSelector((store: IStore) => store);
   const {
     data = [],
@@ -36,7 +39,11 @@ export const BoardsPage = () => {
       </button>
       <div className={styles.boards}>
         {data?.map((board) => {
-          return <Board key={board._id} />;
+          return (
+            <button key={board._id} onClick={() => navigate(location.pathname + '/' + board._id)}>
+              <Board />
+            </button>
+          );
         })}
       </div>
 

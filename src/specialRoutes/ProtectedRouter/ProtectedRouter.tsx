@@ -1,8 +1,10 @@
-import { FC, useEffect } from 'react';
+import { Footer, Navigation } from 'components';
+import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ISpecialRoutes } from 'specialRoutes';
 import { IStore, setToken, Token } from 'store';
+import styles from './ProtectedRouter.module.scss';
 
 export const ProtectedRouter: FC<ISpecialRoutes> = ({ children }) => {
   const { token } = useSelector((store: IStore) => store);
@@ -34,5 +36,11 @@ export const ProtectedRouter: FC<ISpecialRoutes> = ({ children }) => {
     token.value,
   ]);
 
-  return children;
+  return (
+    <>
+      <Navigation />
+      <main className={styles.main}>{children}</main>
+      <Footer />
+    </>
+  );
 };
