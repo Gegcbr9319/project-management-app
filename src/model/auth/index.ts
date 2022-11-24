@@ -1,2 +1,2 @@
 export * from './AuthState';
-export * from './AuthToken';
+export * from './Token';

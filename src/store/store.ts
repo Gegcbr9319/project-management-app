@@ -1,14 +1,17 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
-import authSlice from './auth/authSlice';
+import { authSlice } from './auth/authSlice';
+import { appApi } from 'api';
 
 const appReducer = combineReducers({
-  auth: authSlice,
+  [authSlice.name]: authSlice.reducer,
+  [appApi.reducerPath]: appApi.reducer,
 });
 
 export const setupStore = (preloadedState?: PreloadedState<AppState>) => {
   return configureStore({
     reducer: appReducer,
     preloadedState,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appApi.middleware),
   });
 };
 

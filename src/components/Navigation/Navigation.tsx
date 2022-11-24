@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { AppState } from 'store';
 import styles from './Navigation.module.scss';
+import { IStore, setToken, Token } from 'store';
 
 export const Navigation = () => {
   const [isSticky, setSticky] = useState(true);
@@ -19,6 +20,13 @@ export const Navigation = () => {
       }
     };
   }, []);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    const { value, time, decoded, isValid, timeout } = new Token();
+    const token = { value, time, decoded, isValid, timeout };
+    dispatch(setToken({ token }));
+  };
 
   return (
     <header className={`${styles.header} ${isSticky ? styles.stickyHeader : ''}`}>

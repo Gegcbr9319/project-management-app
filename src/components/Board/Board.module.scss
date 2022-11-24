@@ -1,0 +1,65 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-width: 200px;
+  height: auto;
+  min-height: 100px;
+  text-align: center;
+  border: 1px solid red;
+  gap: 10px;
+  background-color: rgb(91, 91, 91);
+  color: white;
+  margin-top: 15px;
+}
+
+.title {
+  width: 100%;
+  border: none;
+  background: none;
+  color: white;
+  margin-top: 5px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.title:focus {
+  border: none;
+  outline: none;
+}
+.description {
+  width: 100%;
+  border: none;
+  background: none;
+  color: white;
+  text-align: center;
+  font-size: 14px;
+}
+
+.description:focus {
+  border: none;
+  outline: none;
+}
+
+.button {
+  margin: 0 auto;
+  width: 120px;
+  height: 22px;
+  background-color: rgb(141, 115, 115);
+  border: 1px solid white;
+  color: white;
+  border-radius: 10px;
+  transition: 0.4s;
+}
+
+.button:hover {
+  border: 2px solid rgb(252, 5, 5);
+  color: rgb(0, 0, 0);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.columns {
+  display: flex;
+  gap: 5px;
+}

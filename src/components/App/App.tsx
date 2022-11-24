@@ -5,10 +5,11 @@ import { Navigation, Footer } from 'components';
 import styles from './App.module.scss';
 import { PrivateRoute } from 'components/PrivateRoute';
 import { SignOut } from 'components/SignOut';
+import { ProtectedRouter } from 'components/ProtectedRouter';
 
 export function App() {
   return (
-    <>
+    <ProtectedRouter>
       <Navigation />
       <main className={styles.main}>
         <Routes>
@@ -40,10 +41,10 @@ export function App() {
             }
           />
           <Route path="/404" element={<PageNotFound />} />
-          <Route path="/*" element={<Navigate to="/404" replace />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </main>
       <Footer />
-    </>
+    </ProtectedRouter>
   );
 }

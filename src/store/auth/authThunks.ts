@@ -1,15 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NewUserDto, UserAuthDto } from 'model/user';
-import * as API from 'api';
 import { userSignedIn } from './authSlice';
-import { TokenContent } from 'model/auth';
-import jwtDecode from 'jwt-decode';
+import { Token } from 'model/auth';
+import { useGetUserQuery, useSignInMutation, useSignUpMutation } from 'api';
 
 export const signUp = createAsyncThunk(
   'auth/signUp',
   async ({ name, login, password }: NewUserDto, { dispatch }): Promise<void> => {
     try {
-      await API.signUp({ name, login, password });
+      const [triggerSignUp] = useSignUpMutation();
+      await triggerSignUp({ name, login, password });
 
       // Sign in the newly created user
       dispatch(
@@ -30,15 +30,33 @@ export const signIn = createAsyncThunk(
   async (userAuthData: UserAuthDto, { dispatch }): Promise<void> => {
     try {
       const { login, password } = userAuthData;
-      const { token } = await API.signIn({ login, password });
-      const { id } = jwtDecode<TokenContent>(token);
-      const { name } = await API.getUser(id, token);
+      const [triggerSignIn, { data: signInResult }] = useSignInMutation();
+      await triggerSignIn(userAuthData);
+
+      if (!signInResult) {
+        return;
+      }
+
+      const token = new Token(signInResult.token);
+      const userId = token.decoded?.id;
+
+      if (!userId) {
+        return;
+      }
+
+      const { data: getUserResult } = useGetUserQuery(userId);
+
+      if (!getUserResult) {
+        return;
+      }
+
+      const { name } = getUserResult;
 
       dispatch(
         userSignedIn({
           isAuthenticated: true,
           user: {
-            _id: id,
+            _id: userId,
             name,
             login,
             password,

@@ -6,9 +6,9 @@ import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <BrowserRouter>
-    <AppStoreProvider>
+  <AppStoreProvider>
+    <BrowserRouter>
       <App />
-    </AppStoreProvider>
-  </BrowserRouter>
+    </BrowserRouter>
+  </AppStoreProvider>
 );
