@@ -1,13 +1,14 @@
+import { AppState } from 'store';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import styles from './Navigation.module.scss';
-import { IStore, setToken, Token } from 'store';
+import { AuthState } from 'models';
 
 export const Navigation = () => {
   const [isSticky, setSticky] = useState(true);
-  const { token } = useSelector((store: IStore) => store);
-  const dispatch = useDispatch();
+
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
   useEffect(() => {
     window.onscroll = () => {
@@ -19,31 +20,23 @@ export const Navigation = () => {
     };
   }, []);
 
-  const handleSignOut = () => {
-    localStorage.removeItem('token');
-    const { value, time, decoded, isValid, timeout } = new Token();
-    const token = { value, time, decoded, isValid, timeout };
-    dispatch(setToken({ token }));
-  };
-
   return (
     <header className={`${styles.header} ${isSticky ? styles.stickyHeader : ''}`}>
       <nav className={`${styles.navigation} ${isSticky ? styles.stickyNavigation : ''}`}>
-        <NavLink className={styles.link} to="/main">
+        <NavLink className={styles.link} to="/">
           <h1>Project Manager</h1>
         </NavLink>
         <div className={`${styles.links} .links`}>
-          {token.isValid && (
+          {token?.isValid ? (
             <>
               <NavLink className={styles.link} to="/boards">
                 Boards
               </NavLink>
-              <button className={styles.link} onClick={handleSignOut}>
-                Sign out
-              </button>
+              <NavLink className={styles.link} to="/signout">
+                Sign Out
+              </NavLink>
             </>
-          )}
-          {!token.isValid && (
+          ) : (
             <>
               <NavLink className={styles.link} to="/signin">
                 Sign In

@@ -1,59 +1,61 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { SignUpPage, SignInPage, MainPage, PageNotFound, BoardsPage } from 'pages';
-import { Board } from 'components';
-import { PrivateRoute, ProtectedRouter } from 'specialRoutes';
+import { SignUpPage, SignInPage, WelcomePage, PageNotFound, BoardsPage, BoardPage } from 'pages';
+import { Navigation, Footer, ProtectedRouter, ProtectedRoute, SignOut } from 'components';
+import styles from './App.module.scss';
 
 export function App() {
   return (
     <ProtectedRouter>
-      <>
+      <Navigation />
+      <main className={styles.main}>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Navigate to="/boards" replace />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/main" element={<MainPage />} />
-          <Route
-            path="/boards/:id"
-            element={
-              <PrivateRoute>
-                <Board />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/" element={<WelcomePage />} />
           <Route
             path="/boards"
             element={
-              <PrivateRoute>
+              <ProtectedRoute redirectIf="unauthenticated">
                 <BoardsPage />
-              </PrivateRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/boards/:id"
+            element={
+              <ProtectedRoute redirectIf="unauthenticated">
+                <BoardPage />
+              </ProtectedRoute>
             }
           />
           <Route
             path="/signin"
             element={
-              <PrivateRoute isPublic={true}>
+              <ProtectedRoute redirectIf="authenticated">
                 <SignInPage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/signup"
             element={
-              <PrivateRoute isPublic={true}>
+              <ProtectedRoute redirectIf="authenticated">
                 <SignUpPage />
-              </PrivateRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/signout"
+            element={
+              <ProtectedRoute redirectIf="unauthenticated">
+                <SignOut />
+              </ProtectedRoute>
             }
           />
           <Route path="/404" element={<PageNotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
-      </>
+      </main>
+      <Footer />
     </ProtectedRouter>
   );
 }

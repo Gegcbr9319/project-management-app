@@ -1,36 +1,32 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { IStore, useCreateBoardMutation, useGetBoardsSetByUserIdQuery } from 'store';
+import { AppState } from 'store';
 import { Board } from 'components';
 import styles from './BoardsPage.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useGetBoardsSetByUserIdQuery, useCreateBoardMutation } from 'store';
+import { AuthState } from 'models';
 
 export const BoardsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { token } = useSelector((store: IStore) => store);
-  const {
-    data = [],
-    isLoading,
-    isError,
-    isSuccess,
-  } = useGetBoardsSetByUserIdQuery({
-    token,
-    userId: token.decoded?.id ? token.decoded.id : '',
-  });
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+  const userId = token?.decoded?.id || '';
+
+  const { data = [], isLoading, isError, isSuccess } = useGetBoardsSetByUserIdQuery(userId);
   const [createBoard] = useCreateBoardMutation();
 
   const boardsAdd = () => {
     createBoard({
-      token,
       body: {
         title: 'New board title',
         description: 'Очень странная доска',
-        owner: token.decoded?.id ? token.decoded.id : '',
+        owner: userId || '',
         users: [],
       },
     });
   };
+
   return (
     <>
       <h2>Boards</h2>

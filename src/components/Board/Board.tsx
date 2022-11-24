@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Board.module.scss';
-import { Column } from '../index';
+import { Column } from 'components';
 
 const constTitle = 'This is board name';
 const constDescription = 'This is board description';

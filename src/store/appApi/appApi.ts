@@ -1,21 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { AppState } from 'store';
 import {
-  IAuth,
-  ISignInOptions,
-  ISingInResponse,
-  ISignUpOptions,
-  ISingUpResponse,
-  IUser,
-  IGetUserByIdOptions,
-  IUpdateUserByIdOptions,
-  IDeleteUserByIdOptions,
+  TokenDto,
+  UserDto,
+  NewUserDto,
+  UserAuthDto,
+  UpdateUserDto,
   IBoard,
   IСreateBoardOptions,
   IGetBoardByIdOptions,
   IUpdateBoardByIdOptions,
   IDeleteBoardByIdOptions,
   IGetBoardSetByIdsListOptions,
-  IGetBoardsSetByUserIdOptions,
   IColumn,
   IGetColumnsInBoardOptions,
   IСreateColumnOptions,
@@ -46,76 +42,84 @@ import {
   IGetPointsByTaskIdOptions,
   IUpdatePointByIdOptions,
   IDeletePointByIdOptions,
-} from './models';
+} from 'models';
 
-export const managerAppApi = createApi({
-  reducerPath: 'managerAppApi',
+export const appApi = createApi({
+  reducerPath: 'appApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://rss-pm-app.onrender.com/',
+    baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
+    prepareHeaders: (headers, { getState, endpoint }) => {
+      if (['signUp', 'signIn'].includes(endpoint)) {
+        return headers;
+      }
+
+      const { token } = (getState() as AppState).auth;
+
+      if (token?.isValid) {
+        headers.set('authorization', `Bearer ${token.encoded}`);
+      }
+
+      return headers;
+    },
   }),
   endpoints: (build) => ({
     /**
      * Auth endpoints
      */
-    // Create new User
-    signUp: build.mutation<ISingUpResponse, ISignUpOptions>({
-      query: (options) => ({
+    // Create new user
+    signUp: build.mutation<UserDto, NewUserDto>({
+      query: (newUserData) => ({
         url: 'auth/signup',
         method: 'POST',
-        body: options.body,
+        body: newUserData,
       }),
     }),
-    // Get token
-    signIn: build.mutation<ISingInResponse, ISignInOptions>({
-      query: (options) => ({
+    // Authenticate and receive JWT token
+    signIn: build.mutation<TokenDto, UserAuthDto>({
+      query: (userAuthData) => ({
         url: 'auth/signin',
         method: 'POST',
-        body: options.body,
+        body: userAuthData,
       }),
     }),
 
     /**
-     * Users endpoinst
+     * Users endpoints
      */
-    // Get all Users on server
-    getAllUsers: build.query<IUser[], IAuth>({
-      query: (options) => ({
+    // Get all users
+    getUsers: build.query<UserDto[], void>({
+      query: () => ({
         url: 'users',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
-    // Find User
-    getUserById: build.query<IUser, IGetUserByIdOptions>({
-      query: (options) => ({
-        url: 'users/' + options.userId,
+    // Find user by id
+    getUser: build.query<UserDto, string>({
+      query: (userId) => ({
+        url: `users/${userId}`,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
-    // Update User
-    updateUserById: build.mutation<IUser, IUpdateUserByIdOptions>({
-      query: (options) => ({
-        url: 'users/' + options.userId,
-        method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
-        body: options.body,
-      }),
+    // Update user
+    updateUser: build.mutation<UserDto, UpdateUserDto>({
+      query: (newUserData) => {
+        const { _id: userId, name, login, password } = newUserData;
+        return {
+          url: `users/${userId}`,
+          method: 'PUT',
+          body: {
+            name,
+            login,
+            password,
+          },
+        };
+      },
     }),
-    // Delete User
-    deleteUserById: build.mutation<IUser, IDeleteUserByIdOptions>({
-      query: (options) => ({
-        url: 'users/' + options.userId,
+    // Delete user
+    deleteUser: build.mutation<UserDto, string>({
+      query: (userId) => ({
+        url: `users/${userId}`,
         method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
 
@@ -123,13 +127,10 @@ export const managerAppApi = createApi({
      * Boards endpoints
      */
     //Get all Boards on server
-    getAllBoards: build.query<IBoard[], IAuth>({
-      query: (options) => ({
+    getAllBoards: build.query<IBoard[], void>({
+      query: () => ({
         url: 'boards',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Create Board
@@ -137,9 +138,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards',
         method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -148,9 +146,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Update Board
@@ -158,9 +153,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId,
         method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -169,9 +161,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId,
         method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Get Boards by list of boardId
@@ -179,20 +168,14 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boardsSet',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         params: options.params,
       }),
     }),
     // Get Boards where user is owner or one of invited
-    getBoardsSetByUserId: build.query<IBoard[], IGetBoardsSetByUserIdOptions>({
-      query: (options) => ({
-        url: 'boardsSet/' + options.userId,
+    getBoardsSetByUserId: build.query<IBoard[], string>({
+      query: (userId) => ({
+        url: `boardsSet/${userId}`,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
 
@@ -204,9 +187,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Create Column in board
@@ -214,9 +194,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns',
         method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -225,9 +202,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Update Column
@@ -235,9 +209,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId,
         method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -246,9 +217,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId,
         method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Get Columns by list of columnId or in Boards where user is owner or one of invited
@@ -256,9 +224,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'columnSet',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         params: options.params,
       }),
     }),
@@ -267,9 +232,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'columnSet',
         method: 'PATCH',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -278,9 +240,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'columnSet',
         method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -293,9 +252,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Create Task in column
@@ -303,9 +259,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks',
         method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -315,9 +268,6 @@ export const managerAppApi = createApi({
         url:
           'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks/' + options.taskId,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Update Task
@@ -326,9 +276,6 @@ export const managerAppApi = createApi({
         url:
           'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks/' + options.taskId,
         method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -338,9 +285,6 @@ export const managerAppApi = createApi({
         url:
           'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks/' + options.taskId,
         method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Get Tasks by list of taskId or in Boards where user is owner or one of invited, or by search request
@@ -348,9 +292,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'tasksSet',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Change oreder and column of list of tasks
@@ -358,9 +299,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'tasksSet',
         method: 'PATCH',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -369,9 +307,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'tasksSet/' + options.boardId,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
 
@@ -383,9 +318,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'file',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         params: options.params,
       }),
     }),
@@ -400,7 +332,6 @@ export const managerAppApi = createApi({
           url: 'file',
           method: 'POST',
           headers: {
-            Authorization: 'Bearer ' + options.token.value,
             'Content-Type': 'multipart/form-data',
           },
           body,
@@ -412,9 +343,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'file/' + options.boardId,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Delete File by Id
@@ -422,9 +350,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'file/' + options.fileId,
         method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
 
@@ -436,9 +361,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'points',
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         params: options.params,
       }),
     }),
@@ -447,9 +369,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'points',
         method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -458,9 +377,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'points',
         method: 'PATCH',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -469,9 +385,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'points/' + options.taskId,
         method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
     // Change title and done
@@ -479,9 +392,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'points/' + options.pointId,
         method: 'PATCH',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
         body: options.body,
       }),
     }),
@@ -490,9 +400,6 @@ export const managerAppApi = createApi({
       query: (options) => ({
         url: 'points/' + options.pointId,
         method: 'DELETE',
-        headers: {
-          Authorization: 'Bearer ' + options.token.value,
-        },
       }),
     }),
   }),
@@ -503,10 +410,10 @@ export const {
   useSignInMutation,
   useSignUpMutation,
   /* Users Hooks */
-  useGetAllUsersQuery,
-  useGetUserByIdQuery,
-  useUpdateUserByIdMutation,
-  useDeleteUserByIdMutation,
+  useGetUsersQuery,
+  useGetUserQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
   /* Boards Hooks */
   useGetAllBoardsQuery,
   useCreateBoardMutation,
@@ -545,4 +452,4 @@ export const {
   useGetPointsByTaskIdQuery,
   useUpdatePointByIdMutation,
   useDeletePointByIdMutation,
-} = managerAppApi;
+} = appApi;

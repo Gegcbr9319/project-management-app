@@ -1,9 +1,9 @@
 import React from 'react';
 
-export function MainPage() {
+export function WelcomePage() {
   return (
     <>
-      <h2>Main Page</h2>
+      <h2>Welcome Page</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab doloribus officiis totam minus
         reiciendis sed asperiores quis! Dolor temporibus unde voluptatem eos deleniti necessitatibus
