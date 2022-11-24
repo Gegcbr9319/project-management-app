@@ -20,7 +20,7 @@ export const BoardsPage = () => {
       body: {
         title: 'New board title',
         description: 'Очень странная доска',
-        owner: userId,
+        owner: userId || '',
         users: [],
       },
     });

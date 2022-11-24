@@ -1,15 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { NewUserDto, UserAuthDto } from 'model/user';
-import { userSignedIn } from './authSlice';
-import { Token } from 'model/auth';
-import { useGetUserQuery, useSignInMutation, useSignUpMutation } from 'api';
+import { NewUserDto, UserAuthDto, UserDto } from 'model/user';
+import { updateUserData, userSignedIn } from './authSlice';
+import { Token, TokenDto } from 'model/auth';
+import { appApi } from 'api';
 
 export const signUp = createAsyncThunk(
   'auth/signUp',
   async ({ name, login, password }: NewUserDto, { dispatch }): Promise<void> => {
     try {
-      const [triggerSignUp] = useSignUpMutation();
-      await triggerSignUp({ name, login, password });
+      const signUpResult = await dispatch(
+        appApi.endpoints.signUp.initiate({ name, login, password })
+      );
+      // const [triggerSignUp] = useSignUpMutation();
+      // await triggerSignUp({ name, login, password });
+
+      if (!Object.prototype.hasOwnProperty.call(signUpResult, 'data')) {
+        return;
+      }
 
       // Sign in the newly created user
       dispatch(
@@ -30,40 +37,55 @@ export const signIn = createAsyncThunk(
   async (userAuthData: UserAuthDto, { dispatch }): Promise<void> => {
     try {
       const { login, password } = userAuthData;
-      const [triggerSignIn, { data: signInResult }] = useSignInMutation();
-      await triggerSignIn(userAuthData);
 
-      if (!signInResult) {
+      const signInResult = await dispatch(appApi.endpoints.signIn.initiate(userAuthData));
+      // const [triggerSignIn, { data: signInResult }] = useSignInMutation();
+      // await triggerSignIn(userAuthData);
+
+      if (!Object.prototype.hasOwnProperty.call(signInResult, 'data')) {
         return;
       }
 
-      const token = new Token(signInResult.token);
+      const token = new Token((signInResult as { data: TokenDto }).data.token);
       const userId = token.decoded?.id;
 
       if (!userId) {
         return;
       }
 
-      const { data: getUserResult } = useGetUserQuery(userId);
-
-      if (!getUserResult) {
-        return;
-      }
-
-      const { name } = getUserResult;
-
+      // update token and available user data
       dispatch(
         userSignedIn({
           isAuthenticated: true,
           user: {
             _id: userId,
-            name,
             login,
             password,
           },
           token,
         })
       );
+
+      // fetch and update remaining user data (name)
+      await dispatch(loadUser(userId));
+    } catch (error) {
+      console.log(error);
+      // dispatch error action?
+    }
+  }
+);
+
+export const loadUser = createAsyncThunk(
+  'auth/loadUser',
+  async (userId: string, { dispatch }): Promise<void> => {
+    try {
+      const getUserResult = await dispatch(appApi.endpoints.getUser.initiate(userId));
+
+      if (!Object.prototype.hasOwnProperty.call(getUserResult, 'data')) {
+        return;
+      }
+
+      dispatch(updateUserData(getUserResult.data as UserDto));
     } catch (error) {
       console.log(error);
       // dispatch error action?

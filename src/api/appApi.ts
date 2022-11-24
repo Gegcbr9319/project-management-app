@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { TokenDto } from 'model/auth';
-import { UserDto, NewUserDto, UserAuthDto, User } from 'model/user';
+import { UserDto, NewUserDto, UserAuthDto, UpdateUserDto } from 'model/user';
 import { AppState } from 'store';
 import {
   IBoard,
@@ -46,14 +46,14 @@ export const appApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
     prepareHeaders: (headers, { getState, endpoint }) => {
-      if (['auth/signup', 'auth/signin'].includes(endpoint)) {
-        return;
+      if (['signUp', 'signIn'].includes(endpoint)) {
+        return headers;
       }
 
       const auth = (getState() as AppState).auth;
 
       if (auth.isAuthenticated && auth.token) {
-        headers.set('authorization', `Bearer ${auth.token}`);
+        headers.set('authorization', `Bearer ${auth.token.encoded}`);
       }
 
       return headers;
@@ -98,7 +98,7 @@ export const appApi = createApi({
       }),
     }),
     // Update user
-    updateUser: build.mutation<UserDto, User>({
+    updateUser: build.mutation<UserDto, UpdateUserDto>({
       query: (newUserData) => {
         const { _id: userId, name, login, password } = newUserData;
         return {
