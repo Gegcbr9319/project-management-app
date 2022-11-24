@@ -11,8 +11,6 @@ export const signUp = createAsyncThunk(
       const signUpResult = await dispatch(
         appApi.endpoints.signUp.initiate({ name, login, password })
       );
-      // const [triggerSignUp] = useSignUpMutation();
-      // await triggerSignUp({ name, login, password });
 
       if (!Object.prototype.hasOwnProperty.call(signUpResult, 'data')) {
         return;
@@ -39,8 +37,6 @@ export const signIn = createAsyncThunk(
       const { login, password } = userAuthData;
 
       const signInResult = await dispatch(appApi.endpoints.signIn.initiate(userAuthData));
-      // const [triggerSignIn, { data: signInResult }] = useSignInMutation();
-      // await triggerSignIn(userAuthData);
 
       if (!Object.prototype.hasOwnProperty.call(signInResult, 'data')) {
         return;
