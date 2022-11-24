@@ -27,13 +27,15 @@ export const Navigation = () => {
           <h1>Project Manager</h1>
         </NavLink>
         <div className={`${styles.links} .links`}>
-          <NavLink className={styles.link} to="/boards">
-            Boards
-          </NavLink>
           {isAuthenticated ? (
-            <NavLink className={styles.link} to="/signout">
-              Sign Out
-            </NavLink>
+            <>
+              <NavLink className={styles.link} to="/boards">
+                Boards
+              </NavLink>
+              <NavLink className={styles.link} to="/signout">
+                Sign Out
+              </NavLink>
+            </>
           ) : (
             <>
               <NavLink className={styles.link} to="/signin">

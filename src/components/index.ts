@@ -4,7 +4,7 @@ export * from './Board';
 export * from './Column';
 export * from './Footer';
 export * from './Navigation';
-export * from './PrivateRoute';
+export * from './ProtectedRoute';
 export * from './ProtectedRouter';
 export * from './SignOut';
 export * from './UserForm';

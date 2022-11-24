@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SignUpPage, SignInPage, WelcomePage, PageNotFound, BoardsPage, BoardPage } from 'pages';
-import { Navigation, Footer, ProtectedRouter, PrivateRoute, SignOut } from 'components';
+import { Navigation, Footer, ProtectedRouter, ProtectedRoute, SignOut } from 'components';
 import styles from './App.module.scss';
 
 export function App() {
@@ -14,27 +14,41 @@ export function App() {
           <Route
             path="/boards"
             element={
-              <PrivateRoute>
+              <ProtectedRoute redirectIf="unauthenticated">
                 <BoardsPage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/boards/:id"
             element={
-              <PrivateRoute>
+              <ProtectedRoute redirectIf="unauthenticated">
                 <BoardPage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route
+            path="/signin"
+            element={
+              <ProtectedRoute redirectIf="authenticated">
+                <SignInPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <ProtectedRoute redirectIf="authenticated">
+                <SignUpPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/signout"
             element={
-              <PrivateRoute>
+              <ProtectedRoute redirectIf="unauthenticated">
                 <SignOut />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
           <Route path="/404" element={<PageNotFound />} />
