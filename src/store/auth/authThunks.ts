@@ -1,8 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { NewUserDto, UserAuthDto, UserDto } from 'model/user';
+import { NewUserDto, UserAuthDto, UserDto, Token, TokenDto } from 'models';
 import { updateUserData, userSignedIn } from './authSlice';
-import { Token, TokenDto } from 'model/auth';
-import { appApi } from 'api';
+import { appApi } from 'store/appApi';
 
 export const signUp = createAsyncThunk(
   'auth/signUp',

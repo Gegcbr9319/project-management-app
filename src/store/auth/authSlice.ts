@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthenticatedState, AuthState, UnauthenticatedState } from 'model/auth';
-import { User } from 'model/user';
+import { AuthenticatedState, AuthState, UnauthenticatedState, User } from 'models';
 import { authDefaults } from './authDefaults';
 
 export const authSlice = createSlice({

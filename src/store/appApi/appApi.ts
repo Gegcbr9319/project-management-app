@@ -1,8 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { TokenDto } from 'model/auth';
-import { UserDto, NewUserDto, UserAuthDto, UpdateUserDto } from 'model/user';
 import { AppState } from 'store';
 import {
+  TokenDto,
+  UserDto,
+  NewUserDto,
+  UserAuthDto,
+  UpdateUserDto,
   IBoard,
   IСreateBoardOptions,
   IGetBoardByIdOptions,
@@ -39,7 +42,7 @@ import {
   IGetPointsByTaskIdOptions,
   IUpdatePointByIdOptions,
   IDeletePointByIdOptions,
-} from './models';
+} from 'models';
 
 export const appApi = createApi({
   reducerPath: 'appApi',

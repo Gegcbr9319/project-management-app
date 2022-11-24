@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { signIn } from 'store/auth/authThunks';
-import { UserAuthDto } from 'model/user';
+import { UserAuthDto } from 'models';
 import { AppDispatch } from 'store';
-import { UserForm } from 'components/UserForm';
+import { UserForm } from 'components';
 import { useNavigate } from 'react-router-dom';
 
 export function SignInPage() {

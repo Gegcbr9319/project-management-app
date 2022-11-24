@@ -1,11 +1,8 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { SignUpPage, SignInPage, WelcomePage, PageNotFound, BoardsPage, BoardPage } from 'pages';
-import { Navigation, Footer } from 'components';
+import { Navigation, Footer, ProtectedRouter, PrivateRoute, SignOut } from 'components';
 import styles from './App.module.scss';
-import { PrivateRoute } from 'components/PrivateRoute';
-import { SignOut } from 'components/SignOut';
-import { ProtectedRouter } from 'components/ProtectedRouter';
 
 export function App() {
   return (

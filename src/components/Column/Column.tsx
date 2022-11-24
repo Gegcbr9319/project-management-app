@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Column.module.scss';
-import { Task } from '../index';
+import { Task } from 'components';
 
 const constTitle = 'This is column name';
 

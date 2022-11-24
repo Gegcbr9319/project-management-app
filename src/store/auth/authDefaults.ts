@@ -1,5 +1,4 @@
-import { AuthState } from 'model/auth';
-import { ISerializableToken, Token } from 'model/auth/Token';
+import { AuthState, ISerializableToken, Token } from 'models';
 
 export const authDefaults: AuthState = (JSON.parse(
   window.localStorage.getItem('auth') || 'null',

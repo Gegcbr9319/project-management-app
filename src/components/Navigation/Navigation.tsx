@@ -1,8 +1,8 @@
-import { AuthState } from 'model/auth';
+import { AppState } from 'store';
+import { AuthState } from 'models';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { AppState } from 'store';
 import styles from './Navigation.module.scss';
 
 export const Navigation = () => {

@@ -1,9 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { signUp } from 'store/auth/authThunks';
-import { NewUserDto } from 'model/user';
-import { AppDispatch } from 'store';
-import { UserForm } from 'components/UserForm';
+import { AppDispatch, signUp } from 'store';
+import { NewUserDto } from 'models';
+import { UserForm } from 'components';
 import { useNavigate } from 'react-router-dom';
 
 export function SignUpPage() {

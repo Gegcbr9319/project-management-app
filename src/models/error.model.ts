@@ -1,3 +1,8 @@
+export interface ErrorResponse {
+  statusCode: string;
+  message: string;
+}
+
 export class ApiError extends Error {
   constructor(public code: string, message: string) {
     super(message);

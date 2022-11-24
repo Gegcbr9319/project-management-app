@@ -4,7 +4,7 @@ import { AppState } from 'store';
 import { Board } from 'components';
 import styles from './BoardsPage.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useGetBoardsSetByUserIdQuery, useCreateBoardMutation } from 'api';
+import { useGetBoardsSetByUserIdQuery, useCreateBoardMutation } from 'store';
 
 export const BoardsPage = () => {
   const navigate = useNavigate();

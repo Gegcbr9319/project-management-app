@@ -1,8 +1,8 @@
-import { AuthState } from 'model/auth';
+import { AppState } from 'store';
+import { AuthState } from 'models';
 import React, { PropsWithChildren } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { AppState } from 'store';
 
 interface PrivateRouteProps {
   redirectTo?: string;

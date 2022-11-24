@@ -3,7 +3,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { userSignedOut } from 'store/auth/authSlice';
+import { userSignedOut } from 'store';
 
 export function SignOut(): JSX.Element {
   const dispatch = useDispatch();

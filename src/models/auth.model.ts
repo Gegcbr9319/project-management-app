@@ -1,5 +1,4 @@
-import { UpdateUserDto } from 'model/user';
-import { Token } from './Token';
+import { Token, UpdateUserDto } from 'models';
 
 export interface AuthenticatedState {
   isAuthenticated: true;
