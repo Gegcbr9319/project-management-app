@@ -3,14 +3,14 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { userSignedOut } from 'store';
+import { removeToken } from 'store';
 
 export function SignOut(): JSX.Element {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.resolve(dispatch(userSignedOut())).then(() => {
+    Promise.resolve(dispatch(removeToken())).then(() => {
       navigate('/');
     });
   }, []);

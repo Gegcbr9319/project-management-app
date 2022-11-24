@@ -1,29 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthenticatedState, AuthState, UnauthenticatedState, User } from 'models';
-import { authDefaults } from './authDefaults';
+import { AuthState, Timeout, Token } from 'models';
+import { loadToken } from './loadToken';
 
 export const authSlice = createSlice({
   name: 'auth',
-  initialState: authDefaults,
+  initialState: loadToken(),
   reducers: {
-    userSignedIn: (
-      state: AuthState,
-      { payload }: PayloadAction<AuthenticatedState>
-    ): AuthenticatedState => {
-      window.localStorage.setItem('auth', JSON.stringify(payload));
-      return payload;
+    setToken({ token }: AuthState, { payload: newToken }: PayloadAction<Token>): AuthState {
+      token?.clearTimeout();
+      window.localStorage.setItem('token', newToken.encoded);
+      return {
+        token: newToken,
+      };
     },
-    updateUserData: (state: AuthState, { payload }: PayloadAction<Partial<User>>): void => {
-      if (state.isAuthenticated) {
-        state.user = { ...state.user, ...payload };
+    removeToken({ token }: AuthState): AuthState {
+      token?.clearTimeout();
+      window.localStorage.removeItem('token');
+      return {
+        token: null,
+      };
+    },
+    setTokenTimeout({ token }: AuthState, { payload: timeout }: PayloadAction<Timeout>): void {
+      token?.clearTimeout();
+      if (token) {
+        token.timeout = timeout;
       }
-    },
-    userSignedOut: (state: AuthState): UnauthenticatedState => {
-      window.clearTimeout((state as AuthenticatedState).token?.timeout);
-      window.localStorage.removeItem('auth');
-      return { isAuthenticated: false };
     },
   },
 });
 
-export const { userSignedIn, userSignedOut, updateUserData } = authSlice.actions;
+export const { setToken, removeToken, setTokenTimeout } = authSlice.actions;

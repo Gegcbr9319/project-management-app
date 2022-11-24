@@ -5,12 +5,13 @@ import { Board } from 'components';
 import styles from './BoardsPage.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGetBoardsSetByUserIdQuery, useCreateBoardMutation } from 'store';
+import { AuthState } from 'models';
 
 export const BoardsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { auth } = useSelector((state: AppState) => state);
-  const userId = auth.isAuthenticated ? auth.user._id : '';
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+  const userId = token?.decoded?.id || '';
 
   const { data = [], isLoading, isError, isSuccess } = useGetBoardsSetByUserIdQuery(userId);
   const [createBoard] = useCreateBoardMutation();
@@ -25,6 +26,7 @@ export const BoardsPage = () => {
       },
     });
   };
+
   return (
     <>
       <h2>Boards</h2>

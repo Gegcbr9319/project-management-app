@@ -4,7 +4,6 @@ export * from './column.model';
 export * from './task.model';
 export * from './point.model';
 export * from './file.model';
-export * from './auth.model';
 export * from './token.model';
 export * from './user.model';
 export * from './error.model';

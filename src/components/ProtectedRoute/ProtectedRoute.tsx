@@ -14,11 +14,11 @@ export function ProtectedRoute({
   redirectTo,
   children,
 }: PropsWithChildren<ProtectedRouteProps>): JSX.Element {
-  const { isAuthenticated } = useSelector(({ auth }: AppState): AuthState => auth);
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
   const doRedirect =
-    (!isAuthenticated && redirectIf === 'unauthenticated') ||
-    (isAuthenticated && redirectIf === 'authenticated');
+    (!token?.isValid && redirectIf === 'unauthenticated') ||
+    (token?.isValid && redirectIf === 'authenticated');
 
   const redirectTarget = redirectTo || redirectIf === 'unauthenticated' ? '/signin' : '/boards';
 

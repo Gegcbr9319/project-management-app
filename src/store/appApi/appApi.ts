@@ -53,10 +53,10 @@ export const appApi = createApi({
         return headers;
       }
 
-      const auth = (getState() as AppState).auth;
+      const { token } = (getState() as AppState).auth;
 
-      if (auth.isAuthenticated && auth.token) {
-        headers.set('authorization', `Bearer ${auth.token.encoded}`);
+      if (token?.isValid) {
+        headers.set('authorization', `Bearer ${token.encoded}`);
       }
 
       return headers;

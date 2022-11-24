@@ -1,10 +1,5 @@
 import jwtDecode from 'jwt-decode';
 
-export interface ISerializableToken {
-  encoded: string;
-  decoded: IDecodedToken | null;
-}
-
 export interface IDecodedToken {
   id: string;
   login: string;
@@ -16,14 +11,20 @@ export interface TokenDto {
   token: string;
 }
 
+export interface AuthState {
+  token: Token | null;
+}
+
+export type Timeout = ReturnType<typeof setTimeout>;
+
 export class Token {
   encoded: string;
   decoded: IDecodedToken | null;
-  timeout: ReturnType<typeof window.setTimeout> | undefined;
+  timeout: Timeout | null = null;
 
-  constructor(token?: string) {
-    this.encoded = token || '';
-    this.decoded = jwtDecode(this.encoded);
+  constructor(token: string) {
+    this.encoded = token;
+    this.decoded = jwtDecode(token);
   }
 
   get isValid(): boolean {
@@ -34,10 +35,13 @@ export class Token {
     return this.decoded ? +this.decoded.exp * 1000 - Date.now() : 0;
   }
 
-  toJSON(): ISerializableToken {
-    return {
-      encoded: this.encoded,
-      decoded: this.decoded,
-    };
+  clearTimeout() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+  }
+
+  toJSON(): string {
+    return this.encoded;
   }
 }

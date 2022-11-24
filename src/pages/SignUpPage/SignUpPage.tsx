@@ -1,13 +1,15 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch, signUp } from 'store';
-import { NewUserDto } from 'models';
+import { setToken, useSignInMutation, useSignUpMutation } from 'store';
+import { NewUserDto, Token, UserAuthDto } from 'models';
 import { UserForm } from 'components';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 export function SignUpPage() {
-  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const [signUp] = useSignUpMutation();
+  const [signIn] = useSignInMutation();
+  const dispatch = useDispatch();
 
   return (
     <UserForm
@@ -20,8 +22,16 @@ export function SignUpPage() {
       submit={{
         text: 'Sign Up',
         callback: async (newUserData) => {
-          await dispatch(signUp(newUserData as NewUserDto));
-          navigate('/boards');
+          await signUp(newUserData as NewUserDto);
+          const { login, password } = newUserData as UserAuthDto;
+
+          const signInResult = await signIn({ login, password }).unwrap();
+
+          if (signInResult) {
+            const token = new Token(signInResult.token);
+            dispatch(setToken(token));
+            navigate('/boards');
+          }
         },
       }}
       auxLink={{

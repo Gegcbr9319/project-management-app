@@ -1,14 +1,14 @@
 import { AppState } from 'store';
-import { AuthState } from 'models';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.scss';
+import { AuthState } from 'models';
 
 export const Navigation = () => {
   const [isSticky, setSticky] = useState(true);
 
-  const { isAuthenticated } = useSelector(({ auth }: AppState): AuthState => auth);
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
   useEffect(() => {
     window.onscroll = () => {
@@ -27,7 +27,7 @@ export const Navigation = () => {
           <h1>Project Manager</h1>
         </NavLink>
         <div className={`${styles.links} .links`}>
-          {isAuthenticated ? (
+          {token?.isValid ? (
             <>
               <NavLink className={styles.link} to="/boards">
                 Boards
