@@ -14,7 +14,7 @@ export const setupStore = (preloadedState?: PreloadedState<AppState>) => {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          ignoredActionPaths: ['payload'],
+          ignoredActionPaths: ['payload', 'meta'],
           ignoredPaths: ['auth.token'],
         },
       }).concat(appApi.middleware),
