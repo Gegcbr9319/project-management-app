@@ -16,7 +16,7 @@ export const signUp = createAsyncThunk(
       }
 
       // Sign in the newly created user
-      dispatch(
+      await dispatch(
         signIn({
           login,
           password,
