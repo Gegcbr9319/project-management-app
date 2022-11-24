@@ -1,12 +1,8 @@
 import jwtDecode from 'jwt-decode';
-import { string } from 'yargs';
 
-export interface IToken {
+export interface ISerializableToken {
   encoded: string;
   decoded: IDecodedToken | null;
-  isValid: boolean;
-  timeLeft: number;
-  timeout?: ReturnType<typeof window.setTimeout>;
 }
 
 export interface IDecodedToken {
@@ -20,7 +16,7 @@ export interface TokenDto {
   token: string;
 }
 
-export class Token implements IToken {
+export class Token {
   encoded: string;
   decoded: IDecodedToken | null;
   timeout: ReturnType<typeof window.setTimeout> | undefined;
@@ -36,5 +32,12 @@ export class Token implements IToken {
 
   get timeLeft(): number {
     return this.decoded ? +this.decoded.exp * 1000 - Date.now() : 0;
+  }
+
+  toJSON(): ISerializableToken {
+    return {
+      encoded: this.encoded,
+      decoded: this.decoded,
+    };
   }
 }

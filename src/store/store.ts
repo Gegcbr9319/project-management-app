@@ -11,7 +11,13 @@ export const setupStore = (preloadedState?: PreloadedState<AppState>) => {
   return configureStore({
     reducer: appReducer,
     preloadedState,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(appApi.middleware),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActionPaths: ['payload'],
+          ignoredPaths: ['auth.token'],
+        },
+      }).concat(appApi.middleware),
   });
 };
 
