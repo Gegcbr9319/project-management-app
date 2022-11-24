@@ -1,5 +1,3 @@
-import { IToken } from "model/auth";
-
 /**
  * Base models
  */
@@ -63,15 +61,11 @@ export interface IErrorResponse {
   message: string;
 }
 
-export interface IAuth {
-  token: IToken;
-}
-
-export interface IСreateBoardOptions extends IAuth {
+export interface IСreateBoardOptions {
   body: Omit<IBoard, '_id'>;
 }
 
-export interface IGetBoardByIdOptions extends IAuth {
+export interface IGetBoardByIdOptions {
   boardId: string;
 }
 
@@ -81,7 +75,7 @@ export interface IUpdateBoardByIdOptions extends IGetBoardByIdOptions {
 
 export type IDeleteBoardByIdOptions = IGetBoardByIdOptions;
 
-export interface IGetBoardSetByIdsListOptions extends IAuth {
+export interface IGetBoardSetByIdsListOptions {
   params: {
     ids: string[];
   };
@@ -104,7 +98,7 @@ export interface IUpdateColumnByIdOptions extends IСreateColumnOptions, IGetCol
 
 export type IDeleteColumnByIdOptions = IGetColumnByIdOptions;
 
-export interface IGetColumnsSetByParamOptions extends IAuth {
+export interface IGetColumnsSetByParamOptions {
   params:
     | {
         ids: string[];
@@ -114,14 +108,14 @@ export interface IGetColumnsSetByParamOptions extends IAuth {
       };
 }
 
-export interface IUpdateColumnsSetOptions extends IAuth {
+export interface IUpdateColumnsSetOptions {
   body: {
     _id: string;
     order: number;
   }[];
 }
 
-export interface ICreateColumnsSetOptions extends IAuth {
+export interface ICreateColumnsSetOptions {
   body: {
     title: string;
     order: number;
@@ -143,7 +137,7 @@ export interface IUpdateTaskByIdOptions extends ICreateTaskOptions, IGetTaskById
 
 export type IDeleteTaskByIdOptions = IGetTaskByIdOptions;
 
-export interface IGetTasksSetParamOptions extends IAuth {
+export interface IGetTasksSetParamOptions {
   params:
     | {
         ids: string[];
@@ -156,7 +150,7 @@ export interface IGetTasksSetParamOptions extends IAuth {
       };
 }
 
-export interface IUpdateTasksSetOptions extends IAuth {
+export interface IUpdateTasksSetOptions {
   body: {
     _id: string;
     order: number;
@@ -166,7 +160,7 @@ export interface IUpdateTasksSetOptions extends IAuth {
 
 export type IGetTaskSetByBoardIdOptions = IGetBoardByIdOptions;
 
-export interface IGetFilesBygetFilesByParamOptions extends IAuth {
+export interface IGetFilesBygetFilesByParamOptions {
   params:
     | {
         ids: string[];
@@ -179,7 +173,7 @@ export interface IGetFilesBygetFilesByParamOptions extends IAuth {
       };
 }
 
-export interface IUploadFileOptions extends IAuth {
+export interface IUploadFileOptions {
   body: {
     boardId: string;
     taskId: string;
@@ -189,13 +183,13 @@ export interface IUploadFileOptions extends IAuth {
 
 export type IGetFilesByBoardIdOptions = IGetBoardByIdOptions;
 
-export interface IDeleteFileByIdOptions extends IAuth {
+export interface IDeleteFileByIdOptions {
   fileId: string;
 }
 
 export type IGetPointsByParamOptions = IGetColumnsSetByParamOptions;
 
-export interface ICreatePointOptions extends IAuth {
+export interface ICreatePointOptions {
   body: {
     title: string;
     taskId: string;
@@ -204,18 +198,18 @@ export interface ICreatePointOptions extends IAuth {
   };
 }
 
-export interface IUpdateSetOfPointsOptions extends IAuth {
+export interface IUpdateSetOfPointsOptions {
   body: {
     _id: string;
     done: boolean;
   };
 }
 
-export interface IGetPointsByTaskIdOptions extends IAuth {
+export interface IGetPointsByTaskIdOptions {
   taskId: string;
 }
 
-export interface IUpdatePointByIdOptions extends IAuth {
+export interface IUpdatePointByIdOptions {
   pointId: string;
   body: {
     title: string;
@@ -223,6 +217,6 @@ export interface IUpdatePointByIdOptions extends IAuth {
   };
 }
 
-export interface IDeletePointByIdOptions extends IAuth {
+export interface IDeletePointByIdOptions {
   pointId: string;
 }

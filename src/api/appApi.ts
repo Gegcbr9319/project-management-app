@@ -3,7 +3,6 @@ import { TokenDto } from 'model/auth';
 import { UserDto, NewUserDto, UserAuthDto, User } from 'model/user';
 import { AppState } from 'store';
 import {
-  IAuth,
   IBoard,
   IСreateBoardOptions,
   IGetBoardByIdOptions,
@@ -110,7 +109,7 @@ export const appApi = createApi({
             login,
             password,
           },
-        }
+        };
       },
     }),
     // Delete user
@@ -125,8 +124,8 @@ export const appApi = createApi({
      * Boards endpoints
      */
     //Get all Boards on server
-    getAllBoards: build.query<IBoard[], IAuth>({
-      query: (options) => ({
+    getAllBoards: build.query<IBoard[], void>({
+      query: () => ({
         url: 'boards',
         method: 'GET',
       }),
@@ -330,7 +329,6 @@ export const appApi = createApi({
           url: 'file',
           method: 'POST',
           headers: {
-            Authorization: 'Bearer ' + options.token.encoded,
             'Content-Type': 'multipart/form-data',
           },
           body,
