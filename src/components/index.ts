@@ -8,4 +8,5 @@ export * from './ProtectedRoute';
 export * from './ProtectedRouter';
 export * from './SignOut';
 export * from './UserForm';
+export * from './UserMenu';
 export * from './Task';

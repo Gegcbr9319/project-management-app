@@ -1,6 +1,14 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { SignUpPage, SignInPage, WelcomePage, PageNotFound, BoardsPage, BoardPage } from 'pages';
+import {
+  SignUpPage,
+  SignInPage,
+  WelcomePage,
+  PageNotFound,
+  BoardsPage,
+  BoardPage,
+  EditProfilePage,
+} from 'pages';
 import { Navigation, Footer, ProtectedRouter, ProtectedRoute, SignOut } from 'components';
 import styles from './App.module.scss';
 
@@ -40,6 +48,14 @@ export function App() {
             element={
               <ProtectedRoute redirectIf="authenticated">
                 <SignUpPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-profile"
+            element={
+              <ProtectedRoute redirectIf="unauthenticated">
+                <EditProfilePage />
               </ProtectedRoute>
             }
           />
