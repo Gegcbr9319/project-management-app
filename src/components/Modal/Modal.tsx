@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { AppState, useCreateBoardMutation, useUpdateBoardByIdMutation } from 'store';
 import styles from './Modal.module.scss';
 import { AuthState } from 'models';
+import { Loader } from 'components';
 
 export interface ICreateTaskModalProps {
   type: 'create task';
@@ -62,12 +63,12 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
 
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
-  const [createBoard] = useCreateBoardMutation();
-  const [updateBoard] = useUpdateBoardByIdMutation();
+  const [createBoard, createBoardResults] = useCreateBoardMutation();
+  const [updateBoard, updateBoardResults] = useUpdateBoardByIdMutation();
 
-  const onSubmit = ({ title, description }: IFormDataInput) => {
+  const onSubmit = async ({ title, description }: IFormDataInput) => {
     if (type === 'create board') {
-      createBoard({
+      await createBoard({
         body: {
           title: title,
           description: description,
@@ -76,7 +77,7 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
         },
       });
     } else if (type === 'edit board') {
-      updateBoard({
+      await updateBoard({
         boardId: _id,
         body: {
           title: title,
@@ -96,6 +97,7 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
 
   return (
     <>
+      {(createBoardResults.isLoading || updateBoardResults.isLoading) && <Loader />}
       <div className={styles.divForm}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <TextField

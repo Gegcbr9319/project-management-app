@@ -3,19 +3,15 @@ import { useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { AppState, useGetBoardsSetByUserIdQuery } from 'store';
-import { BoardPreview, Modal } from 'components';
+import { BoardPreview, Modal, Loader } from 'components';
 import styles from './BoardsPage.module.scss';
 import { AuthState } from 'models';
 
 export const BoardsPage = () => {
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
   const [callingForm, setCallingForm] = useState(false);
-  const {
-    data = [],
-    isLoading,
-    isError,
-    isSuccess,
-  } = useGetBoardsSetByUserIdQuery(token?.decoded?.id ? token.decoded.id : '');
+  const userId = token?.decoded?.id || '';
+  const { data = [], isLoading } = useGetBoardsSetByUserIdQuery(userId);
 
   const formsCalling = () => {
     setCallingForm(true);
@@ -23,6 +19,7 @@ export const BoardsPage = () => {
 
   return (
     <>
+      {isLoading && <Loader />}
       <h2>Boards</h2>
       <div className={styles.boards}>
         {data?.map((board) => {
@@ -41,14 +38,6 @@ export const BoardsPage = () => {
         </Button>
       </div>
       {callingForm && <Modal type="create board" setCallingForm={setCallingForm} />}
-
-      <br />
-      <div>
-        <p>{`isLoading: ${isLoading}`}</p>
-        <p>{`isSuccess: ${isSuccess}`}</p>
-        <p>{`isError:   ${isError}`}</p>
-        <p>{`data: ${JSON.stringify(data)}`}</p>
-      </div>
     </>
   );
 };

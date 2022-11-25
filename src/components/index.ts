@@ -8,5 +8,6 @@ export * from './ProtectedRouter';
 export * from './SignOut';
 export * from './UserForm';
 export * from './Task';
+export * from './Loader';
 export * from './BoardPreview';
 export * from './Modal';

@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { Delete, Update } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDeleteBoardByIdMutation } from 'store';
-import { Modal } from 'components';
+import { Loader, Modal } from 'components';
 import styles from './BoardPreview.module.scss';
 
 interface IBoardPreview {
@@ -29,13 +29,14 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
     setCallingForm(true);
   };
 
-  const buttonDeleteHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    deleteBoard({ boardId: _id });
+    await deleteBoard({ boardId: _id });
   };
 
   return (
     <>
+      {isLoading && <Loader />}
       <div className={styles.button} onClick={buttonClickHandler}>
         <h2 className={styles.h2}> {title}</h2>
         <h3> {description}</h3>

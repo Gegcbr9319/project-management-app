@@ -46,6 +46,7 @@ import {
 
 export const appApi = createApi({
   reducerPath: 'appApi',
+  tagTypes: ['Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
     prepareHeaders: (headers, { getState, endpoint }) => {
@@ -140,6 +141,7 @@ export const appApi = createApi({
         method: 'POST',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
     // Find Board
     getBoardById: build.query<IBoard, IGetBoardByIdOptions>({
@@ -155,6 +157,7 @@ export const appApi = createApi({
         method: 'PUT',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
     // Delete Board
     deleteBoardById: build.mutation<IBoard, IDeleteBoardByIdOptions>({
@@ -162,6 +165,7 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId,
         method: 'DELETE',
       }),
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
     // Get Boards by list of boardId
     getBoardsSetByIdsList: build.query<IBoard[], IGetBoardSetByIdsListOptions>({
@@ -177,6 +181,13 @@ export const appApi = createApi({
         url: `boardsSet/${userId}`,
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Boards' as const, _id })),
+              { type: 'Boards', id: 'LIST' },
+            ]
+          : [{ type: 'Boards', id: 'LIST' }],
     }),
 
     /**
@@ -188,6 +199,13 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId + '/columns',
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Columns' as const, _id })),
+              { type: 'Columns', id: 'LIST' },
+            ]
+          : [{ type: 'Columns', id: 'LIST' }],
     }),
     // Create Column in board
     createColumn: build.mutation<IColumn, IСreateColumnOptions>({
@@ -196,6 +214,7 @@ export const appApi = createApi({
         method: 'POST',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     // Find Column
     getColumnById: build.query<IColumn, IGetColumnByIdOptions>({
@@ -211,6 +230,7 @@ export const appApi = createApi({
         method: 'PUT',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     // Delete Column
     deleteColumnById: build.mutation<IColumn, IDeleteColumnByIdOptions>({
@@ -218,6 +238,7 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId,
         method: 'DELETE',
       }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     // Get Columns by list of columnId or in Boards where user is owner or one of invited
     getColumnsSetByIdsListOrUserId: build.query<IColumn[], IGetColumnsSetByParamOptions>({
@@ -234,6 +255,7 @@ export const appApi = createApi({
         method: 'PATCH',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     // Create set of Columns
     createColumnsSet: build.mutation<IColumn[], ICreateColumnsSetOptions>({
@@ -242,13 +264,14 @@ export const appApi = createApi({
         method: 'POST',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
 
     /**
      * Tasks endpoints
      */
     // Get Tasks in columns
-    getTasksInColumn: build.query<ITask, IGetTasksInColumnOptions>({
+    getTasksInColumn: build.query<ITask[], IGetTasksInColumnOptions>({
       query: (options) => ({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks',
         method: 'GET',
@@ -261,6 +284,7 @@ export const appApi = createApi({
         method: 'POST',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
     }),
     // Find Task
     getTaskById: build.query<ITask, IGetTaskByIdOptions>({
@@ -278,6 +302,7 @@ export const appApi = createApi({
         method: 'PUT',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
     }),
     // Delete Task
     deleteTaskById: build.mutation<ITask, IDeleteTaskByIdOptions>({
@@ -286,12 +311,14 @@ export const appApi = createApi({
           'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks/' + options.taskId,
         method: 'DELETE',
       }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
     }),
     // Get Tasks by list of taskId or in Boards where user is owner or one of invited, or by search request
     getTasksSet: build.query<ITask[], IGetTasksSetParamOptions>({
       query: (options) => ({
         url: 'tasksSet',
         method: 'GET',
+        params: options.params,
       }),
     }),
     // Change oreder and column of list of tasks
@@ -301,6 +328,7 @@ export const appApi = createApi({
         method: 'PATCH',
         body: options.body,
       }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
     }),
     // Get Tasks in selected Board
     getTaskSetByBoardId: build.query<ITask[], IGetTaskSetByBoardIdOptions>({
@@ -308,6 +336,13 @@ export const appApi = createApi({
         url: 'tasksSet/' + options.boardId,
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
+              { type: 'Tasks', id: 'LIST' },
+            ]
+          : [{ type: 'Tasks', id: 'LIST' }],
     }),
 
     /**
