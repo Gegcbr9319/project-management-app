@@ -5,7 +5,6 @@ import {
   UserDto,
   NewUserDto,
   UserAuthDto,
-  UpdateUserDto,
   IBoard,
   IСreateBoardOptions,
   IGetBoardByIdOptions,
@@ -42,6 +41,7 @@ import {
   IGetPointsByTaskIdOptions,
   IUpdatePointByIdOptions,
   IDeletePointByIdOptions,
+  User,
 } from 'models';
 
 export const appApi = createApi({
@@ -101,7 +101,7 @@ export const appApi = createApi({
       }),
     }),
     // Update user
-    updateUser: build.mutation<UserDto, UpdateUserDto>({
+    updateUser: build.mutation<UserDto, User>({
       query: (newUserData) => {
         const { _id: userId, name, login, password } = newUserData;
         return {
