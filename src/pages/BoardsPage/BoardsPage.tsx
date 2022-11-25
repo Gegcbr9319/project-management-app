@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { AppState } from 'store';
-import { Board } from 'components';
+import { Board, Loader } from 'components';
 import styles from './BoardsPage.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGetBoardsSetByUserIdQuery, useCreateBoardMutation } from 'store';
@@ -13,8 +13,8 @@ export const BoardsPage = () => {
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
   const userId = token?.decoded?.id || '';
 
-  const { data = [], isLoading, isError, isSuccess } = useGetBoardsSetByUserIdQuery(userId);
-  const [createBoard] = useCreateBoardMutation();
+  const { data = [], isLoading } = useGetBoardsSetByUserIdQuery(userId);
+  const [createBoard, createBoardResult] = useCreateBoardMutation();
 
   const boardsAdd = () => {
     createBoard({
@@ -29,6 +29,7 @@ export const BoardsPage = () => {
 
   return (
     <>
+      {(isLoading || createBoardResult.isLoading) && <Loader />}
       <h2>Boards</h2>
       <button className={styles.button} onClick={boardsAdd} disabled={isLoading}>
         Add Board
@@ -41,14 +42,6 @@ export const BoardsPage = () => {
             </button>
           );
         })}
-      </div>
-
-      <br />
-      <div>
-        <p>{`isLoading: ${isLoading}`}</p>
-        <p>{`isSuccess: ${isSuccess}`}</p>
-        <p>{`isError:   ${isError}`}</p>
-        <p>{`data: ${JSON.stringify(data)}`}</p>
       </div>
     </>
   );
