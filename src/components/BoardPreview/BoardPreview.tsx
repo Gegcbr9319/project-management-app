@@ -39,7 +39,7 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
       {isLoading && <Loader />}
       <div className={styles.button} onClick={buttonClickHandler}>
         <h2 className={styles.h2}> {title}</h2>
-        <h3> {description}</h3>
+        <h3 className={styles.h3}> {description}</h3>
         <div className={styles.buttons}>
           <Button
             variant="outlined"
@@ -47,6 +47,7 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
             onClick={buttonEditHandler}
             size="small"
             color="info"
+            className={styles.buttonsButton}
           >
             Edit
           </Button>
@@ -58,6 +59,7 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
             disabled={isLoading}
             size="small"
             color="warning"
+            className={styles.buttonsButton}
           >
             Delete
           </Button>

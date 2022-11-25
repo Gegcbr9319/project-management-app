@@ -71,7 +71,7 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
       await createBoard({
         body: {
           title: title,
-          description: description,
+          description: description?.length === 0 ? '' : description,
           owner: token?.decoded?.id ? token.decoded.id : '',
           users: [],
         },
@@ -81,7 +81,7 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
         boardId: _id,
         body: {
           title: title,
-          description: description,
+          description: description.length === 0 ? '' : description,
           owner: owner,
           users: users,
         },
