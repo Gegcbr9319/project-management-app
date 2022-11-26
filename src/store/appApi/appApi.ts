@@ -46,7 +46,7 @@ import {
 
 export const appApi = createApi({
   reducerPath: 'appApi',
-  tagTypes: ['Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
+  tagTypes: ['User', 'Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
     prepareHeaders: (headers, { getState, endpoint }) => {
@@ -63,7 +63,6 @@ export const appApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['User'],
   endpoints: (build) => ({
     /**
      * Auth endpoints
