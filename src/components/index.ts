@@ -1,6 +1,5 @@
 export * from './App';
 export * from './AppStoreProvider';
-export * from './Board';
 export * from './Column';
 export * from './Footer';
 export * from './Navigation';
@@ -10,3 +9,6 @@ export * from './SignOut';
 export * from './UserForm';
 export * from './UserMenu';
 export * from './Task';
+export * from './Loader';
+export * from './BoardPreview';
+export * from './Modal';

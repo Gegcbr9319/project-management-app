@@ -1,0 +1,31 @@
+.divForm {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(6, 6, 6, 0.56);
+}
+
+.form {
+  height: auto;
+  width: 420px;
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 20px;
+  border: 1.5px solidrgba(6, 6, 6, 0.56);
+  background-color: rgb(221, 237, 242);
+}
+
+.formButtons {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
