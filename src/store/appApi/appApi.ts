@@ -62,6 +62,7 @@ export const appApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ['User'],
   endpoints: (build) => ({
     /**
      * Auth endpoints
@@ -92,6 +93,10 @@ export const appApi = createApi({
         url: 'users',
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [...result.map(({ _id }) => ({ type: 'User' as const, id: _id })), 'User']
+          : ['User'],
     }),
     // Find user by id
     getUser: build.query<UserDto, string>({
@@ -99,6 +104,8 @@ export const appApi = createApi({
         url: `users/${userId}`,
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result ? [{ type: 'User' as const, id: result._id }, 'User'] : ['User'],
     }),
     // Update user
     updateUser: build.mutation<UserDto, User>({
@@ -114,6 +121,7 @@ export const appApi = createApi({
           },
         };
       },
+      invalidatesTags: (result, error, arg) => [{ type: 'User' as const, id: arg._id }],
     }),
     // Delete user
     deleteUser: build.mutation<UserDto, string>({
@@ -121,6 +129,7 @@ export const appApi = createApi({
         url: `users/${userId}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, arg) => [{ type: 'User' as const, id: arg }],
     }),
 
     /**
