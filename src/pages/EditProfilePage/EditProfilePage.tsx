@@ -21,7 +21,7 @@ import Container from '@mui/material/Container';
 import * as yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
-import { PasswordField } from 'components';
+import { Loader, PasswordField } from 'components';
 
 const validationSchema = yup.object({
   name: yup.string().required('Name is required'),
@@ -59,7 +59,7 @@ export function EditProfilePage(): JSX.Element {
     return token?.decoded?.id || '';
   }, [token]);
 
-  const { data: user } = useGetUserQuery(userId);
+  const { data: user, isLoading } = useGetUserQuery(userId);
   const [signIn] = useSignInMutation();
   const [updateUser] = useUpdateUserMutation();
 
@@ -73,112 +73,115 @@ export function EditProfilePage(): JSX.Element {
   }, [user]);
 
   return (
-    <Formik
-      enableReinitialize
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={async (data: EditProfileFormData, { setSubmitting }) => {
-        const { name, login, password, setNewPassword, newPassword } = data;
+    <>
+      {isLoading && <Loader />}
+      <Formik
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={async (data: EditProfileFormData, { setSubmitting }) => {
+          const { name, login, password, setNewPassword, newPassword } = data;
 
-        // sign in to verify that the old password is correct
-        const signInResult = await signIn({
-          login: user?.login || '',
-          password,
-        }).unwrap();
-
-        if (signInResult) {
-          // since we've gotten a new token, save it to store
-          const newToken = new Token(signInResult.token);
-          const tokenTimeout = setTimeout(() => dispatch(removeToken()), newToken.timeLeft);
-          dispatch(setTokenTimeout(tokenTimeout));
-          dispatch(setToken(newToken));
-
-          // post updated user data to server
-          await updateUser({
-            _id: userId,
-            name,
-            login: login,
-            password: setNewPassword ? newPassword! : password,
+          // sign in to verify that the old password is correct
+          const signInResult = await signIn({
+            login: user?.login || '',
+            password,
           }).unwrap();
 
-          navigate('/boards');
-        }
+          if (signInResult) {
+            // since we've gotten a new token, save it to store
+            const newToken = new Token(signInResult.token);
+            const tokenTimeout = setTimeout(() => dispatch(removeToken()), newToken.timeLeft);
+            dispatch(setTokenTimeout(tokenTimeout));
+            dispatch(setToken(newToken));
 
-        setSubmitting(false);
-      }}
-    >
-      {({ submitForm, isSubmitting, values, errors, dirty }) => (
-        <Container maxWidth="xs">
-          <Box
-            sx={{
-              marginTop: 8,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <AccountCircleOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Edit Profile
-            </Typography>
-            <Box sx={{ mt: 3 }}>
-              <Form>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Field component={TextField} name="name" label="Name" fullWidth />
+            // post updated user data to server
+            await updateUser({
+              _id: userId,
+              name,
+              login: login,
+              password: setNewPassword ? newPassword! : password,
+            }).unwrap();
+
+            navigate('/boards');
+          }
+
+          setSubmitting(false);
+        }}
+      >
+        {({ submitForm, isSubmitting, values, errors, dirty }) => (
+          <Container maxWidth="xs">
+            <Box
+              sx={{
+                marginTop: 8,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                <AccountCircleOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Edit Profile
+              </Typography>
+              <Box sx={{ mt: 3 }}>
+                <Form>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Field component={TextField} name="name" label="Name" fullWidth />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Field component={TextField} name="login" label="Login" fullWidth />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Field component={PasswordField} name="password" label="Password" fullWidth />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Field
+                        component={CheckboxWithLabel}
+                        type="checkbox"
+                        name="setNewPassword"
+                        Label={{ label: 'Set new password' }}
+                      />
+                    </Grid>
+                    {values.setNewPassword ? (
+                      <>
+                        <Grid item xs={12}>
+                          <Field
+                            component={PasswordField}
+                            name="newPassword"
+                            label="New password"
+                            fullWidth
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Field
+                            component={PasswordField}
+                            name="confirmNewPassword"
+                            label="Confirm new password"
+                            fullWidth
+                          />
+                        </Grid>
+                      </>
+                    ) : null}
                   </Grid>
-                  <Grid item xs={12}>
-                    <Field component={TextField} name="login" label="Login" fullWidth />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Field component={PasswordField} name="password" label="Password" fullWidth />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Field
-                      component={CheckboxWithLabel}
-                      type="checkbox"
-                      name="setNewPassword"
-                      Label={{ label: 'Set new password' }}
-                    />
-                  </Grid>
-                  {values.setNewPassword ? (
-                    <>
-                      <Grid item xs={12}>
-                        <Field
-                          component={PasswordField}
-                          name="newPassword"
-                          label="New password"
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Field
-                          component={PasswordField}
-                          name="confirmNewPassword"
-                          label="Confirm new password"
-                          fullWidth
-                        />
-                      </Grid>
-                    </>
-                  ) : null}
-                </Grid>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                  disabled={Object.keys(errors).length > 0 || !dirty || isSubmitting}
-                  onClick={submitForm}
-                >
-                  Update Profile
-                </Button>
-              </Form>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    disabled={Object.keys(errors).length > 0 || !dirty || isSubmitting}
+                    onClick={submitForm}
+                  >
+                    Update Profile
+                  </Button>
+                </Form>
+              </Box>
             </Box>
-          </Box>
-        </Container>
-      )}
-    </Formik>
+          </Container>
+        )}
+      </Formik>
+    </>
   );
 }
