@@ -1,6 +1,6 @@
 .button {
-  height: 180px;
-  width: 230px;
+  height: 190px;
+  width: 216px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +12,7 @@
   margin-top: 15px;
   border-radius: 14px;
   transition: 0.35s;
+  overflow: hidden;
 }
 
 .button:hover {
@@ -21,21 +22,28 @@
 }
 
 .h2 {
-  padding: 5px 15px 5px;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  height: auto;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  white-space: nowrap;
   width: 100%;
-  max-height: 100%;
 }
 
 .h3 {
-  width: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  padding: 5px 15px 5px;
+  padding-left: 15px;
+  padding-right: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: break-word;
+  width: 100%;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  text-align: left;
 }
 
 .buttons {
