@@ -1,6 +1,14 @@
 import React, { useMemo } from 'react';
-import { AppState, setToken, useGetUserQuery, useUpdateUserMutation } from 'store';
-import { AuthState, NewUserDto, Token, User, UserAuthDto } from 'models';
+import {
+  AppState,
+  removeToken,
+  setToken,
+  setTokenTimeout,
+  useGetUserQuery,
+  useSignInMutation,
+  useUpdateUserMutation,
+} from 'store';
+import { AuthState, Token } from 'models';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
@@ -44,21 +52,25 @@ interface EditProfileFormData {
 
 export function EditProfilePage(): JSX.Element {
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const userId = useMemo(() => {
     return token?.decoded?.id || '';
   }, [token]);
 
-  const { data: fetchedUser } = useGetUserQuery(userId);
+  const { data: user } = useGetUserQuery(userId);
+  const [signIn] = useSignInMutation();
   const [updateUser] = useUpdateUserMutation();
 
   const initialValues = useMemo((): EditProfileFormData => {
     return {
-      name: fetchedUser?.name || '',
-      login: fetchedUser?.login || '',
+      name: user?.name || '',
+      login: user?.login || '',
       password: '',
       setNewPassword: false,
     };
-  }, [fetchedUser]);
+  }, [user]);
 
   return (
     <Formik
@@ -66,7 +78,32 @@ export function EditProfilePage(): JSX.Element {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (data: EditProfileFormData, { setSubmitting }) => {
-        console.log(JSON.stringify(data));
+        const { name, login, password, setNewPassword, newPassword } = data;
+
+        // sign in to verify that the old password is correct
+        const signInResult = await signIn({
+          login: user?.login || '',
+          password,
+        }).unwrap();
+
+        if (signInResult) {
+          // since we've gotten a new token, save it to store
+          const newToken = new Token(signInResult.token);
+          const tokenTimeout = setTimeout(() => dispatch(removeToken()), newToken.timeLeft);
+          dispatch(setTokenTimeout(tokenTimeout));
+          dispatch(setToken(newToken));
+
+          // post updated user data to server
+          await updateUser({
+            _id: userId,
+            name,
+            login: login,
+            password: setNewPassword ? newPassword! : password,
+          }).unwrap();
+
+          navigate('/boards');
+        }
+
         setSubmitting(false);
       }}
     >
