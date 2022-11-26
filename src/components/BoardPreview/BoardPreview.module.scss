@@ -10,6 +10,7 @@
   background-color: #444;
   color: white;
   margin-top: 15px;
+  padding: 15px;
   border-radius: 14px;
   transition: 0.35s;
   overflow: hidden;
@@ -22,9 +23,9 @@
 }
 
 .h2 {
-  padding-top: 15px;
+  /*  padding-top: 15px;
   padding-left: 15px;
-  padding-right: 15px;
+  padding-right: 15px; */
   height: auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -33,8 +34,8 @@
 }
 
 .h3 {
-  padding-left: 15px;
-  padding-right: 15px;
+  /* padding-left: 15px;
+  padding-right: 15px; */
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
@@ -49,8 +50,8 @@
 .buttons {
   width: 100%;
   display: flex;
-  padding-top: 5px;
-  padding-bottom: 15px;
+  /*  padding-top: 5px;
+  padding-bottom: 15px; */
   justify-content: space-around;
 }
 
