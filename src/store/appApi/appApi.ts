@@ -5,7 +5,6 @@ import {
   UserDto,
   NewUserDto,
   UserAuthDto,
-  UpdateUserDto,
   IBoard,
   IСreateBoardOptions,
   IGetBoardByIdOptions,
@@ -42,11 +41,12 @@ import {
   IGetPointsByTaskIdOptions,
   IUpdatePointByIdOptions,
   IDeletePointByIdOptions,
+  User,
 } from 'models';
 
 export const appApi = createApi({
   reducerPath: 'appApi',
-  tagTypes: ['Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
+  tagTypes: ['User', 'Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
     prepareHeaders: (headers, { getState, endpoint }) => {
@@ -93,6 +93,10 @@ export const appApi = createApi({
         url: 'users',
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [...result.map(({ _id }) => ({ type: 'User' as const, id: _id })), 'User']
+          : ['User'],
     }),
     // Find user by id
     getUser: build.query<UserDto, string>({
@@ -100,9 +104,11 @@ export const appApi = createApi({
         url: `users/${userId}`,
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result ? [{ type: 'User' as const, id: result._id }, 'User'] : ['User'],
     }),
     // Update user
-    updateUser: build.mutation<UserDto, UpdateUserDto>({
+    updateUser: build.mutation<UserDto, User>({
       query: (newUserData) => {
         const { _id: userId, name, login, password } = newUserData;
         return {
@@ -115,6 +121,7 @@ export const appApi = createApi({
           },
         };
       },
+      invalidatesTags: (result, error, arg) => [{ type: 'User' as const, id: arg._id }],
     }),
     // Delete user
     deleteUser: build.mutation<UserDto, string>({
@@ -122,6 +129,7 @@ export const appApi = createApi({
         url: `users/${userId}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, arg) => [{ type: 'User' as const, id: arg }],
     }),
 
     /**
