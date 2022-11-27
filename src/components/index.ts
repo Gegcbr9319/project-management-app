@@ -12,3 +12,5 @@ export * from './Task';
 export * from './Loader';
 export * from './BoardPreview';
 export * from './Modal';
+export * from './ErrorMessage';
+export * from './ErrorBoundary';

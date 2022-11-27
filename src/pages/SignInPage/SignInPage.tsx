@@ -1,6 +1,6 @@
 import React from 'react';
-import { Token, UserAuthDto } from 'models';
-import { setToken, useSignInMutation } from 'store';
+import { ApiError, ErrorResponse, Token, UserAuthDto } from 'models';
+import { setError, setToken, useSignInMutation } from 'store';
 import { Loader, UserForm } from 'components';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -22,12 +22,18 @@ export function SignInPage() {
         submit={{
           text: 'Sign In',
           callback: async (userAuthData) => {
-            const signInResult = await signIn(userAuthData as UserAuthDto).unwrap();
+            try {
+              const signInResult = await signIn(userAuthData as UserAuthDto).unwrap();
 
-            if (signInResult) {
-              const token = new Token(signInResult.token);
-              dispatch(setToken(token));
-              navigate('/boards');
+              if (signInResult) {
+                const token = new Token(signInResult.token);
+                dispatch(setToken(token));
+                navigate('/boards');
+              }
+            } catch (error) {
+              if (Object.prototype.hasOwnProperty.call(error, 'data')) {
+                dispatch(setError((error as ApiError).data as ErrorResponse));
+              }
             }
           },
         }}

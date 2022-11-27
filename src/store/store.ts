@@ -1,9 +1,10 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
-import { appApi, authSlice } from 'store';
+import { appApi, authSlice, errorSlice } from 'store';
 
 const appReducer = combineReducers({
   [authSlice.name]: authSlice.reducer,
   [appApi.reducerPath]: appApi.reducer,
+  [errorSlice.name]: errorSlice.reducer,
 });
 
 export const setupStore = (preloadedState?: PreloadedState<AppState>) => {
