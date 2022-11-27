@@ -42,24 +42,13 @@
 }
 
 .button {
-  margin: 0 auto;
-  width: 120px;
-  height: 22px;
-  background-color: rgb(141, 115, 115);
-  border: 1px solid white;
-  color: white;
-  border-radius: 10px;
-  transition: 0.4s;
-}
-
-.button:hover {
-  border: 2px solid rgb(252, 5, 5);
-  color: rgb(0, 0, 0);
-  border-radius: 10px;
-  cursor: pointer;
+  position: static !important;
+  height: 120px;
 }
 
 .columns {
   display: flex;
-  gap: 5px;
+  gap: 15px;
+  justify-content: space-around;
+  align-items: center;
 }

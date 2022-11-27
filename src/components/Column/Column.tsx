@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
+import { IconButton } from '@mui/material';
+import { AddCircle } from '@mui/icons-material';
 import styles from './Column.module.scss';
 import { Task } from 'components';
+import { useGetTasksInColumnQuery } from 'store';
 
-const constTitle = 'This is column name';
+interface IColumnProps {
+  id: string;
+  title: string;
+  boardId: string;
+}
 
-export const Column = () => {
-  const [title, setTitle] = useState(constTitle);
+export const Column: FC<IColumnProps> = ({ id, title, boardId }) => {
+  const { data, isLoading } = useGetTasksInColumnQuery({ boardId: boardId, columnId: id });
   const [tasksCount, setTasksCount] = useState(0);
   const [tasksArray, setTasksArray] = useState<number[]>([]);
 
   const tasksAdd = () => {
+    console.log(data);
     setTasksCount(tasksCount + 1);
     setTasksArray([...tasksArray, tasksCount]);
   };
@@ -17,24 +25,15 @@ export const Column = () => {
   return (
     <>
       <div>
-        <label>
-          <input
-            className={styles.title}
-            type="text"
-            value={title}
-            onChange={(event) => {
-              setTitle(event.target.value);
-            }}
-          />
-        </label>
+        <h3>{title}</h3>
         <div className={styles.tasks}>
-          {tasksArray?.map((index) => {
-            return <Task key={tasksArray[index]} />;
+          {data?.map((index) => {
+            return <Task key={index._id} title={index.title} description={index.description} />;
           })}
         </div>
-        <button className={styles.button} onClick={tasksAdd}>
-          Add task
-        </button>
+        <IconButton color="info" aria-label="add an alarm" onClick={tasksAdd}>
+          <AddCircle />
+        </IconButton>
       </div>
     </>
   );

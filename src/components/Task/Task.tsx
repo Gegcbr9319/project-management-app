@@ -1,22 +1,16 @@
-import React, { useState } from 'react';
+import React, { FC } from 'react';
 import styles from './Task.module.scss';
 
-const constTitle = 'Task';
+interface ITaskProps {
+  title: string;
+  description: string;
+}
 
-export const Task = () => {
-  const [title, setTitle] = useState(constTitle);
+export const Task: FC<ITaskProps> = ({ title, description }) => {
   return (
     <>
-      <label>
-        <input
-          className={styles.title}
-          type="text"
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value);
-          }}
-        />
-      </label>
+      <h3>{title}</h3>
+      {/* <h4>{description}</h4> */}
     </>
   );
 };

@@ -3,7 +3,13 @@ import { useForm } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
-import { AppState, useCreateBoardMutation, useUpdateBoardByIdMutation } from 'store';
+import {
+  AppState,
+  useCreateBoardMutation,
+  useCreateColumnMutation,
+  useGetColumnsInBoardQuery,
+  useUpdateBoardByIdMutation,
+} from 'store';
 import styles from './Modal.module.scss';
 import { AuthState } from 'models';
 import { Loader } from 'components';
@@ -13,6 +19,7 @@ export interface ICreateTaskModalProps {
   _id?: never;
   users?: string[];
   owner?: string;
+  columnId?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -21,6 +28,7 @@ export interface ICreateBoardModalProps {
   _id?: never;
   users?: string[];
   owner?: string;
+  columnId?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -29,6 +37,7 @@ export interface IEditTaskModalProps {
   _id: string;
   users?: string[];
   owner?: string;
+  columnId?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -37,6 +46,25 @@ export interface IEditBoardModalProps {
   _id: string;
   users: string[];
   owner: string;
+  columnId?: string;
+  setCallingForm: (item: boolean) => void;
+}
+
+export interface ICreateColumnProps {
+  type: 'create column';
+  _id: string;
+  users?: string[];
+  owner?: string;
+  columnId?: string;
+  setCallingForm: (item: boolean) => void;
+}
+
+export interface IEditColumnProps {
+  type: 'edit column';
+  _id: string;
+  columnId: string;
+  users?: string[];
+  owner?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -44,7 +72,9 @@ export type IModalProps =
   | ICreateTaskModalProps
   | ICreateBoardModalProps
   | IEditTaskModalProps
-  | IEditBoardModalProps;
+  | IEditBoardModalProps
+  | ICreateColumnProps
+  | IEditColumnProps;
 
 interface IFormDataInput {
   title: string;
@@ -53,7 +83,7 @@ interface IFormDataInput {
 
 const errorTitleMesage = 'More than 2 letters';
 
-export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm }) => {
+export const Modal: FC<IModalProps> = ({ type, _id, columnId, users, owner, setCallingForm }) => {
   const {
     register,
     reset,
@@ -62,16 +92,18 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
   } = useForm<IFormDataInput>();
 
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+  const columns = useGetColumnsInBoardQuery({ boardId: _id ? _id : '' });
 
   const [createBoard, createBoardResults] = useCreateBoardMutation();
   const [updateBoard, updateBoardResults] = useUpdateBoardByIdMutation();
+  const [createColumn, createColumnResults] = useCreateColumnMutation();
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
     if (type === 'create board') {
       await createBoard({
         body: {
           title: title,
-          description: description?.length === 0 ? ' ' : description,
+          description: description,
           owner: token?.decoded?.id ? token.decoded.id : '',
           users: [],
         },
@@ -81,10 +113,15 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
         boardId: _id,
         body: {
           title: title,
-          description: description.length === 0 ? ' ' : description,
+          description: description,
           owner: owner,
           users: users,
         },
+      });
+    } else if (type === 'create column') {
+      await createColumn({
+        boardId: _id,
+        body: { title: title, order: columns && columns.data ? columns.data.length : 0 },
       });
     }
     setCallingForm(false);
@@ -110,12 +147,15 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
             })}
           />
           {errors?.title && <p> {errorTitleMesage}</p>}
-          <TextField
-            id="standard-basic"
-            label="Description"
-            variant="standard"
-            {...register('description')}
-          />
+          {type !== ('create column' || 'edit column') && (
+            <TextField
+              id="standard-basic"
+              label="Description"
+              variant="standard"
+              {...register('description')}
+            />
+          )}
+
           <div className={styles.formButtons}>
             <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
               Back

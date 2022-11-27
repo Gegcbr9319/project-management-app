@@ -1,54 +1,64 @@
 import React, { useState } from 'react';
+import { Button } from '@mui/material';
+import { ArrowBackIosNew, Add } from '@mui/icons-material';
+import { Column, Loader, Modal } from 'components';
+import { useNavigate } from 'react-router';
 import styles from './BoardPage.module.scss';
-import { Column } from 'components';
-
-const constTitle = 'This is board name';
-const constDescription = 'This is board description';
+import { useGetBoardByIdQuery, useGetColumnsInBoardQuery } from 'store';
 
 export const BoardPage = () => {
-  const [title, setTitle] = useState(constTitle);
-  const [description, setDescription] = useState(constDescription);
-  const [columnsCount, setColumnsCount] = useState(0);
-  const [columnsArray, setColumnsArray] = useState<number[]>([]);
+  const [callingForm, setCallingForm] = useState(false);
+  const boardId = location.pathname.split('/').reverse()[0];
+  const navigate = useNavigate();
+  const { data, isLoading } = useGetBoardByIdQuery({ boardId });
+  const columns = useGetColumnsInBoardQuery({ boardId });
 
   const columnsAdd = () => {
-    setColumnsCount(columnsCount + 1);
-    setColumnsArray([...columnsArray, columnsCount]);
+    setCallingForm(true);
+  };
+
+  const backHandler = () => {
+    navigate('/' + location.pathname.split('/')[1]);
   };
 
   return (
     <>
+      {(isLoading || columns.isLoading) && <Loader />}
       <div className={styles.board}>
-        <label>
-          <input
-            type="text"
-            className={styles.title}
-            value={title}
-            onChange={(event) => {
-              setTitle(event.target.value);
-            }}
-          />
-        </label>
-        <label>
-          <input
-            type="text"
-            className={styles.description}
-            value={description}
-            onChange={(event) => {
-              setDescription(event.target.value);
-            }}
-          />
-        </label>
-        {columnsCount !== 0 && <h3> Columns </h3>}
+        {data && (
+          <>
+            <h2>{data.title}</h2>
+            <h3>{data.description}</h3>
+          </>
+        )}
+        {columns?.data?.length !== 0 && <h3> Columns </h3>}
         <div className={styles.columns}>
-          {columnsArray?.map((index) => {
-            return <Column key={columnsArray[index]} />;
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIosNew />}
+            onClick={backHandler}
+            size="small"
+            color="warning"
+            className={styles.button}
+          >
+            Go back
+          </Button>
+          {columns?.data?.map((index) => {
+            return <Column key={index._id} id={index._id} title={index.title} boardId={boardId} />;
           })}
+          <Button
+            variant="outlined"
+            startIcon={<Add />}
+            onClick={columnsAdd}
+            size="small"
+            color="info"
+            className={styles.button}
+          >
+            Add Column
+          </Button>
         </div>
-        <button className={styles.button} onClick={columnsAdd}>
-          Add Column
-        </button>
       </div>
+      {callingForm && <Modal type="create column" setCallingForm={setCallingForm} _id={boardId} />}
     </>
   );
 };
