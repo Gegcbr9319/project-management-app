@@ -2,11 +2,9 @@ import React, { FC, useState } from 'react';
 import { Button } from '@mui/material';
 import { Delete, Update } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { setError, useDeleteBoardByIdMutation } from 'store';
+import { useDeleteBoardByIdMutation } from 'store';
 import { Loader, Modal } from 'components';
 import styles from './BoardPreview.module.scss';
-import { ApiError, ErrorResponse } from 'models';
-import { useDispatch } from 'react-redux';
 
 interface IBoardPreview {
   title: string;
@@ -19,7 +17,6 @@ interface IBoardPreview {
 export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users, owner }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
   const [callingForm, setCallingForm] = useState(false);
   const [deleteBoard, { isLoading }] = useDeleteBoardByIdMutation();
 
@@ -34,13 +31,7 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
 
   const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    try {
-      await deleteBoard({ boardId: _id });
-    } catch (error) {
-      if (Object.prototype.hasOwnProperty.call(error, 'data')) {
-        dispatch(setError((error as ApiError).data as ErrorResponse));
-      }
-    }
+    await deleteBoard({ boardId: _id });
   };
 
   return (

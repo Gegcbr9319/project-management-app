@@ -53,7 +53,7 @@ export function ErrorMessage(): JSX.Element {
       return 'error';
     }
 
-    return 'info';
+    return 'error';
   }, [error]);
 
   const messageText = useMemo((): string => {

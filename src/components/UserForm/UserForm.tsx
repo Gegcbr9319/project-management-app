@@ -1,20 +1,12 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { Button, Link, Grid, Box, Typography, Container } from '@mui/material';
 import * as yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
 import { Link as RouterLink } from 'react-router-dom';
 import { PasswordField } from 'components';
-import { ApiError, ErrorResponse } from 'models';
-import { setError } from 'store';
-import { useDispatch } from 'react-redux';
 
 const nameValidation = { name: yup.string().required('Name is required') };
 const loginValidation = { login: yup.string().required('Login is required') };
@@ -57,22 +49,13 @@ export function UserForm({
     )
   );
 
-  const dispatch = useDispatch();
-
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (data: FormData, { setSubmitting }) => {
-        try {
-          await submit.callback(data);
-        } catch (error) {
-          if (Object.prototype.hasOwnProperty.call(error, 'data')) {
-            dispatch(setError((error as ApiError).data as ErrorResponse));
-          }
-        } finally {
-          setSubmitting(false);
-        }
+        await submit.callback(data);
+        setSubmitting(false);
       }}
     >
       {({ submitForm, isSubmitting, errors, dirty }) => (

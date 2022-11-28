@@ -2,23 +2,18 @@ import React, { useMemo } from 'react';
 import {
   AppState,
   removeToken,
-  setError,
   setToken,
   setTokenTimeout,
   useGetUserQuery,
   useSignInMutation,
   useUpdateUserMutation,
 } from 'store';
-import { ApiError, AuthState, ErrorResponse, Token } from 'models';
+import { AuthState, Token } from 'models';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { Button, Grid, Box, Typography, Container } from '@mui/material';
 import * as yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
@@ -81,39 +76,33 @@ export function EditProfilePage(): JSX.Element {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (data: EditProfileFormData, { setSubmitting }) => {
-          try {
-            const { name, login, password, setNewPassword, newPassword } = data;
+          const { name, login, password, setNewPassword, newPassword } = data;
 
-            // sign in to verify that the old password is correct
-            const signInResult = await signIn({
-              login: user?.login || '',
-              password,
+          // sign in to verify that the old password is correct
+          const signInResult = await signIn({
+            login: user?.login || '',
+            password,
+          }).unwrap();
+
+          if (signInResult) {
+            // since we've gotten a new token, save it to store
+            const newToken = new Token(signInResult.token);
+            const tokenTimeout = setTimeout(() => dispatch(removeToken()), newToken.timeLeft);
+            dispatch(setTokenTimeout(tokenTimeout));
+            dispatch(setToken(newToken));
+
+            // post updated user data to server
+            await updateUser({
+              _id: userId,
+              name,
+              login: login,
+              password: setNewPassword ? newPassword! : password,
             }).unwrap();
 
-            if (signInResult) {
-              // since we've gotten a new token, save it to store
-              const newToken = new Token(signInResult.token);
-              const tokenTimeout = setTimeout(() => dispatch(removeToken()), newToken.timeLeft);
-              dispatch(setTokenTimeout(tokenTimeout));
-              dispatch(setToken(newToken));
-
-              // post updated user data to server
-              await updateUser({
-                _id: userId,
-                name,
-                login: login,
-                password: setNewPassword ? newPassword! : password,
-              }).unwrap();
-
-              navigate('/boards');
-            }
-          } catch (error) {
-            if (Object.prototype.hasOwnProperty.call(error, 'data')) {
-              dispatch(setError((error as ApiError).data as ErrorResponse));
-            }
-          } finally {
-            setSubmitting(false);
+            navigate('/boards');
           }
+
+          setSubmitting(false);
         }}
       >
         {({ submitForm, isSubmitting, values, errors, dirty }) => (
