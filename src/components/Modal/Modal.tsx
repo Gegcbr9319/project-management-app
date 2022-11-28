@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
-import { AppState, useCreateBoardMutation, useUpdateBoardByIdMutation } from 'store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState, setError, useCreateBoardMutation, useUpdateBoardByIdMutation } from 'store';
 import styles from './Modal.module.scss';
-import { AuthState } from 'models';
+import { ApiError, AuthState, ErrorResponse } from 'models';
 import { Loader } from 'components';
 
 export interface ICreateTaskModalProps {
@@ -62,32 +62,40 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
   } = useForm<IFormDataInput>();
 
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+  const dispatch = useDispatch();
 
   const [createBoard, createBoardResults] = useCreateBoardMutation();
   const [updateBoard, updateBoardResults] = useUpdateBoardByIdMutation();
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
-    if (type === 'create board') {
-      await createBoard({
-        body: {
-          title: title,
-          description: description,
-          owner: token?.decoded?.id ? token.decoded.id : '',
-          users: [],
-        },
-      });
-    } else if (type === 'edit board') {
-      await updateBoard({
-        boardId: _id,
-        body: {
-          title: title,
-          description: description,
-          owner: owner,
-          users: users,
-        },
-      });
+    try {
+      if (type === 'create board') {
+        await createBoard({
+          body: {
+            title: title,
+            description: description,
+            owner: token?.decoded?.id ? token.decoded.id : '',
+            users: [],
+          },
+        });
+      } else if (type === 'edit board') {
+        await updateBoard({
+          boardId: _id,
+          body: {
+            title: title,
+            description: description,
+            owner: owner,
+            users: users,
+          },
+        });
+      }
+    } catch (error) {
+      if (Object.prototype.hasOwnProperty.call(error, 'data')) {
+        dispatch(setError((error as ApiError).data as ErrorResponse));
+      }
+    } finally {
+      setCallingForm(false);
     }
-    setCallingForm(false);
   };
 
   const resetForm = () => {

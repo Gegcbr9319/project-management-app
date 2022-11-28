@@ -12,6 +12,9 @@ import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
 import { Link as RouterLink } from 'react-router-dom';
 import { PasswordField } from 'components';
+import { ApiError, ErrorResponse } from 'models';
+import { setError } from 'store';
+import { useDispatch } from 'react-redux';
 
 const nameValidation = { name: yup.string().required('Name is required') };
 const loginValidation = { login: yup.string().required('Login is required') };
@@ -54,13 +57,22 @@ export function UserForm({
     )
   );
 
+  const dispatch = useDispatch();
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (data: FormData, { setSubmitting }) => {
-        await submit.callback(data);
-        setSubmitting(false);
+        try {
+          await submit.callback(data);
+        } catch (error) {
+          if (Object.prototype.hasOwnProperty.call(error, 'data')) {
+            dispatch(setError((error as ApiError).data as ErrorResponse));
+          }
+        } finally {
+          setSubmitting(false);
+        }
       }}
     >
       {({ submitForm, isSubmitting, errors, dirty }) => (
