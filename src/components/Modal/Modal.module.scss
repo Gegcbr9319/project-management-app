@@ -8,11 +8,14 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(6, 6, 6, 0.56);
+  z-index: 20;
 }
 
 .form {
   height: auto;
-  width: 420px;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 2rem;
   display: flex;
   align-items: center;
   padding-top: 10px;

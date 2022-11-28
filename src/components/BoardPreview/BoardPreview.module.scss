@@ -1,17 +1,19 @@
 .button {
   height: 180px;
-  width: 230px;
+  max-width: 216px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   border: 1px solid rgb(251, 251, 251);
-  justify-content: space-between;
   background-color: #444;
   color: white;
-  margin-top: 15px;
   border-radius: 14px;
   transition: 0.35s;
+  overflow: hidden;
+  position: relative;
+  padding: 12px 15px;
+  width: 100%;
 }
 
 .button:hover {
@@ -21,14 +23,33 @@
 }
 
 .h2 {
-  margin-top: 8px;
+  margin-bottom: 8px;
+  height: 1.8rem;
+  overflow: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.h3 {
+  overflow: clip;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  width: 100%;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  text-align: left;
 }
 
 .buttons {
   width: 100%;
   display: flex;
-  margin-bottom: 15px;
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: 15px;
+    position: absolute;
+    bottom: 0;
 }
 
 .buttonsButton {

@@ -1,6 +1,6 @@
 .button {
   height: 180px !important;
-  width: 220px !important;
+  width: 216px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -9,7 +9,6 @@
   justify-content: center !important;
   background-color: #444 !important;
   color: white !important;
-  margin-top: 15px !important;
   border-radius: 14px !important;
   transition: 0.35s !important;
   font-size: 24px !important;
@@ -29,4 +28,5 @@
   gap: 25px;
   max-width: 100%;
   flex-wrap: wrap;
+  padding: 1rem 0;
 }

@@ -12,3 +12,4 @@ export * from './Task';
 export * from './Loader';
 export * from './BoardPreview';
 export * from './Modal';
+export * from './ConfirmDeleteModal';
