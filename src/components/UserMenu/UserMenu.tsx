@@ -21,9 +21,8 @@ export function UserMenu(): JSX.Element {
         onClick={handleClick}
         size="small"
         sx={{
-          ml: 2,
-          filter: 'invert(1)',
-          color: 'white',
+          p: 0.25,
+          color: '#222',
         }}
         aria-controls={open ? 'account-menu' : undefined}
         aria-haspopup="true"

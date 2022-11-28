@@ -33,12 +33,12 @@ export const ConfirmDeleteModal = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Внимание!</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Warning!</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Это действие нельзя будет отменить.
+            This action cannot be canceled later.
           </DialogContentText>
-          <DialogContentText id="alert-dialog-description">Подтвердить удаление?</DialogContentText>
+          <DialogContentText id="alert-dialog-description">Confirm deletion?</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="inherit" variant="contained" size="small" autoFocus>
@@ -54,6 +54,7 @@ export const ConfirmDeleteModal = () => {
             Delete
           </Button>
         </DialogActions>
+        <br />
       </Dialog>
     </div>
   );

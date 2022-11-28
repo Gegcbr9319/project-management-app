@@ -1,10 +1,11 @@
 import React from 'react';
+import styles from './WelcomePage.module.scss';
 
 export function WelcomePage() {
   return (
     <>
       <h2>Welcome Page</h2>
-      <p>
+      <p className={styles.p}>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab doloribus officiis totam minus
         reiciendis sed asperiores quis! Dolor temporibus unde voluptatem eos deleniti necessitatibus
         quisquam? Temporibus maiores ut eaque consectetur facilis dicta, officiis in illum corrupti
