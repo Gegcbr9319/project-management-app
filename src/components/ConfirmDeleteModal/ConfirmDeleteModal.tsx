@@ -40,7 +40,13 @@ export const ConfirmDeleteModal = () => {
           </DialogContentText>
           <DialogContentText id="alert-dialog-description">Confirm deletion?</DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{
+            paddingRight: 3,
+            paddingLeft: 3,
+            paddingBottom: 3,
+          }}
+        >
           <Button onClick={handleCancel} color="inherit" variant="contained" size="small" autoFocus>
             Cancel
           </Button>
@@ -54,7 +60,6 @@ export const ConfirmDeleteModal = () => {
             Delete
           </Button>
         </DialogActions>
-        <br />
       </Dialog>
     </div>
   );
