@@ -63,8 +63,8 @@ export function ErrorMessage(): JSX.Element {
   return (
     <Snackbar
       anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
+        vertical: 'top',
+        horizontal: 'center',
       }}
       open={show}
       autoHideDuration={5000}
