@@ -23,7 +23,7 @@ export const Column: FC<IColumnProps> = ({ id, title, boardId }) => {
     <>
       {isLoading && <Loader />}
       <div>
-        <h3>{title}</h3>
+        <h3 className={styles.h3}>{title}</h3>
         <div className={styles.tasks}>
           {data?.map((index) => {
             return <Task key={index._id} title={index.title} description={index.description} />;

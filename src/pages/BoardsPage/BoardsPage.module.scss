@@ -1,5 +1,5 @@
 .button {
-  height: 180px !important;
+  height: 190px !important;
   width: 216px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -13,6 +13,9 @@
   transition: 0.35s !important;
   font-size: 24px !important;
   position: static !important;
+  & span {
+    margin: 0;
+  }
 }
 
 .button:hover {
