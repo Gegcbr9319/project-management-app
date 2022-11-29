@@ -52,3 +52,10 @@
   justify-content: space-around;
   align-items: center;
 }
+
+.column {
+  width: 80%;
+  display: flex;
+  gap: 40px;
+  justify-content: space-around;
+}

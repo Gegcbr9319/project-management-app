@@ -43,9 +43,13 @@ export const BoardPage = () => {
           >
             Go back
           </Button>
-          {columns?.data?.map((index) => {
-            return <Column key={index._id} id={index._id} title={index.title} boardId={boardId} />;
-          })}
+          <div className={styles.column}>
+            {columns?.data?.map((index) => {
+              return (
+                <Column key={index._id} id={index._id} title={index.title} boardId={boardId} />
+              );
+            })}
+          </div>
           <Button
             variant="outlined"
             startIcon={<Add />}

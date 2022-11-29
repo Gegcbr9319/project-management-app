@@ -3,3 +3,12 @@
   height: 20px;
   margin-bottom: 5px;
 }
+
+.task {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button svg {
+  font-size: 1rem;
+}
