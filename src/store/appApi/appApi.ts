@@ -80,6 +80,9 @@ const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOptions) 
         };
 
     api.dispatch(setError(errorPayload));
+
+    // implicit catch by returning 'normal' data shape
+    return { data: undefined };
   }
 
   return result;

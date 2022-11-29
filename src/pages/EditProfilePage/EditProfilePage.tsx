@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import {
   AppState,
   removeToken,
+  setDeleteCallback,
   setToken,
   setTokenTimeout,
+  useDeleteUserMutation,
   useGetUserQuery,
   useSignInMutation,
   useUpdateUserMutation,
@@ -15,7 +17,7 @@ import Avatar from '@mui/material/Avatar';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Button, Grid, Box, Typography, Container, Alert } from '@mui/material';
 import * as yup from 'yup';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, FormikProps } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
 import { Loader, PasswordField } from 'components';
 
@@ -42,8 +44,8 @@ interface EditProfileFormData {
   login: string;
   password: string;
   setNewPassword: boolean;
-  newPassword?: string;
-  confirmPassword?: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 export function EditProfilePage(): JSX.Element {
@@ -59,6 +61,7 @@ export function EditProfilePage(): JSX.Element {
   const { data: user, isLoading } = useGetUserQuery(userId);
   const [signIn] = useSignInMutation();
   const [updateUser] = useUpdateUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
 
   const initialValues = useMemo((): EditProfileFormData => {
     return {
@@ -66,8 +69,38 @@ export function EditProfilePage(): JSX.Element {
       login: user?.login || '',
       password: '',
       setNewPassword: false,
+      newPassword: '',
+      confirmNewPassword: '',
     };
   }, [user]);
+
+  const formRef = useRef<FormikProps<EditProfileFormData> | null>(null);
+
+  const deleteProfileCallback = useCallback(async (): Promise<void> => {
+    // sign in to verify that the old password is correct
+    const signInResult = await signIn({
+      login: user?.login || '',
+      password: formRef.current?.values.password || '',
+    }).unwrap();
+
+    if (signInResult) {
+      // since we've gotten a new token, save it to store
+      // we're still saving it just in case delete fails
+      const newToken = new Token(signInResult.token);
+      const tokenTimeout = setTimeout(() => dispatch(removeToken()), newToken.timeLeft);
+      dispatch(setTokenTimeout(tokenTimeout));
+      dispatch(setToken(newToken));
+
+      // delete user from server
+      await deleteUser(userId).unwrap();
+
+      navigate('/signout');
+    }
+  }, [deleteUser, dispatch, navigate, signIn, user?.login, userId]);
+
+  const handleDeleteProfile = (): void => {
+    dispatch(setDeleteCallback(deleteProfileCallback));
+  };
 
   return (
     <>
@@ -76,6 +109,7 @@ export function EditProfilePage(): JSX.Element {
         enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
+        innerRef={formRef}
         onSubmit={async (data: EditProfileFormData, { setSubmitting }) => {
           const { name, login, password, setNewPassword, newPassword } = data;
 
@@ -176,11 +210,24 @@ export function EditProfilePage(): JSX.Element {
                     type="submit"
                     fullWidth
                     variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
+                    sx={{ mt: 3, mb: 1 }}
                     disabled={Object.keys(errors).length > 0 || !dirty || isSubmitting}
                     onClick={submitForm}
                   >
                     Update Profile
+                  </Button>
+                  <Button
+                    type="button"
+                    fullWidth
+                    variant="contained"
+                    color="error"
+                    sx={{ mt: 1, mb: 2 }}
+                    disabled={
+                      !userId || values.password === '' || !!errors.password || isSubmitting
+                    }
+                    onClick={handleDeleteProfile}
+                  >
+                    Delete Profile
                   </Button>
                 </Form>
               </Box>
