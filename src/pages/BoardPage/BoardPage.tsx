@@ -53,6 +53,7 @@ export const BoardPage = () => {
             size="small"
             color="info"
             className={styles.button}
+            disabled={columns.isLoading}
           >
             Add Column
           </Button>

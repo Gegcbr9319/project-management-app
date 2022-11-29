@@ -7,7 +7,9 @@ import {
   AppState,
   useCreateBoardMutation,
   useCreateColumnMutation,
+  useCreateTaskMutation,
   useGetColumnsInBoardQuery,
+  useGetTasksInColumnQuery,
   useUpdateBoardByIdMutation,
 } from 'store';
 import styles from './Modal.module.scss';
@@ -16,10 +18,10 @@ import { Loader } from 'components';
 
 export interface ICreateTaskModalProps {
   type: 'create task';
-  _id?: never;
+  _id: string;
   users?: string[];
   owner?: string;
-  columnId?: string;
+  columnId: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -93,10 +95,15 @@ export const Modal: FC<IModalProps> = ({ type, _id, columnId, users, owner, setC
 
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
   const columns = useGetColumnsInBoardQuery({ boardId: _id ? _id : '' });
+  const tasks = useGetTasksInColumnQuery({
+    boardId: _id ? _id : '',
+    columnId: columnId ? columnId : '',
+  });
 
   const [createBoard, createBoardResults] = useCreateBoardMutation();
   const [updateBoard, updateBoardResults] = useUpdateBoardByIdMutation();
   const [createColumn, createColumnResults] = useCreateColumnMutation();
+  const [createTask, createTaskResults] = useCreateTaskMutation();
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
     if (type === 'create board') {
@@ -122,6 +129,18 @@ export const Modal: FC<IModalProps> = ({ type, _id, columnId, users, owner, setC
       await createColumn({
         boardId: _id,
         body: { title: title, order: columns && columns.data ? columns.data.length : 0 },
+      });
+    } else if (type === 'create task') {
+      await createTask({
+        body: {
+          title: title,
+          description: description,
+          users: [],
+          userId: token?.decoded?.id ? token.decoded.id : '',
+          order: tasks && tasks.data ? tasks.data.length : 0,
+        },
+        columnId: columnId,
+        boardId: _id,
       });
     }
     setCallingForm(false);

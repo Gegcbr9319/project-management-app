@@ -3,9 +3,9 @@ import { IGetBoardByIdOptions, IGetColumnByIdOptions, IId } from 'models';
 export interface ITaskBase {
   title: string;
   order: number;
-  boardId: string;
+  //boardId: string;
   description: string;
-  columnId: string;
+  //columnId: string;
   users: string[];
 }
 
