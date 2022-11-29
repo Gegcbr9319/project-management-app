@@ -6,14 +6,15 @@
   align-items: center;
   text-align: center;
   border: 1px solid rgb(251, 251, 251);
-  justify-content: space-between;
   background-color: #444;
   color: white;
-  margin-top: 15px;
-  padding: 15px;
+
   border-radius: 14px;
   transition: 0.35s;
   overflow: hidden;
+  position: relative;
+  padding: 12px 15px;
+  width: 100%;
 }
 
 .button:hover {
@@ -23,10 +24,8 @@
 }
 
 .h2 {
-  /*  padding-top: 15px;
-  padding-left: 15px;
-  padding-right: 15px; */
-  height: auto;
+  margin-bottom: 8px;
+  height: 1.8rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -34,8 +33,6 @@
 }
 
 .h3 {
-  /* padding-left: 15px;
-  padding-right: 15px; */
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
@@ -50,9 +47,10 @@
 .buttons {
   width: 100%;
   display: flex;
-  /*  padding-top: 5px;
-  padding-bottom: 15px; */
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: 15px;
+  position: absolute;
+  bottom: 0;
 }
 
 .buttonsButton {

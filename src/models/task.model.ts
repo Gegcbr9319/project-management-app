@@ -9,7 +9,7 @@ export interface ITaskBase {
   users: string[];
 }
 
-export interface INewTask extends ITaskBase {
+export interface INewTask extends Omit<Omit<ITaskBase, 'boardId'>, 'columnId'> {
   userId: string;
 }
 

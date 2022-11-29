@@ -13,7 +13,7 @@ export function SignOut(): JSX.Element {
     Promise.resolve(dispatch(removeToken())).then(() => {
       navigate('/');
     });
-  }, []);
+  }, [dispatch, navigate]);
 
   return <CircularProgress />;
 }

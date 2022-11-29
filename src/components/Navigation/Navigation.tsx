@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.scss';
 import { AuthState } from 'models';
+import { UserMenu } from 'components';
 
 export const Navigation = () => {
   const [isSticky, setSticky] = useState(true);
@@ -32,9 +33,7 @@ export const Navigation = () => {
               <NavLink className={styles.link} to="/boards">
                 Boards
               </NavLink>
-              <NavLink className={styles.link} to="/signout">
-                Sign Out
-              </NavLink>
+              <UserMenu />
             </>
           ) : (
             <>

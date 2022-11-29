@@ -1,18 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { Button, Link, Grid, Box, Typography, Container, Alert } from '@mui/material';
 import * as yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-mui';
-import { IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
+import { PasswordField } from 'components';
+import { ErrorState } from 'models';
+import { useSelector } from 'react-redux';
+import { AppState } from 'store';
 
 const nameValidation = { name: yup.string().required('Name is required') };
 const loginValidation = { login: yup.string().required('Login is required') };
@@ -45,9 +42,7 @@ export function UserForm({
   submit,
   auxLink,
 }: UserFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
-  const toggleShowPassword = () => setShowPassword(!showPassword);
-
+  const { error } = useSelector(({ error }: AppState): ErrorState => error);
   const { name, login, password } = initialValues;
   const validationSchema = yup.object(
     Object.assign(
@@ -84,6 +79,15 @@ export function UserForm({
             <Box sx={{ mt: 3 }}>
               <Form>
                 <Grid container spacing={2}>
+                  {error && error.statusCode === 401 ? (
+                    <Grid item xs={12}>
+                      <Alert severity="error">
+                        Password or login are incorrect.
+                        {<br />}
+                        Check the credentials and try again.
+                      </Alert>
+                    </Grid>
+                  ) : null}
                   {initialValues.name !== undefined ? (
                     <Grid item xs={12}>
                       <Field component={TextField} name="name" label="Name" fullWidth />
@@ -96,26 +100,7 @@ export function UserForm({
                   ) : null}
                   {initialValues.password !== undefined ? (
                     <Grid item xs={12}>
-                      <Field
-                        component={TextField}
-                        type={showPassword ? 'text' : 'password'}
-                        name="password"
-                        label="Password"
-                        fullWidth
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={toggleShowPassword}
-                                edge="end"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
+                      <Field component={PasswordField} name="password" label="Password" fullWidth />
                     </Grid>
                   ) : null}
                 </Grid>

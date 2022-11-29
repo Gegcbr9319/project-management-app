@@ -1,11 +1,15 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { AppState } from 'store';
+import {
+  BaseQueryFn,
+  createApi,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+} from '@reduxjs/toolkit/query/react';
+import { AppState, setError } from 'store';
 import {
   TokenDto,
   UserDto,
   NewUserDto,
   UserAuthDto,
-  UpdateUserDto,
   IBoard,
   IСreateBoardOptions,
   IGetBoardByIdOptions,
@@ -42,27 +46,52 @@ import {
   IGetPointsByTaskIdOptions,
   IUpdatePointByIdOptions,
   IDeletePointByIdOptions,
+  User,
+  ErrorResponse,
 } from 'models';
+
+const baseQuery: BaseQueryFn = fetchBaseQuery({
+  baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
+  prepareHeaders: (headers, { getState, endpoint }) => {
+    if (['signUp', 'signIn'].includes(endpoint)) {
+      return headers;
+    }
+
+    const { token } = (getState() as AppState).auth;
+
+    if (token?.isValid) {
+      headers.set('authorization', `Bearer ${token.encoded}`);
+    }
+
+    return headers;
+  },
+});
+
+const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOptions) => {
+  const result = await baseQuery(args, api, extraOptions);
+  const error = result.error as FetchBaseQueryError | undefined;
+
+  if (error) {
+    const errorPayload: ErrorResponse = Number.isInteger(error.status)
+      ? (error.data as ErrorResponse)
+      : {
+          statusCode: error.status,
+          message: (error as { error: string }).error,
+        };
+
+    api.dispatch(setError(errorPayload));
+
+    // implicit catch by returning 'normal' data shape
+    return { data: undefined };
+  }
+
+  return result;
+};
 
 export const appApi = createApi({
   reducerPath: 'appApi',
-  tagTypes: ['Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
-    prepareHeaders: (headers, { getState, endpoint }) => {
-      if (['signUp', 'signIn'].includes(endpoint)) {
-        return headers;
-      }
-
-      const { token } = (getState() as AppState).auth;
-
-      if (token?.isValid) {
-        headers.set('authorization', `Bearer ${token.encoded}`);
-      }
-
-      return headers;
-    },
-  }),
+  tagTypes: ['User', 'Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
+  baseQuery: baseQueryWithErrorHandling,
   endpoints: (build) => ({
     /**
      * Auth endpoints
@@ -93,6 +122,10 @@ export const appApi = createApi({
         url: 'users',
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [...result.map(({ _id }) => ({ type: 'User' as const, id: _id })), 'User']
+          : ['User'],
     }),
     // Find user by id
     getUser: build.query<UserDto, string>({
@@ -100,9 +133,11 @@ export const appApi = createApi({
         url: `users/${userId}`,
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result ? [{ type: 'User' as const, id: result._id }, 'User'] : ['User'],
     }),
     // Update user
-    updateUser: build.mutation<UserDto, UpdateUserDto>({
+    updateUser: build.mutation<UserDto, User>({
       query: (newUserData) => {
         const { _id: userId, name, login, password } = newUserData;
         return {
@@ -115,6 +150,7 @@ export const appApi = createApi({
           },
         };
       },
+      invalidatesTags: (result, error, arg) => [{ type: 'User' as const, id: arg._id }],
     }),
     // Delete user
     deleteUser: build.mutation<UserDto, string>({
@@ -122,6 +158,7 @@ export const appApi = createApi({
         url: `users/${userId}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, arg) => [{ type: 'User' as const, id: arg }],
     }),
 
     /**
