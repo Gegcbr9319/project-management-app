@@ -8,16 +8,12 @@ import {
   useSignInMutation,
   useUpdateUserMutation,
 } from 'store';
-import { AuthState, Token } from 'models';
+import { AuthState, ErrorState, Token } from 'models';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { Button, Grid, Box, Typography, Container, Alert } from '@mui/material';
 import * as yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { CheckboxWithLabel, TextField } from 'formik-mui';
@@ -52,6 +48,7 @@ interface EditProfileFormData {
 
 export function EditProfilePage(): JSX.Element {
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+  const { error } = useSelector(({ error }: AppState): ErrorState => error);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -128,6 +125,15 @@ export function EditProfilePage(): JSX.Element {
               <Box sx={{ mt: 3 }}>
                 <Form>
                   <Grid container spacing={2}>
+                    {error && error.statusCode === 401 ? (
+                      <Grid item xs={12}>
+                        <Alert severity="error">
+                          Password or login are incorrect.
+                          {<br />}
+                          Check the credentials and try again.
+                        </Alert>
+                      </Grid>
+                    ) : null}
                     <Grid item xs={12}>
                       <Field component={TextField} name="name" label="Name" fullWidth />
                     </Grid>

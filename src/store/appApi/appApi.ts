@@ -1,5 +1,10 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { AppState } from 'store';
+import {
+  BaseQueryFn,
+  createApi,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+} from '@reduxjs/toolkit/query/react';
+import { AppState, setError } from 'store';
 import {
   TokenDto,
   UserDto,
@@ -42,27 +47,48 @@ import {
   IUpdatePointByIdOptions,
   IDeletePointByIdOptions,
   User,
+  ErrorResponse,
 } from 'models';
+
+const baseQuery: BaseQueryFn = fetchBaseQuery({
+  baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
+  prepareHeaders: (headers, { getState, endpoint }) => {
+    if (['signUp', 'signIn'].includes(endpoint)) {
+      return headers;
+    }
+
+    const { token } = (getState() as AppState).auth;
+
+    if (token?.isValid) {
+      headers.set('authorization', `Bearer ${token.encoded}`);
+    }
+
+    return headers;
+  },
+});
+
+const baseQueryWithErrorHandling: BaseQueryFn = async (args, api, extraOptions) => {
+  const result = await baseQuery(args, api, extraOptions);
+  const error = result.error as FetchBaseQueryError | undefined;
+
+  if (error) {
+    const errorPayload: ErrorResponse = Number.isInteger(error.status)
+      ? (error.data as ErrorResponse)
+      : {
+          statusCode: error.status,
+          message: (error as { error: string }).error,
+        };
+
+    api.dispatch(setError(errorPayload));
+  }
+
+  return result;
+};
 
 export const appApi = createApi({
   reducerPath: 'appApi',
   tagTypes: ['User', 'Boards', 'Board', 'Columns', 'Column', 'Tasks', 'Task'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE || 'https://rss-pm-app.onrender.com',
-    prepareHeaders: (headers, { getState, endpoint }) => {
-      if (['signUp', 'signIn'].includes(endpoint)) {
-        return headers;
-      }
-
-      const { token } = (getState() as AppState).auth;
-
-      if (token?.isValid) {
-        headers.set('authorization', `Bearer ${token.encoded}`);
-      }
-
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithErrorHandling,
   endpoints: (build) => ({
     /**
      * Auth endpoints
