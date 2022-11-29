@@ -44,8 +44,8 @@ interface EditProfileFormData {
   login: string;
   password: string;
   setNewPassword: boolean;
-  newPassword?: string;
-  confirmPassword?: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 export function EditProfilePage(): JSX.Element {
@@ -69,6 +69,8 @@ export function EditProfilePage(): JSX.Element {
       login: user?.login || '',
       password: '',
       setNewPassword: false,
+      newPassword: '',
+      confirmNewPassword: '',
     };
   }, [user]);
 
