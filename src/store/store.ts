@@ -1,8 +1,9 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
-import { appApi, authSlice, errorSlice } from 'store';
+import { appApi, authSlice, errorSlice, deleteSlice } from 'store';
 
 const appReducer = combineReducers({
   [authSlice.name]: authSlice.reducer,
+  [deleteSlice.name]: deleteSlice.reducer,
   [appApi.reducerPath]: appApi.reducer,
   [errorSlice.name]: errorSlice.reducer,
 });
@@ -15,7 +16,7 @@ export const setupStore = (preloadedState?: PreloadedState<AppState>) => {
       getDefaultMiddleware({
         serializableCheck: {
           ignoredActionPaths: ['payload', 'meta'],
-          ignoredPaths: ['auth.token'],
+          ignoredPaths: ['auth.token', 'delete.callback'],
         },
       }).concat(appApi.middleware),
   });
