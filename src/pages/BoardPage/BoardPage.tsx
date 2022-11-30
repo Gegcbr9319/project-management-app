@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import { ArrowBackIosNew, Add } from '@mui/icons-material';
-import { Column, Loader, Modal } from 'components';
+import { Column, Loader, ModalColumns } from 'components';
 import { useNavigate } from 'react-router';
 import styles from './BoardPage.module.scss';
 import { useGetBoardByIdQuery, useGetColumnsInBoardQuery } from 'store';
@@ -44,11 +44,19 @@ export const BoardPage = () => {
             Go back
           </Button>
           <div className={styles.column}>
-            {columns?.data?.map((index) => {
-              return (
-                <Column key={index._id} id={index._id} title={index.title} boardId={boardId} />
-              );
-            })}
+            {columns?.data
+              ?.map((index) => index)
+              .sort((a, b) => a.order - b.order)
+              .map((index) => {
+                return (
+                  <Column
+                    key={index._id}
+                    columnId={index._id}
+                    title={index.title}
+                    boardId={boardId}
+                  />
+                );
+              })}
           </div>
           <Button
             variant="outlined"
@@ -63,7 +71,9 @@ export const BoardPage = () => {
           </Button>
         </div>
       </div>
-      {callingForm && <Modal type="create column" setCallingForm={setCallingForm} _id={boardId} />}
+      {callingForm && (
+        <ModalColumns type="create column" setCallingForm={setCallingForm} boardId={boardId} />
+      )}
     </>
   );
 };

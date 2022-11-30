@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { Delete, Update } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
-import { Loader, Modal } from 'components';
+import { Loader, ModalBoard } from 'components';
 import styles from './BoardPreview.module.scss';
 import { useDispatch } from 'react-redux';
 import { DeleteCallback } from 'models';
@@ -74,10 +74,10 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
         </div>
       </div>
       {callingForm && (
-        <Modal
+        <ModalBoard
           type="edit board"
           setCallingForm={setCallingForm}
-          _id={_id}
+          boardId={_id}
           users={users}
           owner={owner}
         />
