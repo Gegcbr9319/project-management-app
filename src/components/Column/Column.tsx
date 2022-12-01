@@ -1,11 +1,17 @@
 import React, { FC, useCallback, useState } from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { AddCircle, Delete, Edit } from '@mui/icons-material';
+import { AddCircle, Delete, Close, Send } from '@mui/icons-material';
 import styles from './Column.module.scss';
 import { Loader, ModalColumns, Task } from 'components';
 import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
-import { setDeleteCallback, useDeleteColumnByIdMutation, useGetTasksInColumnQuery } from 'store';
+import {
+  setDeleteCallback,
+  useDeleteColumnByIdMutation,
+  useGetColumnsInBoardQuery,
+  useGetTasksInColumnQuery,
+  useUpdateColumnByIdMutation,
+} from 'store';
 import { DeleteCallback } from 'models';
 
 interface IColumnProps {
@@ -20,6 +26,14 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
   const [type, setType] = useState('');
   const { data, isLoading } = useGetTasksInColumnQuery({ boardId: boardId, columnId: columnId });
   const [deleteColumn, deleteColumnResults] = useDeleteColumnByIdMutation();
+  const [inputColunm, setInputColumn] = useState(false);
+  const [inputValue, setInputValue] = useState(title);
+  const [updateColumn, updateColumnResults] = useUpdateColumnByIdMutation();
+  const columns = useGetColumnsInBoardQuery({ boardId });
+
+  const inputHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
 
   const tasksAdd = () => {
     setType('create task');
@@ -27,10 +41,19 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
     setCallingForm(true);
   };
 
-  const columnEdit = () => {
-    setType('edit column');
-
-    setCallingForm(true);
+  const columnEdit = async () => {
+    await updateColumn({
+      boardId: boardId,
+      columnId: columnId,
+      body: {
+        title: inputValue,
+        order:
+          columns && columns.data
+            ? columns.data.filter((column) => column._id === columnId)[0].order
+            : 0,
+      },
+    });
+    setInputColumn(false);
   };
 
   const deleteCallback: DeleteCallback = useCallback(
@@ -45,16 +68,53 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
 
   return (
     <>
-      {(isLoading || deleteColumnResults.isLoading) && <Loader />}
+      {(isLoading || deleteColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
       <div className={styles.column}>
         <div className={styles.button}>
-          <IconButton color="warning" onClick={buttonDeleteHandler}>
-            <Delete />
-          </IconButton>
-          <h3 className={styles.h3}>{title}</h3>
-          <IconButton color="info" size="small" onClick={columnEdit}>
-            <Edit />
-          </IconButton>
+          {!inputColunm && (
+            <>
+              <IconButton color="warning" onClick={buttonDeleteHandler}>
+                <Delete />
+              </IconButton>
+              <button className={styles.h3} onClick={() => setInputColumn(true)}>
+                {title}
+              </button>
+            </>
+          )}
+          {inputColunm && (
+            <div className={styles.editInput}>
+              <TextField
+                className={styles.inputTitle}
+                id="outlined-basic"
+                autoFocus
+                size="small"
+                variant="outlined"
+                value={inputValue}
+                multiline={true}
+                minRows={1}
+                maxRows={2}
+                onChange={inputHandler}
+              />
+              <div className={styles.inputButton}>
+                <IconButton
+                  className={styles.iconButton}
+                  color="warning"
+                  size="small"
+                  onClick={() => setInputColumn(false)}
+                >
+                  <Close />
+                </IconButton>
+                <IconButton
+                  className={styles.iconButton}
+                  color="info"
+                  size="small"
+                  onClick={columnEdit}
+                >
+                  <Send />
+                </IconButton>
+              </div>
+            </div>
+          )}
         </div>
         <div className={styles.tasks}>
           {data
@@ -83,6 +143,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
           setCallingForm={setCallingForm}
           boardId={boardId}
           columnId={columnId}
+          titleEdit={title}
         />
       )}
       {callingForm && type === 'create task' && (

@@ -62,6 +62,8 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
           taskId={taskId}
           boardId={boardId}
           columnId={columnId}
+          titleEdit={title}
+          descriptionEdit={description}
         />
       )}
     </>

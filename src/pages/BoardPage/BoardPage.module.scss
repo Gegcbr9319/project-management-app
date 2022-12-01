@@ -1,16 +1,27 @@
 .board {
+  width: initial;
   display: flex;
   flex-direction: column;
   height: auto;
   min-width: 200px;
-  height: auto;
-  min-height: 100px;
+  height: 100%;
   text-align: center;
   border: 1px solid red;
   gap: 10px;
   background-color: rgb(91, 91, 91);
   color: white;
-  margin-top: 15px;
+}
+
+.boardDescription {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  padding: 15px;
+}
+
+.boardEdit {
+  display: flex;
+  justify-content: space-between;
 }
 
 .title {
@@ -23,10 +34,6 @@
   font-size: 16px;
 }
 
-.title:focus {
-  border: none;
-  outline: none;
-}
 .description {
   width: 100%;
   border: none;
@@ -36,25 +43,28 @@
   font-size: 14px;
 }
 
-.description:focus {
-  border: none;
-  outline: none;
+.editButton {
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
 }
 
 .button {
   position: static !important;
-  height: 120px;
 }
 
 .columns {
+  max-width: 100%;
   display: flex;
   gap: 15px;
   justify-content: space-around;
   align-items: center;
+  overflow-x: scroll;
 }
 
 .column {
-  width: 80%;
+  min-width: 250px;
   display: flex;
   gap: 40px;
   justify-content: space-around;

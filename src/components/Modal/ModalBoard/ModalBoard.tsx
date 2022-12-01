@@ -13,6 +13,8 @@ export interface ICreateBoardModalProps {
   boardId?: never;
   owner?: never;
   users?: never;
+  titleEdit?: string;
+  descriptionEdit?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -21,6 +23,8 @@ export interface IEditBoardModalProps {
   boardId: string;
   owner: string;
   users: string[];
+  titleEdit: string;
+  descriptionEdit: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -38,6 +42,8 @@ export const ModalBoard: FC<IModalBoardProps> = ({
   boardId,
   owner,
   users,
+  titleEdit,
+  descriptionEdit,
   setCallingForm,
 }) => {
   const {
@@ -86,10 +92,14 @@ export const ModalBoard: FC<IModalBoardProps> = ({
       {(createBoardResults.isLoading || updateBoardResults.isLoading) && <Loader />}
       <div className={styles.divForm}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          {type === 'create board' && <p className={styles.formP}>Create new Board</p>}
+          {type === 'edit board' && <p className={styles.formP}>Edit Board</p>}
           <TextField
             id="standard-basic"
             label="Title"
-            variant="standard"
+            variant="outlined"
+            autoFocus
+            defaultValue={titleEdit}
             {...register('title', {
               required: true,
               minLength: 3,
@@ -99,13 +109,17 @@ export const ModalBoard: FC<IModalBoardProps> = ({
           <TextField
             id="standard-basic"
             label="Description"
-            variant="standard"
+            variant="outlined"
+            multiline={true}
+            minRows={3}
+            maxRows={3}
+            defaultValue={descriptionEdit}
             {...register('description')}
           />
 
           <div className={styles.formButtons}>
             <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
-              Back
+              Close
             </Button>
             <Button variant="outlined" type="submit" startIcon={<Send />}>
               Send

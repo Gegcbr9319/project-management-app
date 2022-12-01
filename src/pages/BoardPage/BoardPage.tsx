@@ -1,19 +1,35 @@
-import React, { useState } from 'react';
-import { Button } from '@mui/material';
-import { ArrowBackIosNew, Add } from '@mui/icons-material';
-import { Column, Loader, ModalColumns } from 'components';
+import React, { useState, useCallback } from 'react';
+import { Button, IconButton } from '@mui/material';
+import { ArrowBackIosNew, Add, Delete, Edit } from '@mui/icons-material';
+import { Column, Loader, ModalColumns, ModalBoard } from 'components';
 import { useNavigate } from 'react-router';
 import styles from './BoardPage.module.scss';
-import { useGetBoardByIdQuery, useGetColumnsInBoardQuery } from 'store';
+import {
+  setDeleteCallback,
+  useDeleteBoardByIdMutation,
+  useGetBoardByIdQuery,
+  useGetColumnsInBoardQuery,
+} from 'store';
+import { useDispatch } from 'react-redux';
+import { DeleteCallback } from 'models';
 
 export const BoardPage = () => {
   const [callingForm, setCallingForm] = useState(false);
+  const dispatch = useDispatch();
+  const [deleteBoard] = useDeleteBoardByIdMutation();
   const boardId = location.pathname.split('/').reverse()[0];
   const navigate = useNavigate();
   const { data, isLoading } = useGetBoardByIdQuery({ boardId });
   const columns = useGetColumnsInBoardQuery({ boardId });
+  const [type, setType] = useState('');
 
   const columnsAdd = () => {
+    setType('column');
+    setCallingForm(true);
+  };
+
+  const boardEditHandler = () => {
+    setType('board');
     setCallingForm(true);
   };
 
@@ -21,28 +37,70 @@ export const BoardPage = () => {
     navigate('/' + location.pathname.split('/')[1]);
   };
 
+  const deleteCallback: DeleteCallback = useCallback(async () => {
+    await deleteBoard({ boardId });
+    navigate('/boards');
+  }, [boardId, deleteBoard, navigate]);
+
+  const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    dispatch(setDeleteCallback(deleteCallback));
+  };
+
   return (
     <>
       {(isLoading || columns.isLoading) && <Loader />}
       <div className={styles.board}>
         {data && (
-          <>
-            <h2>{data.title}</h2>
+          <div className={styles.boardDescription}>
+            <div className={styles.boardEdit}>
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIosNew />}
+                onClick={backHandler}
+                size="small"
+                color="warning"
+                className={styles.button}
+              >
+                Back
+              </Button>
+              <h2>{data.title}</h2>
+              <Button
+                variant="outlined"
+                startIcon={<Add />}
+                onClick={columnsAdd}
+                size="small"
+                color="info"
+                className={styles.button}
+                disabled={columns.isLoading}
+              >
+                Column
+              </Button>
+            </div>
             <h3>{data.description}</h3>
-          </>
+            <div className={styles.editButton}>
+              <IconButton
+                className={styles.button}
+                color="warning"
+                size="small"
+                onClick={buttonDeleteHandler}
+              >
+                <Delete />
+              </IconButton>
+              <IconButton
+                className={styles.button}
+                color="info"
+                size="small"
+                onClick={boardEditHandler}
+              >
+                <Edit />
+              </IconButton>
+            </div>
+          </div>
         )}
+
         {columns?.data?.length !== 0 && <h3> Columns </h3>}
         <div className={styles.columns}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIosNew />}
-            onClick={backHandler}
-            size="small"
-            color="warning"
-            className={styles.button}
-          >
-            Go back
-          </Button>
           <div className={styles.column}>
             {columns?.data
               ?.map((index) => index)
@@ -58,21 +116,21 @@ export const BoardPage = () => {
                 );
               })}
           </div>
-          <Button
-            variant="outlined"
-            startIcon={<Add />}
-            onClick={columnsAdd}
-            size="small"
-            color="info"
-            className={styles.button}
-            disabled={columns.isLoading}
-          >
-            Add Column
-          </Button>
         </div>
       </div>
-      {callingForm && (
+      {callingForm && type === 'column' && (
         <ModalColumns type="create column" setCallingForm={setCallingForm} boardId={boardId} />
+      )}
+      {callingForm && type === 'board' && (
+        <ModalBoard
+          type="edit board"
+          setCallingForm={setCallingForm}
+          boardId={boardId}
+          users={data ? data.users : ['']}
+          owner={data ? data.owner : ''}
+          titleEdit={data ? data.title : ''}
+          descriptionEdit={data ? data.description : ''}
+        />
       )}
     </>
   );

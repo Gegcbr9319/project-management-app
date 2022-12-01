@@ -80,6 +80,8 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
           boardId={_id}
           users={users}
           owner={owner}
+          titleEdit={title}
+          descriptionEdit={description}
         />
       )}
     </>

@@ -20,6 +20,8 @@ export interface ICreateTaskModalProps {
   owner?: string;
   columnId: string;
   taskId?: string;
+  titleEdit?: string;
+  descriptionEdit?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -29,7 +31,9 @@ export interface IEditTaskModalProps {
   users?: string[];
   owner?: string;
   columnId: string;
-  taskId?: string;
+  taskId: string;
+  titleEdit: string;
+  descriptionEdit: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -49,6 +53,8 @@ export const ModalTasks: FC<IModalTasksProps> = ({
   owner,
   columnId,
   taskId,
+  titleEdit,
+  descriptionEdit,
   setCallingForm,
 }) => {
   const {
@@ -110,10 +116,14 @@ export const ModalTasks: FC<IModalTasksProps> = ({
       {(createTaskResults.isLoading || updateTaskResults.isLoading) && <Loader />}
       <div className={styles.divForm}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          {type === 'create task' && <p className={styles.formP}>Create new Task</p>}
+          {type === 'edit task' && <p className={styles.formP}>Edit Task</p>}
           <TextField
             id="standard-basic"
+            autoFocus
             label="Title"
             variant="standard"
+            defaultValue={titleEdit}
             {...register('title', {
               required: true,
               minLength: 3,
@@ -123,13 +133,17 @@ export const ModalTasks: FC<IModalTasksProps> = ({
           <TextField
             id="standard-basic"
             label="Description"
-            variant="standard"
+            variant="outlined"
+            multiline={true}
+            minRows={3}
+            maxRows={3}
+            defaultValue={descriptionEdit}
             {...register('description')}
           />
 
           <div className={styles.formButtons}>
             <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
-              Back
+              Close
             </Button>
             <Button variant="outlined" type="submit" startIcon={<Send />}>
               Send

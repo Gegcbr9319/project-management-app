@@ -17,6 +17,7 @@ export interface ICreateColumnProps {
   type: 'create column';
   boardId: string;
   columnId?: string;
+  titleEdit?: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -24,6 +25,7 @@ export interface IEditColumnProps {
   type: 'edit column';
   boardId: string;
   columnId: string;
+  titleEdit: string;
   setCallingForm: (item: boolean) => void;
 }
 
@@ -39,7 +41,7 @@ export const ModalColumns: FC<IModalColumnsProps> = ({
   type,
   boardId,
   columnId,
-
+  titleEdit,
   setCallingForm,
 }) => {
   const {
@@ -90,10 +92,14 @@ export const ModalColumns: FC<IModalColumnsProps> = ({
       {(createColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
       <div className={styles.divForm}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          {type === 'create column' && <p className={styles.formP}>Create new Column</p>}
+          {type === 'edit column' && <p className={styles.formP}>Edit Column</p>}
           <TextField
             id="standard-basic"
             label="Title"
+            autoFocus
             variant="standard"
+            defaultValue={titleEdit}
             {...register('title', {
               required: true,
               minLength: 3,
@@ -102,7 +108,7 @@ export const ModalColumns: FC<IModalColumnsProps> = ({
           {errors?.title && <p> {errorTitleMesage}</p>}
           <div className={styles.formButtons}>
             <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
-              Back
+              Close
             </Button>
             <Button variant="outlined" type="submit" startIcon={<Send />}>
               Send
