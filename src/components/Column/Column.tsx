@@ -116,23 +116,25 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
             </div>
           )}
         </div>
-        <div className={styles.tasks}>
-          {data
-            ?.map((index) => index)
-            .sort((a, b) => a.order - b.order)
-            .map((index) => {
-              return (
-                <Task
-                  key={index._id}
-                  title={index.title}
-                  description={index.description}
-                  taskId={index._id}
-                  boardId={boardId}
-                  columnId={columnId}
-                />
-              );
-            })}
-        </div>
+        {data?.length !== 0 && (
+          <div className={styles.tasks}>
+            {data
+              ?.map((index) => index)
+              .sort((a, b) => a.order - b.order)
+              .map((index) => {
+                return (
+                  <Task
+                    key={index._id}
+                    title={index.title}
+                    description={index.description}
+                    taskId={index._id}
+                    boardId={boardId}
+                    columnId={columnId}
+                  />
+                );
+              })}
+          </div>
+        )}
         <IconButton color="info" onClick={tasksAdd} size="large">
           <AddCircle />
         </IconButton>
