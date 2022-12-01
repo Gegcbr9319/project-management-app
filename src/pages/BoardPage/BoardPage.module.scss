@@ -57,15 +57,13 @@
 .columns {
   max-width: 100%;
   display: flex;
-  gap: 15px;
-  justify-content: space-around;
   align-items: center;
   overflow-x: scroll;
+  padding: 30px;
 }
 
 .column {
-  min-width: 250px;
   display: flex;
-  gap: 40px;
+  gap: 30px;
   justify-content: space-around;
 }

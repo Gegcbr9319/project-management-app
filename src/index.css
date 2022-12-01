@@ -9,7 +9,7 @@
 body {
   font-family: 'Roboto', sans-serif;
   display: grid;
-  width: calc(100% - 2,5 * 2rem);
+  width: 100vw;
   overflow: overlay;
 }
 
