@@ -1,5 +1,5 @@
 .button {
-  height: 180px !important;
+  height: 190px !important;
   width: 216px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -12,6 +12,10 @@
   border-radius: 14px !important;
   transition: 0.35s !important;
   font-size: 24px !important;
+  position: static !important;
+  & span {
+    margin: 0;
+  }
 }
 
 .button:hover {
@@ -25,7 +29,7 @@
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  gap: 25px;
+  gap: 35px;
   max-width: 100%;
   flex-wrap: wrap;
   padding: 1rem 0;

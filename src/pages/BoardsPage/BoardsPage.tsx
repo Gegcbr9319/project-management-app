@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Button } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { AppState, useGetBoardsSetByUserIdQuery } from 'store';
-import { BoardPreview, Modal, Loader } from 'components';
+import { BoardPreview, ModalBoard, Loader } from 'components';
 import styles from './BoardsPage.module.scss';
 import { AuthState } from 'models';
 
@@ -37,7 +37,7 @@ export const BoardsPage = () => {
           Add Board
         </Button>
       </div>
-      {callingForm && <Modal type="create board" setCallingForm={setCallingForm} />}
+      {callingForm && <ModalBoard type="create board" setCallingForm={setCallingForm} />}
     </>
   );
 };

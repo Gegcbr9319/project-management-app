@@ -313,6 +313,13 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId + '/tasks',
         method: 'GET',
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
+              { type: 'Tasks', id: 'LIST' },
+            ]
+          : [{ type: 'Tasks', id: 'LIST' }],
     }),
     // Create Task in column
     createTask: build.mutation<ITask, ICreateTaskOptions>({
@@ -373,13 +380,6 @@ export const appApi = createApi({
         url: 'tasksSet/' + options.boardId,
         method: 'GET',
       }),
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
-              { type: 'Tasks', id: 'LIST' },
-            ]
-          : [{ type: 'Tasks', id: 'LIST' }],
     }),
 
     /**

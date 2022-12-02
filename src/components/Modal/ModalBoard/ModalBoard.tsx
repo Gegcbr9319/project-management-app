@@ -1,59 +1,51 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { AppState, useCreateBoardMutation, useUpdateBoardByIdMutation } from 'store';
-import styles from './Modal.module.scss';
+import styles from '../Modal.module.scss';
 import { AuthState } from 'models';
 import { Loader } from 'components';
 
-export interface ICreateTaskModalProps {
-  type: 'create task';
-  _id?: never;
-  users?: string[];
-  owner?: string;
-  setCallingForm: (item: boolean) => void;
-}
-
 export interface ICreateBoardModalProps {
   type: 'create board';
-  _id?: never;
-  users?: string[];
-  owner?: string;
-  setCallingForm: (item: boolean) => void;
-}
-
-export interface IEditTaskModalProps {
-  type: 'edit task';
-  _id: string;
-  users?: string[];
-  owner?: string;
+  boardId?: never;
+  owner?: never;
+  users?: never;
+  titleEdit?: string;
+  descriptionEdit?: string;
   setCallingForm: (item: boolean) => void;
 }
 
 export interface IEditBoardModalProps {
   type: 'edit board';
-  _id: string;
-  users: string[];
+  boardId: string;
   owner: string;
+  users: string[];
+  titleEdit: string;
+  descriptionEdit: string;
   setCallingForm: (item: boolean) => void;
 }
-
-export type IModalProps =
-  | ICreateTaskModalProps
-  | ICreateBoardModalProps
-  | IEditTaskModalProps
-  | IEditBoardModalProps;
 
 interface IFormDataInput {
   title: string;
   description: string;
 }
 
+export type IModalBoardProps = ICreateBoardModalProps | IEditBoardModalProps;
+
 const errorTitleMesage = 'More than 2 letters';
 
-export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm }) => {
+export const ModalBoard: FC<IModalBoardProps> = ({
+  type,
+  boardId,
+  owner,
+  users,
+  titleEdit,
+  descriptionEdit,
+  setCallingForm,
+}) => {
   const {
     register,
     reset,
@@ -61,10 +53,10 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
     handleSubmit,
   } = useForm<IFormDataInput>();
 
-  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
-
   const [createBoard, createBoardResults] = useCreateBoardMutation();
   const [updateBoard, updateBoardResults] = useUpdateBoardByIdMutation();
+
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
     if (type === 'create board') {
@@ -78,7 +70,7 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
       });
     } else if (type === 'edit board') {
       await updateBoard({
-        boardId: _id,
+        boardId: boardId,
         body: {
           title: title,
           description: description,
@@ -95,15 +87,31 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
     reset();
   };
 
+  useEffect(() => {
+    const handleEsc = (event: { keyCode: number }) => {
+      if (event.keyCode === 27) {
+        resetForm();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
   return (
     <>
       {(createBoardResults.isLoading || updateBoardResults.isLoading) && <Loader />}
       <div className={styles.divForm}>
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          {type === 'create board' && <p className={styles.formP}>Create new Board</p>}
+          {type === 'edit board' && <p className={styles.formP}>Edit Board</p>}
           <TextField
             id="standard-basic"
             label="Title"
-            variant="standard"
+            variant="outlined"
+            autoFocus
+            defaultValue={titleEdit}
             {...register('title', {
               required: true,
               minLength: 3,
@@ -113,12 +121,17 @@ export const Modal: FC<IModalProps> = ({ type, _id, users, owner, setCallingForm
           <TextField
             id="standard-basic"
             label="Description"
-            variant="standard"
+            variant="outlined"
+            multiline={true}
+            minRows={3}
+            maxRows={3}
+            defaultValue={descriptionEdit}
             {...register('description')}
           />
+
           <div className={styles.formButtons}>
             <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
-              Back
+              Close
             </Button>
             <Button variant="outlined" type="submit" startIcon={<Send />}>
               Send
