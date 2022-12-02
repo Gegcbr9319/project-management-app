@@ -1,8 +1,9 @@
 .header {
   position: sticky;
   top: 0;
-  background-color: #f5f5f5b5;
-  filter: invert(1);
+  //background-color: #f5f5f5b5;
+  //filter: invert(1);
+  background-color: rgba(10, 10, 10, 0.71);
   box-sizing: content-box;
   transition: 0.4s;
   margin-bottom: 1rem;
@@ -10,7 +11,7 @@
 }
 
 .header::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   width: 100%;
@@ -18,10 +19,11 @@
   z-index: -1;
 }
 
-.header:focus ,
+.header:focus,
 .header:hover {
   margin-bottom: 0;
-  background-color: #bbb;
+  //background-color: #bbb;
+  background-color: #444;
 }
 
 .header:focus .navigation,
@@ -32,7 +34,7 @@
 .navigation {
   display: flex;
   justify-content: space-between;
-  margin: .5rem 2rem;
+  margin: 0.5rem 2rem;
   text-transform: uppercase;
   transition: 0.4s;
 }
@@ -48,17 +50,18 @@
   gap: 1rem;
   transition: 0.4s, pointer-events 0.4s 0.4s;
   width: fit-content;
-  color: black;
+  color: white;
   align-items: center;
   align-self: center;
   @media screen and (max-width: 600px) {
     &::before,
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       width: 100%;
       height: 20%;
-      background-color: #f5f5f5b5;
+      //background-color: #f5f5f5b5;
+      background-color: rgba(10, 10, 10, 0.71);
       z-index: 2;
       left: 0;
       pointer-events: none;
@@ -70,7 +73,7 @@
     &::after {
       top: 59%;
     }
-    background-color: black;
+    background-color: white;
     padding: 1rem;
     flex-direction: column;
     position: fixed;
@@ -85,18 +88,18 @@
     &:hover,
     &:has(.link:focus) {
       top: 1rem;
-      color: black;
-      background-color: #bbbbbbe5;
+      color: white;
+      background-color: rgba(68, 68, 68, 0.898);
       width: calc(100% - 4rem);
       height: max-content;
       border-radius: 0.25rem;
       // box-shadow: inset 0 0 1rem 0 #ddd;
-      box-shadow: 0px 2px 8px rgba(0,0,0,0.32);
-      background-color: #fff;
-      color: rgba(0, 0, 0, 0.87);
+      box-shadow: 0px 2px 8px rgba(255, 255, 255, 0.32);
+      background-color: #000;
+      color: rgba(255, 255, 255, 0.87);
       filter: invert(1);
       & .link {
-        transform: translate(0,0);
+        transform: translate(0, 0);
       }
     }
     &:focus::before,
@@ -107,13 +110,13 @@
     }
   }
   @media screen and (max-width: 400px) {
-    padding: .75rem;
+    padding: 0.75rem;
   }
 }
 
 .stickyHeader {
   margin-bottom: 0;
-  background-color: #bbb;
+  background-color: #444;
 }
 
 .link {
@@ -131,6 +134,7 @@
   h1 {
     text-align: left;
     width: max-content;
+    color: white;
     @media screen and (max-width: 400px) {
       font-size: 1rem;
     }
@@ -142,10 +146,10 @@
     &:focus,
     &:active,
     &:hover {
-      background-color: #ddd;
+      background-color: #222222;
     }
     &:not(:has(h1)) {
-      transform: translate(100%,100%);
+      transform: translate(100%, 100%);
     }
   }
   &:has(h1):focus,

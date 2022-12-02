@@ -22,7 +22,7 @@ export function UserMenu(): JSX.Element {
         size="small"
         sx={{
           p: 0.25,
-          color: '#222',
+          color: 'white',
         }}
         aria-controls={open ? 'account-menu' : undefined}
         aria-haspopup="true"

@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(6, 6, 6, 0.56);
+  background-color: rgba(6, 6, 6, 0.56) !important;
   z-index: 20;
 }
 
@@ -23,8 +23,8 @@
   flex-direction: column;
   gap: 10px;
   border-radius: 20px;
-  border: 1.5px solidrgba(6, 6, 6, 0.56);
-  background-color: rgb(221, 237, 242);
+  border: 1.5px solidrgba(6, 6, 6, 0.56) !important;
+  background-color: rgb(221, 237, 242) !important;
 }
 
 .formButtons {
@@ -34,5 +34,5 @@
 }
 
 .formP {
-  color: black;
+  color: black !important;
 }
