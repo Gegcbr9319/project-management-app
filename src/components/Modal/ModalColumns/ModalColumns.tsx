@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
@@ -87,6 +87,18 @@ export const ModalColumns: FC<IModalColumnsProps> = ({
     reset();
   };
 
+  useEffect(() => {
+    const handleEsc = (event: { keyCode: number }) => {
+      if (event.keyCode === 27) {
+        resetForm();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
   return (
     <>
       {(createColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
