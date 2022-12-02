@@ -22,6 +22,7 @@ export const BoardPage = () => {
   const { data, isLoading } = useGetBoardByIdQuery({ boardId });
   const columns = useGetColumnsInBoardQuery({ boardId });
   const [type, setType] = useState('');
+  const [showDescription, setShowDescription] = useState(false);
 
   const columnsAdd = () => {
     setType('column');
@@ -60,24 +61,31 @@ export const BoardPage = () => {
                 onClick={backHandler}
                 size="small"
                 color="warning"
-                className={styles.button}
+                className={styles.buttonBig}
               >
                 Back
               </Button>
-              <h2>{data.title}</h2>
               <Button
                 variant="outlined"
                 startIcon={<Add />}
                 onClick={columnsAdd}
                 size="small"
                 color="info"
-                className={styles.button}
+                className={styles.buttonBig}
                 disabled={columns.isLoading}
               >
                 Column
               </Button>
             </div>
-            <h3>{data.description}</h3>
+            <div className={styles.boardInfo}>
+              <h2>{data.title}</h2>
+              <h3
+                onClick={() => setShowDescription((prev) => !prev)}
+                className={showDescription ? styles.showDesription : ''}
+              >
+                {data.description}
+              </h3>
+            </div>
             <div className={styles.editButton}>
               <IconButton
                 className={styles.button}
