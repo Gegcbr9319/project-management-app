@@ -60,24 +60,26 @@ export const BoardPage = () => {
                 onClick={backHandler}
                 size="small"
                 color="warning"
-                className={styles.button}
+                className={styles.buttonBig}
               >
                 Back
               </Button>
-              <h2>{data.title}</h2>
               <Button
                 variant="outlined"
                 startIcon={<Add />}
                 onClick={columnsAdd}
                 size="small"
                 color="info"
-                className={styles.button}
+                className={styles.buttonBig}
                 disabled={columns.isLoading}
               >
                 Column
               </Button>
             </div>
-            <h3>{data.description}</h3>
+            <div className={styles.boardInfo}>
+              <h2>{data.title}</h2>
+              <h3>{data.description ? data.description : <span>Description is empty</span>}</h3>
+            </div>
             <div className={styles.editButton}>
               <IconButton
                 className={styles.button}
@@ -98,8 +100,6 @@ export const BoardPage = () => {
             </div>
           </div>
         )}
-
-        {columns?.data?.length !== 0 && <h3> Columns </h3>}
         <div className={styles.columns}>
           <div className={styles.column}>
             {columns?.data

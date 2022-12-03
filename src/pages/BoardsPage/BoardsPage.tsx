@@ -18,7 +18,7 @@ export const BoardsPage = () => {
   };
 
   return (
-    <>
+    <div className={styles.pageWrapper}>
       {isLoading && <Loader />}
       <h2>Boards</h2>
       <div className={styles.boards}>
@@ -26,18 +26,18 @@ export const BoardsPage = () => {
           return <BoardPreview key={board._id} {...board} />;
         })}
         <Button
-          variant="outlined"
+          variant="contained"
           startIcon={<AddCircle />}
           onClick={formsCalling}
           disabled={isLoading}
           size="large"
-          color="warning"
+          color="inherit"
           className={styles.button}
         >
           Add Board
         </Button>
       </div>
       {callingForm && <ModalBoard type="create board" setCallingForm={setCallingForm} />}
-    </>
+    </div>
   );
 };

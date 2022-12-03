@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Dialog, DialogTitle } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import {
@@ -111,58 +111,66 @@ export const ModalTasks: FC<IModalTasksProps> = ({
     reset();
   };
 
-  useEffect(() => {
-    const handleEsc = (event: { keyCode: number }) => {
-      if (event.keyCode === 27) {
-        resetForm();
-      }
-    };
-    window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, []);
-
   return (
     <>
       {(createTaskResults.isLoading || updateTaskResults.isLoading) && <Loader />}
-      <div className={styles.divForm}>
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-          {type === 'create task' && <p className={styles.formP}>Create new Task</p>}
-          {type === 'edit task' && <p className={styles.formP}>Edit Task</p>}
-          <TextField
-            id="standard-basic"
-            autoFocus
-            label="Title"
-            variant="standard"
-            defaultValue={titleEdit}
-            {...register('title', {
-              required: true,
-              minLength: 3,
-            })}
-          />
-          {errors?.title && <p> {errorTitleMesage}</p>}
-          <TextField
-            id="standard-basic"
-            label="Description"
-            variant="outlined"
-            multiline={true}
-            minRows={3}
-            maxRows={3}
-            defaultValue={descriptionEdit}
-            {...register('description')}
-          />
+      <div>
+        <Dialog
+          className={styles.divForm}
+          open={Boolean(type)}
+          onClose={resetForm}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+            {type === 'create task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                Create new Task
+              </DialogTitle>
+            )}
+            {type === 'edit task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                Edit Task
+              </DialogTitle>
+            )}
+            <TextField
+              id="standard-basic"
+              autoFocus
+              label="Title"
+              variant="outlined"
+              defaultValue={titleEdit}
+              {...register('title', {
+                required: true,
+                minLength: 3,
+              })}
+            />
+            {errors?.title && <p> {errorTitleMesage}</p>}
+            <TextField
+              id="standard-basic"
+              label="Description"
+              variant="outlined"
+              multiline={true}
+              minRows={3}
+              maxRows={3}
+              defaultValue={descriptionEdit}
+              {...register('description')}
+            />
 
-          <div className={styles.formButtons}>
-            <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
-              Close
-            </Button>
-            <Button variant="outlined" type="submit" startIcon={<Send />}>
-              Send
-            </Button>
-          </div>
-        </form>
+            <div className={styles.formButtons}>
+              <Button
+                variant="contained"
+                color="inherit"
+                startIcon={<KeyboardArrowLeft />}
+                onClick={resetForm}
+              >
+                Close
+              </Button>
+              <Button variant="contained" type="submit" startIcon={<Send />}>
+                Send
+              </Button>
+            </div>
+          </form>
+        </Dialog>
       </div>
     </>
   );

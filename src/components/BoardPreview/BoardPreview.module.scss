@@ -1,11 +1,10 @@
 .button {
   height: 190px;
-  width: 216px;
+  width: 248px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  border: 1px solid rgb(251, 251, 251);
   background-color: #444;
   color: white;
   border-radius: 14px;
@@ -13,11 +12,11 @@
   overflow: hidden;
   position: relative;
   padding: 12px 15px;
+  box-shadow: 0 2px 8px -2px black;
 }
 
 .button:hover {
   cursor: pointer;
-  border: 1px solid rgb(255, 0, 0);
   background-color: rgb(0, 0, 0);
 }
 
@@ -40,6 +39,11 @@
   -webkit-line-clamp: 3;
   line-clamp: 3;
   text-align: left;
+  &>span {
+    user-select: none;
+    color: #555;
+    font-style: italic;
+  }
 }
 
 .buttons {

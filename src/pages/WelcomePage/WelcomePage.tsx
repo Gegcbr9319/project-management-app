@@ -3,7 +3,7 @@ import styles from './WelcomePage.module.scss';
 
 export function WelcomePage() {
   return (
-    <>
+    <div className={styles.pageWrapper}>
       <h2>Welcome Page</h2>
       <p className={styles.p}>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab doloribus officiis totam minus
@@ -111,6 +111,6 @@ export function WelcomePage() {
         laboriosam amet minima repudiandae eum perspiciatis quaerat, nam exercitationem numquam quos
         cumque unde fugiat ea!
       </p>
-    </>
+    </div>
   );
 }

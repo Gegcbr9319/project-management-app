@@ -186,6 +186,7 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId,
         method: 'GET',
       }),
+      providesTags: (_result, _err, arg) => [{ type: 'Board', id: arg.boardId }],
     }),
     // Update Board
     updateBoardById: build.mutation<IBoard, IUpdateBoardByIdOptions>({
@@ -194,7 +195,7 @@ export const appApi = createApi({
         method: 'PUT',
         body: options.body,
       }),
-      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }, 'Board'],
     }),
     // Delete Board
     deleteBoardById: build.mutation<IBoard, IDeleteBoardByIdOptions>({
@@ -202,7 +203,7 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }, 'Board'],
     }),
     // Get Boards by list of boardId
     getBoardsSetByIdsList: build.query<IBoard[], IGetBoardSetByIdsListOptions>({
