@@ -107,6 +107,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
                   color="info"
                   size="small"
                   onClick={columnEdit}
+                  disabled={inputValue.length < 3}
                 >
                   <Send />
                 </IconButton>
