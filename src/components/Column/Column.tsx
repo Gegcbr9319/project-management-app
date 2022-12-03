@@ -12,7 +12,7 @@ import {
   useGetTasksInColumnQuery,
   useUpdateColumnByIdMutation,
 } from 'store';
-import { DeleteCallback } from 'models';
+import { DeleteCallback, ITask } from 'models';
 
 interface IColumnProps {
   columnId: string;
@@ -118,15 +118,15 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
         {data?.length !== 0 && (
           <div className={styles.tasks}>
             {data
-              ?.map((index) => index)
-              .sort((a, b) => a.order - b.order)
-              .map((index) => {
+              ?.map((task) => task)
+              .sort((task1, task2) => task1.order - task2.order)
+              .map(({ _id, title, description }: ITask) => {
                 return (
                   <Task
-                    key={index._id}
-                    title={index.title}
-                    description={index.description}
-                    taskId={index._id}
+                    key={_id}
+                    title={title}
+                    description={description}
+                    taskId={_id}
                     boardId={boardId}
                     columnId={columnId}
                   />

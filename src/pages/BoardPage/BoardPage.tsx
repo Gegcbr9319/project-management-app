@@ -11,7 +11,7 @@ import {
   useGetColumnsInBoardQuery,
 } from 'store';
 import { useDispatch } from 'react-redux';
-import { DeleteCallback } from 'models';
+import { DeleteCallback, IColumn } from 'models';
 import { DragDropContext, DropResult, ResponderProvided } from 'react-beautiful-dnd';
 
 export const BoardPage = () => {
@@ -111,7 +111,7 @@ export const BoardPage = () => {
               {columns?.data
                 ?.map((column) => column)
                 .sort((column1, column2) => column1.order - column2.order)
-                .map(({ _id, title }) => {
+                .map(({ _id, title }: IColumn) => {
                   return <Column key={_id} columnId={_id} title={title} boardId={boardId} />;
                 })}
             </div>
