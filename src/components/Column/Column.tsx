@@ -13,6 +13,7 @@ import {
   useUpdateColumnByIdMutation,
 } from 'store';
 import { DeleteCallback, ITask } from 'models';
+import { Droppable, DroppableProvided, DroppableStateSnapshot } from 'react-beautiful-dnd';
 
 interface IColumnProps {
   columnId: string;
@@ -116,23 +117,29 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
           )}
         </div>
         {data?.length !== 0 && (
-          <div className={styles.tasks}>
-            {data
-              ?.map((task) => task)
-              .sort((task1, task2) => task1.order - task2.order)
-              .map(({ _id, title, description }: ITask) => {
-                return (
-                  <Task
-                    key={_id}
-                    title={title}
-                    description={description}
-                    taskId={_id}
-                    boardId={boardId}
-                    columnId={columnId}
-                  />
-                );
-              })}
-          </div>
+          <Droppable droppableId={columnId}>
+            {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
+              <div className={styles.tasks} {...droppableProps} ref={innerRef}>
+                {data
+                  ?.map((task) => task)
+                  .sort((task1, task2) => task1.order - task2.order)
+                  .map(({ _id, title, description, order }: ITask) => {
+                    return (
+                      <Task
+                        key={_id}
+                        title={title}
+                        description={description}
+                        taskId={_id}
+                        boardId={boardId}
+                        columnId={columnId}
+                        order={order}
+                      />
+                    );
+                  })}
+                {placeholder}
+              </div>
+            )}
+          </Droppable>
         )}
         <IconButton color="info" onClick={tasksAdd} size="large">
           <AddCircle />

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setDeleteCallback, useDeleteTaskByIdMutation } from 'store';
 import { Loader } from 'components';
 import { DeleteCallback } from 'models';
+import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
 interface ITaskProps {
   title: string;
@@ -14,9 +15,10 @@ interface ITaskProps {
   taskId: string;
   boardId: string;
   columnId: string;
+  order: number;
 }
 
-export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId }) => {
+export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId, order }) => {
   const [callingForm, setCallingForm] = useState(false);
   const dispatch = useDispatch();
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
@@ -38,25 +40,29 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
   return (
     <>
       {isLoading && <Loader />}
-      <div className={styles.task}>
-        <div>
-          <h3>{title}</h3>
-          <p>{description ? description : 'Description is empty'}</p>
-        </div>
-        <div>
-          <IconButton
-            className={styles.button}
-            color="warning"
-            size="small"
-            onClick={buttonDeleteHandler}
-          >
-            <Delete />
-          </IconButton>
-          <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
-            <Edit />
-          </IconButton>
-        </div>
-      </div>
+      <Draggable draggableId={taskId} index={order}>
+        {({ draggableProps, dragHandleProps, innerRef }: DraggableProvided) => (
+          <div className={styles.task} {...draggableProps} {...dragHandleProps} ref={innerRef}>
+            <div>
+              <h3>{title}</h3>
+              <p>{description ? description : 'Description is empty'}</p>
+            </div>
+            <div>
+              <IconButton
+                className={styles.button}
+                color="warning"
+                size="small"
+                onClick={buttonDeleteHandler}
+              >
+                <Delete />
+              </IconButton>
+              <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
+                <Edit />
+              </IconButton>
+            </div>
+          </div>
+        )}
+      </Draggable>
       {callingForm && (
         <ModalTasks
           type="edit task"
