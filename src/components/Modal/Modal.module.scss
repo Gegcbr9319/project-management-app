@@ -18,19 +18,24 @@
   margin: 0 2rem;
   display: flex;
   align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 1rem;
   flex-direction: column;
   gap: 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1.5px solidrgba(6, 6, 6, 0.56) !important;
   background-color: rgb(221, 237, 242) !important;
+  @media screen and (max-width: 600px) {
+    margin: 0 1rem;
+  }
+  &>div {
+    width: 100%;
+  }
 }
 
 .formButtons {
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .formP {

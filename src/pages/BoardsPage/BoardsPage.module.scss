@@ -1,6 +1,6 @@
 .button {
   height: 190px !important;
-  width: 216px !important;
+  width: 248px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -37,4 +37,7 @@
 
 .pageWrapper {
   padding: 0.5rem 2rem;
+  @media screen and (max-width: 600px) {
+    padding: 0.5rem 1rem;
+  }
 }
