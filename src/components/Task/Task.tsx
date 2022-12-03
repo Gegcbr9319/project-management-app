@@ -14,9 +14,10 @@ interface ITaskProps {
   taskId: string;
   boardId: string;
   columnId: string;
+  users: string[];
 }
 
-export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId }) => {
+export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId, users }) => {
   const [callingForm, setCallingForm] = useState(false);
   const dispatch = useDispatch();
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
@@ -42,6 +43,11 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
         <div>
           <h3>{title}</h3>
           <p>{description ? description : 'Description is empty'}</p>
+          <div className={styles.users}>
+            {users?.map((index) => {
+              return <span key={index}>{index}</span>;
+            })}
+          </div>
         </div>
         <div>
           <IconButton
@@ -66,6 +72,7 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
           columnId={columnId}
           titleEdit={title}
           descriptionEdit={description}
+          users={users}
         />
       )}
     </>

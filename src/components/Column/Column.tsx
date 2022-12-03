@@ -129,6 +129,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
                     taskId={index._id}
                     boardId={boardId}
                     columnId={columnId}
+                    users={index.users}
                   />
                 );
               })}
