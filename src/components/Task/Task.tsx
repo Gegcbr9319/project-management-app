@@ -41,7 +41,7 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
       <div className={styles.task}>
         <div>
           <h3>{title}</h3>
-          <p>{description}</p>
+          <p>{description ? description : 'Description is empty'}</p>
         </div>
         <div>
           <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
