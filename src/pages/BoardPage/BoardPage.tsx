@@ -12,6 +12,7 @@ import {
 } from 'store';
 import { useDispatch } from 'react-redux';
 import { DeleteCallback } from 'models';
+import { DragDropContext, DropResult, ResponderProvided } from 'react-beautiful-dnd';
 
 export const BoardPage = () => {
   const [callingForm, setCallingForm] = useState(false);
@@ -45,6 +46,10 @@ export const BoardPage = () => {
   const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     dispatch(setDeleteCallback(deleteCallback));
+  };
+
+  const handleDragEnd = (result: DropResult, provided: ResponderProvided): void => {
+    // TODO
   };
 
   return (
@@ -100,23 +105,18 @@ export const BoardPage = () => {
             </div>
           </div>
         )}
-        <div className={styles.columns}>
-          <div className={styles.column}>
-            {columns?.data
-              ?.map((index) => index)
-              .sort((a, b) => a.order - b.order)
-              .map((index) => {
-                return (
-                  <Column
-                    key={index._id}
-                    columnId={index._id}
-                    title={index.title}
-                    boardId={boardId}
-                  />
-                );
-              })}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className={styles.columns}>
+            <div className={styles.column}>
+              {columns?.data
+                ?.map((column) => column)
+                .sort((column1, column2) => column1.order - column2.order)
+                .map(({ _id, title }) => {
+                  return <Column key={_id} columnId={_id} title={title} boardId={boardId} />;
+                })}
+            </div>
           </div>
-        </div>
+        </DragDropContext>
       </div>
       {callingForm && type === 'column' && (
         <ModalColumns type="create column" setCallingForm={setCallingForm} boardId={boardId} />
