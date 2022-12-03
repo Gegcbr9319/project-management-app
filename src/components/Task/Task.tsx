@@ -44,9 +44,6 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
           <p>{description ? description : 'Description is empty'}</p>
         </div>
         <div>
-          <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
-            <Edit />
-          </IconButton>
           <IconButton
             className={styles.button}
             color="warning"
@@ -54,6 +51,9 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
             onClick={buttonDeleteHandler}
           >
             <Delete />
+          </IconButton>
+          <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
+            <Edit />
           </IconButton>
         </div>
       </div>
