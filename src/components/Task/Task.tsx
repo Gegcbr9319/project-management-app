@@ -39,21 +39,23 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
     <>
       {isLoading && <Loader />}
       <div className={styles.task}>
-        <IconButton
-          className={styles.button}
-          color="warning"
-          size="small"
-          onClick={buttonDeleteHandler}
-        >
-          <Delete />
-        </IconButton>
         <div>
           <h3>{title}</h3>
           <h4>{description}</h4>
         </div>
-        <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
-          <Edit />
-        </IconButton>
+        <div>
+          <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
+            <Edit />
+          </IconButton>
+          <IconButton
+            className={styles.button}
+            color="warning"
+            size="small"
+            onClick={buttonDeleteHandler}
+          >
+            <Delete />
+          </IconButton>
+        </div>
       </div>
       {callingForm && (
         <ModalTasks

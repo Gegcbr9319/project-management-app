@@ -7,8 +7,16 @@
 }
 
 .inputTitle {
-  background-color: #ddedf2;
+  & input {
+    color: white;
+    background-color: #555;
+    padding: 4px 8px;
+  }
   padding: 0 !important;
+  &>div {
+    padding: 0;
+    overflow: hidden;
+  }
 }
 
 .editInput {
@@ -38,20 +46,34 @@
 }
 
 .h3 {
-  font-style: italic;
   background-color: initial;
   color: white;
   border: none;
   cursor: pointer;
   width: 100%;
+  max-width: 170px;
+  text-align: left;
   font-size: 16px;
+  padding: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 1.5rem;
+  word-break: break-word;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  font-weight: 700;
 }
 
 .button {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
+  &>button {
+    padding: 4px 4px 4px 8px;
+  }
 }
 
 .tasks {

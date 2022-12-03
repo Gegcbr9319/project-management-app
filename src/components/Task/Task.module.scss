@@ -10,8 +10,36 @@
   border-radius: 4px;
   box-shadow: 0 2px 5px -2px black;
   background-color: rgba($color: #222, $alpha: 0.4);
+  max-width: 255px;
+  width: 100%;
+  & h3,
+  & h4 {
+    width: 100%;
+    max-width: 154px;
+    text-align: left;
+    font-size: 16px;
+    padding: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 1.5rem;
+    word-break: break-word;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+  & h4 {
+    font-style: italic;
+    color: #555;
+  }
+  &>div:has(button) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-.button svg {
+.button {
+  & svg {
   font-size: 1rem;
+}
 }
