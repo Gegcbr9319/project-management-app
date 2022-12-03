@@ -148,6 +148,7 @@ export function EditProfilePage(): JSX.Element {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                padding: '0 1rem',
               }}
             >
               <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>

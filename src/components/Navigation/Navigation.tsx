@@ -34,19 +34,20 @@ export const Navigation = () => {
         <div className={`${styles.links} .links`}>
           {token?.isValid ? (
             <>
-              <Button
-                variant="outlined"
-                startIcon={<AddCircle />}
-                onClick={() => setCallingForm(true)}
-                size="large"
-                color="info"
-              >
-                Add Board
-              </Button>
               <NavLink className={styles.link} to="/boards">
                 Boards
               </NavLink>
               <UserMenu />
+              <Button
+                variant="outlined"
+                startIcon={<AddCircle />}
+                onClick={() => setCallingForm(true)}
+                size="small"
+                color="info"
+                className={styles.addBoard}
+              >
+                Add Board
+              </Button>
             </>
           ) : (
             <>

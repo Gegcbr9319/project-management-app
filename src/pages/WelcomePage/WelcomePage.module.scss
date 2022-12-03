@@ -1,3 +1,9 @@
 .p {
   text-align: justify;
 }
+.pageWrapper {
+  padding: 0.5rem 2rem;
+  @media screen and (max-width: 600px) {
+    padding: 0.5rem 1rem;
+  }
+}

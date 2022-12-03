@@ -70,6 +70,7 @@ export function UserForm({
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              padding: '0 2rem',
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>{avatar}</Avatar>

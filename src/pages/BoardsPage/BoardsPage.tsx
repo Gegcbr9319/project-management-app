@@ -18,7 +18,7 @@ export const BoardsPage = () => {
   };
 
   return (
-    <>
+    <div className={styles.pageWrapper}>
       {isLoading && <Loader />}
       <h2>Boards</h2>
       <div className={styles.boards}>
@@ -38,6 +38,6 @@ export const BoardsPage = () => {
         </Button>
       </div>
       {callingForm && <ModalBoard type="create board" setCallingForm={setCallingForm} />}
-    </>
+    </div>
   );
 };

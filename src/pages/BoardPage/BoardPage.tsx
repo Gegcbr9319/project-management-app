@@ -106,8 +106,6 @@ export const BoardPage = () => {
             </div>
           </div>
         )}
-
-        {columns?.data?.length !== 0 && <h3> Columns </h3>}
         <div className={styles.columns}>
           <div className={styles.column}>
             {columns?.data
