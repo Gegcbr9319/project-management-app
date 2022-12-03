@@ -22,7 +22,6 @@ export const BoardPage = () => {
   const { data, isLoading } = useGetBoardByIdQuery({ boardId });
   const columns = useGetColumnsInBoardQuery({ boardId });
   const [type, setType] = useState('');
-  const [showDescription, setShowDescription] = useState(false);
 
   const columnsAdd = () => {
     setType('column');
@@ -79,12 +78,7 @@ export const BoardPage = () => {
             </div>
             <div className={styles.boardInfo}>
               <h2>{data.title}</h2>
-              <h3
-                onClick={() => setShowDescription((prev) => !prev)}
-                className={showDescription ? styles.showDesription : ''}
-              >
-                {data.description ? data.description : <span>Description is empty</span>}
-              </h3>
+              <h3>{data.description ? data.description : <span>Description is empty</span>}</h3>
             </div>
             <div className={styles.editButton}>
               <IconButton

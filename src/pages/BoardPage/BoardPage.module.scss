@@ -48,22 +48,30 @@
     line-clamp: 1;
     text-align: left;
     padding: 0 10px;
-  }
-  & h3 {
     background-color: rgb(76, 76, 76);
     position: absolute;
-    height: 1.5rem;
+    height: 1.6rem;
     border-radius: 5px;
     cursor: pointer;
     transition: 0.4s all 0.4s, 0.4s height, 0.4s width, 0.4s box-shadow;
-    z-index: 1;
+    z-index: 2;
     &>span {
       user-select: none;
       color: #555;
       font-style: italic;
     }
   }
-  & .showDesription {
+  & h3 {
+    top: 2rem;
+    height: 1.5rem;
+    z-index: 1;
+  }
+  & h2:active,
+  & h3:active,
+  & h2:focus,
+  & h3:focus,
+  & h2:hover,
+  & h3:hover {
     overflow: auto;
     display: block;
     color: white;
