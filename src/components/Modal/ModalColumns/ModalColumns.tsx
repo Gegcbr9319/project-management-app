@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Dialog, DialogTitle } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import {
@@ -87,46 +87,55 @@ export const ModalColumns: FC<IModalColumnsProps> = ({
     reset();
   };
 
-  useEffect(() => {
-    const handleEsc = (event: { keyCode: number }) => {
-      if (event.keyCode === 27) {
-        resetForm();
-      }
-    };
-    window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, []);
   return (
     <>
       {(createColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
-      <div className={styles.divForm}>
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-          {type === 'create column' && <p className={styles.formP}>Create new Column</p>}
-          {type === 'edit column' && <p className={styles.formP}>Edit Column</p>}
-          <TextField
-            id="standard-basic"
-            label="Title"
-            autoFocus
-            variant="standard"
-            defaultValue={titleEdit}
-            {...register('title', {
-              required: true,
-              minLength: 3,
-            })}
-          />
-          {errors?.title && <p> {errorTitleMesage}</p>}
-          <div className={styles.formButtons}>
-            <Button variant="outlined" startIcon={<KeyboardArrowLeft />} onClick={resetForm}>
-              Close
-            </Button>
-            <Button variant="outlined" type="submit" startIcon={<Send />}>
-              Send
-            </Button>
-          </div>
-        </form>
+      <div>
+        <Dialog
+          className={styles.divForm}
+          open={Boolean(type)}
+          onClose={resetForm}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+            {type === 'create column' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                Create new Column
+              </DialogTitle>
+            )}
+            {type === 'edit column' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                Edit Column
+              </DialogTitle>
+            )}
+            <TextField
+              id="standard-basic"
+              label="Title"
+              autoFocus
+              variant="outlined"
+              defaultValue={titleEdit}
+              {...register('title', {
+                required: true,
+                minLength: 3,
+              })}
+            />
+            {errors?.title && <p> {errorTitleMesage}</p>}
+            <div className={styles.formButtons}>
+              <Button
+                variant="contained"
+                color="inherit"
+                startIcon={<KeyboardArrowLeft />}
+                onClick={resetForm}
+              >
+                Close
+              </Button>
+              <Button variant="contained" type="submit" startIcon={<Send />}>
+                Send
+              </Button>
+            </div>
+          </form>
+        </Dialog>
       </div>
     </>
   );

@@ -1,32 +1,27 @@
 .divForm {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  & div div:has(form) {
+    margin: 0 2rem;
+    width: fit-content;
+    max-width: 400px;
+    width: 100%;
+    @media screen and (max-width: 600px) {
+      margin: 0 1rem;
+    }
+  }
   background-color: rgba(6, 6, 6, 0.56) !important;
   z-index: 20;
 }
 
 .form {
   height: auto;
-  max-width: 400px;
-  width: 100%;
-  margin: 0 2rem;
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 1.5rem;
   flex-direction: column;
   gap: 10px;
   border-radius: 10px;
   border: 1.5px solidrgba(6, 6, 6, 0.56) !important;
   background-color: rgb(221, 237, 242) !important;
-  @media screen and (max-width: 600px) {
-    margin: 0 1rem;
-  }
   &>div {
     width: 100%;
   }
@@ -35,9 +30,11 @@
 .formButtons {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .formP {
+  padding: 0 !important;
   color: black !important;
 }

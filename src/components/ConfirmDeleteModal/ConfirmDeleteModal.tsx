@@ -27,7 +27,7 @@ export const ConfirmDeleteModal = () => {
   };
 
   return (
-    <div>
+    <>
       <Dialog
         className={styles.content}
         open={Boolean(callback)}
@@ -57,6 +57,6 @@ export const ConfirmDeleteModal = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
