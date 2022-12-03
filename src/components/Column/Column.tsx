@@ -73,12 +73,12 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
         <div className={styles.button}>
           {!inputColunm && (
             <>
-              <IconButton color="warning" onClick={buttonDeleteHandler}>
-                <Delete />
-              </IconButton>
               <button className={styles.h3} onClick={() => setInputColumn(true)}>
                 {title}
               </button>
+              <IconButton color="warning" onClick={buttonDeleteHandler}>
+                <Delete />
+              </IconButton>
             </>
           )}
           {inputColunm && (
@@ -90,9 +90,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
                 size="small"
                 variant="outlined"
                 value={inputValue}
-                multiline={true}
-                minRows={1}
-                maxRows={2}
+                multiline={false}
                 onChange={inputHandler}
               />
               <div className={styles.inputButton}>
@@ -109,6 +107,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
                   color="info"
                   size="small"
                   onClick={columnEdit}
+                  disabled={inputValue.length < 3}
                 >
                   <Send />
                 </IconButton>

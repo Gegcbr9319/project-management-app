@@ -2,25 +2,82 @@
   width: initial;
   display: flex;
   flex-direction: column;
-  min-width: 200px;
   height: 100%;
   text-align: center;
-  border: 1px solid red;
-  gap: 10px;
   background-color: rgb(91, 91, 91);
   color: white;
 }
 
 .boardDescription {
   display: flex;
-  flex-direction: column;
-  width: 600px;
-  padding: 15px;
+  gap: 5px;
+  padding: 0.5rem 2rem;
+  background-color: rgb(76, 76, 76);
+  box-shadow: 0 2px 5px -3px black;
+  @media screen and (max-width: 600px) {
+    padding: 0.5rem 1rem;
+  }
+  @media screen and (max-width: 400px) {
+    flex-wrap: wrap;
+  }
 }
 
 .boardEdit {
   display: flex;
-  justify-content: space-between;
+  gap: 5px;
+  flex-direction: column;
+  @media screen and (max-width: 400px) {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.boardInfo {
+  position: relative;
+  flex: 1;
+  & h2,
+  & h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    width: 100%;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    text-align: left;
+    padding: 0 10px;
+    background-color: rgb(76, 76, 76);
+    position: absolute;
+    height: 1.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.4s all 0.4s, 0.4s height, 0.4s width, 0.4s box-shadow;
+    z-index: 2;
+    &>span {
+      user-select: none;
+      color: #555;
+      font-style: italic;
+    }
+  }
+  & h3 {
+    top: 2rem;
+    height: 1.5rem;
+    z-index: 1;
+  }
+  & h2:active,
+  & h3:active,
+  & h2:focus,
+  & h3:focus,
+  & h2:hover,
+  & h3:hover {
+    overflow: auto;
+    display: block;
+    color: white;
+    height: 5rem;
+    box-shadow: 0px 2px 8px -3px black;
+  }
 }
 
 .title {
@@ -44,13 +101,22 @@
 
 .editButton {
   display: flex;
-  height: 30px;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .button {
   position: static !important;
+  padding: 0 !important;
+  height: auto;
+}
+
+.buttonBig {
+  position: static !important;
+  padding: 0 !important;
+  width: 100px;
+  height: auto;
 }
 
 .columns {
@@ -58,9 +124,12 @@
   max-height: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   overflow-x: scroll;
-  padding: 30px;
+  padding: 0.5rem 2rem;
+  @media screen and (max-width: 600px) {
+    padding: 0.5rem 1rem;
+  }
 }
 
 .column {

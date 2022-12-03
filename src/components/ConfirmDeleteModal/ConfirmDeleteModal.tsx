@@ -11,6 +11,7 @@ import { Delete } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState, setDeleteCallback } from 'store';
 import { DeleteState } from 'models';
+import styles from './ConfirmDeleteModal.module.scss';
 
 export const ConfirmDeleteModal = () => {
   const { callback } = useSelector((state: AppState): DeleteState => state.delete);
@@ -26,8 +27,9 @@ export const ConfirmDeleteModal = () => {
   };
 
   return (
-    <div>
+    <>
       <Dialog
+        className={styles.content}
         open={Boolean(callback)}
         onClose={handleCancel}
         aria-labelledby="alert-dialog-title"
@@ -40,13 +42,7 @@ export const ConfirmDeleteModal = () => {
           </DialogContentText>
           <DialogContentText id="alert-dialog-description">Confirm deletion?</DialogContentText>
         </DialogContent>
-        <DialogActions
-          sx={{
-            paddingRight: 3,
-            paddingLeft: 3,
-            paddingBottom: 3,
-          }}
-        >
+        <DialogActions className={styles.actions}>
           <Button onClick={handleCancel} color="inherit" variant="contained" size="small" autoFocus>
             Cancel
           </Button>
@@ -61,6 +57,6 @@ export const ConfirmDeleteModal = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };

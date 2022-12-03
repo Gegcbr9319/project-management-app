@@ -70,9 +70,10 @@ export function UserForm({
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              padding: '0 2rem',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>{avatar}</Avatar>
+            <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>{avatar}</Avatar>
             <Typography component="h1" variant="h5">
               {title}
             </Typography>

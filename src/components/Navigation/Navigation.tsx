@@ -4,12 +4,16 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.scss';
 import { AuthState } from 'models';
-import { UserMenu } from 'components';
+import { ModalBoard, UserMenu } from 'components';
+import { AddCircle } from '@mui/icons-material';
+import { Button } from '@mui/material';
 
 export const Navigation = () => {
   const [isSticky, setSticky] = useState(true);
 
   const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+
+  const [callingForm, setCallingForm] = useState(false);
 
   useEffect(() => {
     window.onscroll = () => {
@@ -34,6 +38,16 @@ export const Navigation = () => {
                 Boards
               </NavLink>
               <UserMenu />
+              <Button
+                variant="outlined"
+                startIcon={<AddCircle />}
+                onClick={() => setCallingForm(true)}
+                size="small"
+                color="info"
+                className={styles.addBoard}
+              >
+                Add Board
+              </Button>
             </>
           ) : (
             <>
@@ -47,6 +61,7 @@ export const Navigation = () => {
           )}
         </div>
       </nav>
+      {callingForm && <ModalBoard type="create board" setCallingForm={setCallingForm} />}
     </header>
   );
 };
