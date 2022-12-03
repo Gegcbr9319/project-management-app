@@ -57,6 +57,11 @@
     cursor: pointer;
     transition: 0.4s all 0.4s, 0.4s height, 0.4s width, 0.4s box-shadow;
     z-index: 1;
+    &>span {
+      user-select: none;
+      color: #555;
+      font-style: italic;
+    }
   }
   & .showDesription {
     overflow: auto;

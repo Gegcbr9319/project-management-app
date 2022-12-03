@@ -83,7 +83,7 @@ export const BoardPage = () => {
                 onClick={() => setShowDescription((prev) => !prev)}
                 className={showDescription ? styles.showDesription : ''}
               >
-                {data.description}
+                {data.description ? data.description : <span>Description is empty</span>}
               </h3>
             </div>
             <div className={styles.editButton}>

@@ -47,7 +47,10 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
       {isLoading && <Loader />}
       <div className={styles.button} onClick={buttonClickHandler}>
         <h2 className={styles.h2}> {title}</h2>
-        <h3 className={styles.h3}> {description}</h3>
+        <h3 className={styles.h3}>
+          {' '}
+          {description ? description : <span>Description is empty</span>}
+        </h3>
         <div className={styles.buttons}>
           <Button
             variant="outlined"

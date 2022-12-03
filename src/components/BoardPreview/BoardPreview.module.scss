@@ -40,6 +40,11 @@
   -webkit-line-clamp: 3;
   line-clamp: 3;
   text-align: left;
+  &>span {
+    user-select: none;
+    color: #555;
+    font-style: italic;
+  }
 }
 
 .buttons {
