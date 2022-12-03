@@ -26,12 +26,12 @@ export const BoardsPage = () => {
           return <BoardPreview key={board._id} {...board} />;
         })}
         <Button
-          variant="outlined"
+          variant="contained"
           startIcon={<AddCircle />}
           onClick={formsCalling}
           disabled={isLoading}
           size="large"
-          color="warning"
+          color="inherit"
           className={styles.button}
         >
           Add Board
