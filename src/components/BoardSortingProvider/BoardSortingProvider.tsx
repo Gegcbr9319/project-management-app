@@ -32,6 +32,8 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
       return;
     }
 
+    const { columns } = boardState;
+
     // dropped outside any valid droppable
     if (!destination) {
       return;
@@ -39,16 +41,20 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
 
     // dragged within the same column
     if (destination.droppableId === source.droppableId) {
-      // dropped where drag started
       if (destination.index === source.index) {
+        // dropped where drag started
         return;
       }
 
-      const { columns } = boardState;
       const affectedColumn = columns.find((column) => column._id === destination.droppableId);
 
+      if (!affectedColumn) {
+        // something went wrong
+        return;
+      }
+
       // rearrange task order
-      const sortedTasks: ITask[] = affectedColumn?.tasks ?? [];
+      const sortedTasks: ITask[] = affectedColumn.tasks;
       const draggedTask = sortedTasks.splice(source.index, 1)[0];
       sortedTasks.splice(destination.index, 0, draggedTask);
 
@@ -61,7 +67,7 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
       setBoardState({
         ...boardState,
         columns: boardState.columns.map((column) =>
-          column._id === affectedColumn?._id ? { ...column, tasks: reorderedTasks } : column
+          column._id === affectedColumn._id ? { ...column, tasks: reorderedTasks } : column
         ),
       });
 
@@ -75,6 +81,67 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
       await updateTasksSet({
         body: updatedTasksSet,
       }).unwrap();
+
+      return;
+    }
+
+    // dragged between columns
+    {
+      const sourceColumn = columns.find((column) => column._id === source.droppableId);
+      const destinationColumn = columns.find((column) => column._id === destination.droppableId);
+
+      if (!sourceColumn || !destinationColumn) {
+        // something went wrong
+        return;
+      }
+
+      // rearrange task order
+      const sortedSourceTasks: ITask[] = sourceColumn.tasks;
+      const sortedDestinationTasks: ITask[] = destinationColumn.tasks;
+      const draggedTask = sortedSourceTasks.splice(source.index, 1)[0];
+      sortedDestinationTasks.splice(destination.index, 0, draggedTask);
+
+      const reorderedSourceTasks = sortedSourceTasks.map((task, index) => ({
+        ...task,
+        order: index,
+      }));
+
+      const reorderedDestinationTasks = sortedDestinationTasks.map((task, index) => ({
+        ...task,
+        order: index,
+        columnId: destinationColumn._id,
+      }));
+
+      // update board state optimistically (assuming API will change ordering later)
+      setBoardState({
+        ...boardState,
+        columns: boardState.columns.map((column) => {
+          if (column._id === sourceColumn._id) {
+            return { ...column, tasks: reorderedSourceTasks };
+          }
+
+          if (column._id === destinationColumn._id) {
+            return { ...column, tasks: reorderedDestinationTasks };
+          }
+
+          return column;
+        }),
+      });
+
+      // sync ordering with the server
+      const updatedTasksSet = [...reorderedSourceTasks, ...reorderedDestinationTasks].map(
+        ({ _id, order, columnId }: ITask) => ({
+          _id,
+          order,
+          columnId,
+        })
+      );
+
+      await updateTasksSet({
+        body: updatedTasksSet,
+      }).unwrap();
+
+      return;
     }
   };
 
