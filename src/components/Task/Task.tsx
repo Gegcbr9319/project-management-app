@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from 'react';
+import React, { MouseEvent, useState, useCallback } from 'react';
 import { IconButton } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import styles from './Task.module.scss';
@@ -6,35 +6,32 @@ import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
 import { useDispatch } from 'react-redux';
 import { setDeleteCallback, useDeleteTaskByIdMutation } from 'store';
 import { Loader } from 'components';
-import { DeleteCallback } from 'models';
+import { DeleteCallback, ITask } from 'models';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
-interface ITaskProps {
-  title: string;
-  description: string;
-  taskId: string;
-  boardId: string;
-  columnId: string;
-  order: number;
+interface TaskProps {
+  task: ITask;
 }
 
-export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId, order }) => {
+export function Task({ task }: TaskProps): JSX.Element {
+  const { _id: taskId, columnId, boardId, order, title, description } = task;
+
   const [callingForm, setCallingForm] = useState(false);
   const dispatch = useDispatch();
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
 
-  const editTask = () => {
+  const handleEditTask = () => {
     setCallingForm(true);
   };
 
-  const deleteCallback: DeleteCallback = useCallback(
+  const deleteTaskCallback: DeleteCallback = useCallback(
     async () => await deleteTask({ boardId, columnId, taskId }),
     [boardId, columnId, taskId, deleteTask]
   );
 
-  const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDeleteTask = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    dispatch(setDeleteCallback(deleteCallback));
+    dispatch(setDeleteCallback(deleteTaskCallback));
   };
 
   return (
@@ -52,11 +49,16 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
                 className={styles.button}
                 color="warning"
                 size="small"
-                onClick={buttonDeleteHandler}
+                onClick={handleDeleteTask}
               >
                 <Delete />
               </IconButton>
-              <IconButton className={styles.button} color="info" size="small" onClick={editTask}>
+              <IconButton
+                className={styles.button}
+                color="info"
+                size="small"
+                onClick={handleEditTask}
+              >
                 <Edit />
               </IconButton>
             </div>
@@ -76,4 +78,4 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
       )}
     </>
   );
-};
+}

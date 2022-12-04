@@ -6,7 +6,7 @@ import {
   useGetTaskSetByBoardIdQuery,
 } from 'store';
 import { BoardContext } from './BoardContext';
-import { buildSortedBoard } from './buildSortedBoard';
+import { buildSortedBoard } from '../BoardSortingProvider/buildSortedBoard';
 
 interface BoardContextProviderProps extends PropsWithChildren {
   boardId: string;

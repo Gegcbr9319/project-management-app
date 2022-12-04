@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { MouseEvent, useState, useCallback, useContext } from 'react';
 import { Button, IconButton } from '@mui/material';
 import { ArrowBackIosNew, Add, Delete, Edit } from '@mui/icons-material';
 import { Column, Loader, ModalColumns, ModalBoard, BoardContext, BoardState } from 'components';
@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router';
 import styles from './Board.module.scss';
 import { setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
 import { useDispatch } from 'react-redux';
-import { DeleteCallback, IColumn } from 'models';
+import { DeleteCallback } from 'models';
 
-export const Board = () => {
+export const Board = (): JSX.Element => {
   const [board] = useContext(BoardContext) as BoardState;
 
   const boardId = board?._id ?? '';
@@ -22,28 +22,28 @@ export const Board = () => {
   const navigate = useNavigate();
   const [type, setType] = useState('');
 
-  const columnsAdd = () => {
+  const handleCreateColumn = () => {
     setType('column');
     setCallingForm(true);
   };
 
-  const boardEditHandler = () => {
+  const handleEditBoard = () => {
     setType('board');
     setCallingForm(true);
   };
 
-  const backHandler = () => {
+  const handleBack = () => {
     navigate('/' + location.pathname.split('/')[1]);
   };
 
-  const deleteCallback: DeleteCallback = useCallback(async () => {
+  const deleteBoardCallback: DeleteCallback = useCallback(async () => {
     await deleteBoard({ boardId });
     navigate('/boards');
   }, [boardId, deleteBoard, navigate]);
 
-  const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDeleteBoard = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    dispatch(setDeleteCallback(deleteCallback));
+    dispatch(setDeleteCallback(deleteBoardCallback));
   };
 
   return (
@@ -56,7 +56,7 @@ export const Board = () => {
               <Button
                 variant="outlined"
                 startIcon={<ArrowBackIosNew />}
-                onClick={backHandler}
+                onClick={handleBack}
                 size="small"
                 color="warning"
                 className={styles.buttonBig}
@@ -66,7 +66,7 @@ export const Board = () => {
               <Button
                 variant="outlined"
                 startIcon={<Add />}
-                onClick={columnsAdd}
+                onClick={handleCreateColumn}
                 size="small"
                 color="info"
                 className={styles.buttonBig}
@@ -84,7 +84,7 @@ export const Board = () => {
                 className={styles.button}
                 color="warning"
                 size="small"
-                onClick={buttonDeleteHandler}
+                onClick={handleDeleteBoard}
               >
                 <Delete />
               </IconButton>
@@ -92,7 +92,7 @@ export const Board = () => {
                 className={styles.button}
                 color="info"
                 size="small"
-                onClick={boardEditHandler}
+                onClick={handleEditBoard}
               >
                 <Edit />
               </IconButton>
@@ -101,8 +101,8 @@ export const Board = () => {
         )}
         <div className={styles.columns}>
           <div className={styles.column}>
-            {columns.map(({ _id, title }: IColumn) => {
-              return <Column key={_id} columnId={_id} title={title} boardId={boardId} />;
+            {columns.map((column) => {
+              return <Column key={column._id} column={column} />;
             })}
           </div>
         </div>
