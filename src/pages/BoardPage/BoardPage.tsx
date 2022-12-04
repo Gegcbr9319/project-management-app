@@ -2,26 +2,30 @@ import React, { useState, useCallback } from 'react';
 import { Button, IconButton } from '@mui/material';
 import { ArrowBackIosNew, Add, Delete, Edit } from '@mui/icons-material';
 import { Column, Loader, ModalColumns, ModalBoard } from 'components';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import styles from './BoardPage.module.scss';
 import {
   setDeleteCallback,
   useDeleteBoardByIdMutation,
+  useUpdateTasksSetMutation,
   useGetBoardByIdQuery,
   useGetColumnsInBoardQuery,
+  useGetTaskSetByBoardIdQuery,
 } from 'store';
 import { useDispatch } from 'react-redux';
-import { DeleteCallback, IColumn } from 'models';
-import { DragDropContext, DropResult, ResponderProvided } from 'react-beautiful-dnd';
+import { DeleteCallback, IColumn, ITask } from 'models';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 export const BoardPage = () => {
   const [callingForm, setCallingForm] = useState(false);
   const dispatch = useDispatch();
   const [deleteBoard] = useDeleteBoardByIdMutation();
-  const boardId = location.pathname.split('/').reverse()[0];
+  const [updateTasksSet] = useUpdateTasksSetMutation();
+  const boardId = useParams()?.id || '';
   const navigate = useNavigate();
-  const { data, isLoading } = useGetBoardByIdQuery({ boardId });
-  const columns = useGetColumnsInBoardQuery({ boardId });
+  const { data: board, isLoading: isBoardLoading } = useGetBoardByIdQuery({ boardId });
+  const { data: columns, isLoading: areColumnsLoading } = useGetColumnsInBoardQuery({ boardId });
+  const { data: tasks, isLoading: areTasksLoading } = useGetTaskSetByBoardIdQuery({ boardId });
   const [type, setType] = useState('');
 
   const columnsAdd = () => {
@@ -48,15 +52,49 @@ export const BoardPage = () => {
     dispatch(setDeleteCallback(deleteCallback));
   };
 
-  const handleDragEnd = (result: DropResult, provided: ResponderProvided): void => {
-    // TODO
+  const handleDragEnd = async ({ draggableId, source, destination }: DropResult): Promise<void> => {
+    // dropped outside any valid droppable
+    if (!destination) {
+      return;
+    }
+
+    // dragged within the same column
+    if (destination.droppableId === source.droppableId) {
+      // dropped where drag started
+      if (destination.index === source.index) {
+        return;
+      }
+
+      // tasks order changed
+      const tasksOrder: ITask[] =
+        tasks
+          ?.filter((task) => task.columnId === destination.droppableId)
+          .sort((task1, task2) => task1.order - task2.order) || [];
+      console.log(JSON.stringify(tasksOrder));
+      const draggedTask = tasksOrder.splice(source.index, 1)[0];
+      console.log(draggedTask, source.index, destination.index);
+      console.log(JSON.stringify(tasksOrder));
+      tasksOrder.splice(destination.index, 0, draggedTask);
+      console.log(JSON.stringify(tasksOrder));
+
+      const updatedTasksSet = tasksOrder.map(({ _id, columnId }: ITask, index) => ({
+        _id,
+        order: index,
+        columnId,
+      }));
+      console.log(JSON.stringify(updatedTasksSet));
+
+      await updateTasksSet({
+        body: updatedTasksSet,
+      }).unwrap();
+    }
   };
 
   return (
     <>
-      {(isLoading || columns.isLoading) && <Loader />}
+      {(isBoardLoading || areColumnsLoading) && <Loader />}
       <div className={styles.board}>
-        {data && (
+        {board && (
           <div className={styles.boardDescription}>
             <div className={styles.boardEdit}>
               <Button
@@ -76,14 +114,14 @@ export const BoardPage = () => {
                 size="small"
                 color="info"
                 className={styles.buttonBig}
-                disabled={columns.isLoading}
+                disabled={areColumnsLoading}
               >
                 Column
               </Button>
             </div>
             <div className={styles.boardInfo}>
-              <h2>{data.title}</h2>
-              <h3>{data.description ? data.description : <span>Description is empty</span>}</h3>
+              <h2>{board.title}</h2>
+              <h3>{board.description ? board.description : <span>Description is empty</span>}</h3>
             </div>
             <div className={styles.editButton}>
               <IconButton
@@ -108,7 +146,7 @@ export const BoardPage = () => {
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className={styles.columns}>
             <div className={styles.column}>
-              {columns?.data
+              {columns
                 ?.map((column) => column)
                 .sort((column1, column2) => column1.order - column2.order)
                 .map(({ _id, title }: IColumn) => {
@@ -126,10 +164,10 @@ export const BoardPage = () => {
           type="edit board"
           setCallingForm={setCallingForm}
           boardId={boardId}
-          users={data ? data.users : ['']}
-          owner={data ? data.owner : ''}
-          titleEdit={data ? data.title : ''}
-          descriptionEdit={data ? data.description : ''}
+          users={board?.users || ['']}
+          owner={board?.owner || ''}
+          titleEdit={board?.title || ''}
+          descriptionEdit={board?.description || ''}
         />
       )}
     </>

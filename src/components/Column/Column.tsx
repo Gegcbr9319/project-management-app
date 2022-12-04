@@ -13,7 +13,7 @@ import {
   useUpdateColumnByIdMutation,
 } from 'store';
 import { DeleteCallback, ITask } from 'models';
-import { Droppable, DroppableProvided, DroppableStateSnapshot } from 'react-beautiful-dnd';
+import { Droppable, DroppableProvided } from 'react-beautiful-dnd';
 
 interface IColumnProps {
   columnId: string;
@@ -25,7 +25,10 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
   const dispatch = useDispatch();
   const [callingForm, setCallingForm] = useState(false);
   const [type, setType] = useState('');
-  const { data, isLoading } = useGetTasksInColumnQuery({ boardId: boardId, columnId: columnId });
+  const { data: tasks, isLoading: areTasksLoading } = useGetTasksInColumnQuery({
+    boardId: boardId,
+    columnId: columnId,
+  });
   const [deleteColumn, deleteColumnResults] = useDeleteColumnByIdMutation();
   const [inputColunm, setInputColumn] = useState(false);
   const [inputValue, setInputValue] = useState(title);
@@ -69,7 +72,9 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
 
   return (
     <>
-      {(isLoading || deleteColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
+      {(areTasksLoading || deleteColumnResults.isLoading || updateColumnResults.isLoading) && (
+        <Loader />
+      )}
       <div className={styles.column}>
         <div className={styles.button}>
           {!inputColunm && (
@@ -116,14 +121,14 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
             </div>
           )}
         </div>
-        {data?.length !== 0 && (
+        {tasks?.length !== 0 && (
           <Droppable droppableId={columnId}>
             {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
               <div className={styles.tasks} {...droppableProps} ref={innerRef}>
-                {data
+                {tasks
                   ?.map((task) => task)
                   .sort((task1, task2) => task1.order - task2.order)
-                  .map(({ _id, title, description, order }: ITask) => {
+                  .map(({ _id, title, description }: ITask, index) => {
                     return (
                       <Task
                         key={_id}
@@ -132,7 +137,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
                         taskId={_id}
                         boardId={boardId}
                         columnId={columnId}
-                        order={order}
+                        order={index}
                       />
                     );
                   })}
