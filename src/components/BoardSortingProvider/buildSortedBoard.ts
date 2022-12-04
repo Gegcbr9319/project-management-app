@@ -20,6 +20,7 @@ export const buildSortedBoard = ({
   const sortedColumns = (columns ?? [])
     .map((column) => {
       return Object.defineProperty({ ...column }, 'tasks', {
+        enumerable: true,
         value: (tasks ?? []).filter((task) => task.columnId === column._id).sort(byOrder),
       });
     })
@@ -30,15 +31,19 @@ export const buildSortedBoard = ({
     { ...board },
     {
       columns: {
+        enumerable: true,
         value: sortedColumns,
       },
       isBoardLoading: {
+        enumerable: true,
         value: isBoardLoading,
       },
       areColumnsLoading: {
+        enumerable: true,
         value: areColumnsLoading,
       },
       areTasksLoading: {
+        enumerable: true,
         value: areColumnsLoading,
       },
     }
