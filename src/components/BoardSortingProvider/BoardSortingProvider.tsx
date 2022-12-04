@@ -2,7 +2,7 @@ import { BoardState } from 'components/BoardContextProvider';
 import { IBoard, IColumn, ITask } from 'models';
 import React, { PropsWithChildren, useContext } from 'react';
 import { DropResult, DragDropContext } from 'react-beautiful-dnd';
-import { useUpdateTasksSetMutation } from 'store';
+import { useUpdateColumnsSetMutation, useUpdateTasksSetMutation } from 'store';
 import { BoardContext } from 'components';
 
 export interface SortedBoard extends IBoard {
@@ -24,9 +24,15 @@ export const byOrder = (item1: Orderable, item2: Orderable) => item1.order - ite
 
 export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Element {
   const [boardState, setBoardState] = useContext(BoardContext) as BoardState;
+  const [updateColumnsSet] = useUpdateColumnsSetMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
 
-  const handleDragEnd = async ({ draggableId, source, destination }: DropResult): Promise<void> => {
+  const handleDragEnd = async ({
+    draggableId,
+    source,
+    destination,
+    type,
+  }: DropResult): Promise<void> => {
     // nothing to work with yet
     if (!boardState) {
       return;
@@ -39,13 +45,44 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
       return;
     }
 
-    // dragged within the same column
-    if (destination.droppableId === source.droppableId) {
-      if (destination.index === source.index) {
-        // dropped where drag started
-        return;
-      }
+    // dropped where drag started
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      return;
+    }
 
+    // dragged a column
+    if (type === 'column') {
+      // rearrange columns order
+      const sortedColumns: SortedColumn[] = [...columns];
+      const draggedColumn = sortedColumns.splice(source.index, 1)[0];
+      sortedColumns.splice(destination.index, 0, draggedColumn);
+
+      const reorderedColumns = sortedColumns.map((column, index) => ({
+        ...column,
+        order: index,
+      }));
+
+      // update board state optimistically (assuming API will change ordering later)
+      setBoardState({
+        ...boardState,
+        columns: reorderedColumns,
+      });
+
+      // sync ordering with the server
+      const updatedColumnsSet = reorderedColumns.map(({ _id, order }: SortedColumn) => ({
+        _id,
+        order,
+      }));
+
+      await updateColumnsSet({
+        body: updatedColumnsSet,
+      }).unwrap();
+
+      return;
+    }
+
+    // dragged a task within the same column
+    if (destination.droppableId === source.droppableId) {
       const affectedColumn = columns.find((column) => column._id === destination.droppableId);
 
       if (!affectedColumn) {
@@ -53,7 +90,7 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
         return;
       }
 
-      // rearrange task order
+      // rearrange tasks order
       const sortedTasks: ITask[] = affectedColumn.tasks;
       const draggedTask = sortedTasks.splice(source.index, 1)[0];
       sortedTasks.splice(destination.index, 0, draggedTask);
@@ -85,7 +122,7 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
       return;
     }
 
-    // dragged between columns
+    // dragged a task between columns
     {
       const sourceColumn = columns.find((column) => column._id === source.droppableId);
       const destinationColumn = columns.find((column) => column._id === destination.droppableId);

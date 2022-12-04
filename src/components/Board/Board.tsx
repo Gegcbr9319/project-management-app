@@ -7,6 +7,7 @@ import styles from './Board.module.scss';
 import { setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
 import { useDispatch } from 'react-redux';
 import { DeleteCallback } from 'models';
+import { Droppable, DroppableProvided } from 'react-beautiful-dnd';
 
 export const Board = (): JSX.Element => {
   const [board] = useContext(BoardContext) as BoardState;
@@ -99,13 +100,18 @@ export const Board = (): JSX.Element => {
             </div>
           </div>
         )}
-        <div className={styles.columns}>
-          <div className={styles.column}>
-            {columns.map((column) => {
-              return <Column key={column._id} column={column} />;
-            })}
-          </div>
-        </div>
+        <Droppable droppableId={boardId || 'board'} direction="horizontal" type="column">
+          {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
+            <div className={styles.columns}>
+              <div className={styles.column} {...droppableProps} ref={innerRef}>
+                {columns.map((column) => {
+                  return <Column key={column._id} column={column} />;
+                })}
+                {placeholder}
+              </div>
+            </div>
+          )}
+        </Droppable>
       </div>
       {callingForm && type === 'column' && (
         <ModalColumns type="create column" setCallingForm={setCallingForm} boardId={boardId} />

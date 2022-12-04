@@ -7,7 +7,7 @@ import { Loader, ModalColumns, SortedColumn, Task } from 'components';
 import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
 import { setDeleteCallback, useDeleteColumnByIdMutation, useUpdateColumnByIdMutation } from 'store';
 import { DeleteCallback } from 'models';
-import { Droppable, DroppableProvided } from 'react-beautiful-dnd';
+import { Draggable, DraggableProvided, Droppable, DroppableProvided } from 'react-beautiful-dnd';
 
 interface ColumnProps {
   column: SortedColumn;
@@ -58,66 +58,70 @@ export function Column({ column }: ColumnProps): JSX.Element {
   return (
     <>
       {(deleteColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
-      <div className={styles.column}>
-        <div className={styles.button}>
-          {!editable && (
-            <>
-              <button className={styles.h3} onClick={() => setEditable(true)}>
-                {title}
-              </button>
-              <IconButton color="warning" onClick={handleDeleteColumn}>
-                <Delete />
-              </IconButton>
-            </>
-          )}
-          {editable && (
-            <div className={styles.editInput}>
-              <TextField
-                className={styles.inputTitle}
-                id="column-title"
-                autoFocus
-                size="small"
-                variant="outlined"
-                value={newTitle}
-                multiline={false}
-                onChange={handleChangeTitle}
-              />
-              <div className={styles.inputButton}>
-                <IconButton
-                  className={styles.iconButton}
-                  color="warning"
-                  size="small"
-                  onClick={() => setEditable(false)}
-                >
-                  <Close />
-                </IconButton>
-                <IconButton
-                  className={styles.iconButton}
-                  color="info"
-                  size="small"
-                  onClick={handleEditColumn}
-                  disabled={newTitle.length < 3}
-                >
-                  <Send />
-                </IconButton>
-              </div>
+      <Draggable draggableId={columnId} index={order}>
+        {({ draggableProps, dragHandleProps, innerRef }: DraggableProvided) => (
+          <div className={styles.column} {...draggableProps} {...dragHandleProps} ref={innerRef}>
+            <div className={styles.button}>
+              {!editable && (
+                <>
+                  <button className={styles.h3} onClick={() => setEditable(true)}>
+                    {title}
+                  </button>
+                  <IconButton color="warning" onClick={handleDeleteColumn}>
+                    <Delete />
+                  </IconButton>
+                </>
+              )}
+              {editable && (
+                <div className={styles.editInput}>
+                  <TextField
+                    className={styles.inputTitle}
+                    id="column-title"
+                    autoFocus
+                    size="small"
+                    variant="outlined"
+                    value={newTitle}
+                    multiline={false}
+                    onChange={handleChangeTitle}
+                  />
+                  <div className={styles.inputButton}>
+                    <IconButton
+                      className={styles.iconButton}
+                      color="warning"
+                      size="small"
+                      onClick={() => setEditable(false)}
+                    >
+                      <Close />
+                    </IconButton>
+                    <IconButton
+                      className={styles.iconButton}
+                      color="info"
+                      size="small"
+                      onClick={handleEditColumn}
+                      disabled={newTitle.length < 3}
+                    >
+                      <Send />
+                    </IconButton>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <Droppable droppableId={columnId}>
-          {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
-            <div className={styles.tasks} {...droppableProps} ref={innerRef}>
-              {tasks.map((task) => (
-                <Task key={task._id} task={task} />
-              ))}
-              {placeholder}
-            </div>
-          )}
-        </Droppable>
-        <IconButton color="info" onClick={handleCreateTask} size="large">
-          <AddCircle />
-        </IconButton>
-      </div>
+            <Droppable droppableId={columnId} direction="vertical" type="task">
+              {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
+                <div className={styles.tasks} {...droppableProps} ref={innerRef}>
+                  {tasks.map((task) => (
+                    <Task key={task._id} task={task} />
+                  ))}
+                  {placeholder}
+                </div>
+              )}
+            </Droppable>
+            <IconButton color="info" onClick={handleCreateTask} size="large">
+              <AddCircle />
+            </IconButton>
+          </div>
+        )}
+      </Draggable>
       {callingForm && type === 'edit column' && (
         <ModalColumns
           type="edit column"
