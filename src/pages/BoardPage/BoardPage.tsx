@@ -7,8 +7,11 @@ import styles from './BoardPage.module.scss';
 import {
   setDeleteCallback,
   useDeleteBoardByIdMutation,
+  useDeleteColumnByIdMutation,
   useGetBoardByIdQuery,
   useGetColumnsInBoardQuery,
+  useGetTaskSetByBoardIdQuery,
+  useDeleteTaskByIdMutation,
 } from 'store';
 import { useDispatch } from 'react-redux';
 import { DeleteCallback } from 'models';
@@ -21,11 +24,15 @@ export const BoardPage = () => {
   const navigate = useNavigate();
   const { data, isLoading } = useGetBoardByIdQuery({ boardId });
   const columns = useGetColumnsInBoardQuery({ boardId });
+  const tasks = useGetTaskSetByBoardIdQuery({ boardId });
   const [type, setType] = useState('');
+  const [deleteColumn] = useDeleteColumnByIdMutation();
+  const [deleteTask] = useDeleteTaskByIdMutation();
 
   const columnsAdd = () => {
     setType('column');
     setCallingForm(true);
+    console.log(tasks.data);
   };
 
   const boardEditHandler = () => {
@@ -38,9 +45,15 @@ export const BoardPage = () => {
   };
 
   const deleteCallback: DeleteCallback = useCallback(async () => {
+    tasks.data?.map(async (index) => {
+      await deleteTask({ boardId, columnId: index.columnId, taskId: index._id });
+    });
+    columns.data?.map(async (index) => {
+      await deleteColumn({ boardId, columnId: index._id });
+    });
     await deleteBoard({ boardId });
     navigate('/boards');
-  }, [boardId, deleteBoard, navigate]);
+  }, [boardId, columns.data, deleteBoard, deleteColumn, deleteTask, navigate, tasks.data]);
 
   const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

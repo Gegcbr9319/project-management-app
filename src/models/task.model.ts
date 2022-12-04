@@ -18,7 +18,7 @@ export interface IEditTask extends Omit<ITaskBase, 'boardId'> {
   columnId: string;
 }
 
-export type ITask = INewTask & IId;
+export type ITask = INewTask & IId & { boardId: string; columnId: string };
 
 export type IGetTasksInColumnOptions = IGetColumnByIdOptions;
 

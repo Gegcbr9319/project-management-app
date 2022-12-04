@@ -1,17 +1,49 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Dialog, DialogTitle } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  Box,
+  Chip,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
+import { Theme, useTheme } from '@mui/material/styles';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import {
   AppState,
   useCreateTaskMutation,
   useGetTasksInColumnQuery,
+  useGetUsersQuery,
   useUpdateTaskByIdMutation,
 } from 'store';
 import styles from '../Modal.module.scss';
 import { AuthState } from 'models';
 import { Loader } from 'components';
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: 'auto',
+      width: 250,
+    },
+  },
+};
+
+function getStyles(name: string, personName: readonly string[], theme: Theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
 
 export interface ICreateTaskModalProps {
   type: 'create task';
@@ -26,7 +58,7 @@ export interface ICreateTaskModalProps {
 }
 
 export interface IEditTaskModalProps {
-  type: 'edit task';
+  type: 'edit task' | 'view task';
   boardId: string;
   users?: string[];
   owner?: string;
@@ -71,8 +103,22 @@ export const ModalTasks: FC<IModalTasksProps> = ({
     columnId,
   });
 
+  const { data } = useGetUsersQuery();
+
   const [createTask, createTaskResults] = useCreateTaskMutation();
   const [updateTask, updateTaskResults] = useUpdateTaskByIdMutation();
+
+  const [personName, setPersonName] = useState<string[]>(users ? users : []);
+
+  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
     if (type === 'create task') {
@@ -80,7 +126,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         body: {
           title: title,
           description: description,
-          users: [],
+          users: personName,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order: tasks && tasks.data ? tasks.data.length : 0,
         },
@@ -92,7 +138,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         body: {
           title: title,
           description: description,
-          users: [],
+          users: personName,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order:
             tasks && tasks.data ? tasks.data.filter((tasks) => tasks._id === taskId)[0].order : 0,
@@ -107,6 +153,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
   };
 
   const resetForm = () => {
+    setPersonName([]);
     setCallingForm(false);
     reset();
   };
@@ -133,12 +180,18 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 Edit Task
               </DialogTitle>
             )}
+            {type === 'view task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                View Task
+              </DialogTitle>
+            )}
             <TextField
               id="standard-basic"
               autoFocus
               label="Title"
               variant="outlined"
               defaultValue={titleEdit}
+              disabled={type === 'view task'}
               {...register('title', {
                 required: true,
                 minLength: 3,
@@ -150,12 +203,39 @@ export const ModalTasks: FC<IModalTasksProps> = ({
               label="Description"
               variant="outlined"
               multiline={true}
-              minRows={3}
-              maxRows={3}
+              minRows={type === 'view task' ? 5 : 3}
+              maxRows={type === 'view task' ? 5 : 3}
+              disabled={type === 'view task'}
               defaultValue={descriptionEdit}
               {...register('description')}
             />
-
+            <div>
+              <InputLabel id="demo-multiple-chip-label">Users</InputLabel>
+              <Select
+                className={styles.selected}
+                labelId="demo-multiple-chip-label"
+                id="demo-multiple-chip"
+                multiple
+                value={personName}
+                disabled={type === 'view task'}
+                onChange={handleChange}
+                input={<OutlinedInput id="select-multiple-chip" label="Users" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {data?.map((index) => (
+                  <MenuItem key={index._id} value={index.name}>
+                    {index.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
             <div className={styles.formButtons}>
               <Button
                 variant="contained"
@@ -165,9 +245,11 @@ export const ModalTasks: FC<IModalTasksProps> = ({
               >
                 Close
               </Button>
-              <Button variant="contained" type="submit" startIcon={<Send />}>
-                Send
-              </Button>
+              {type !== 'view task' && (
+                <Button variant="contained" type="submit" startIcon={<Send />}>
+                  Send
+                </Button>
+              )}
             </div>
           </form>
         </Dialog>
