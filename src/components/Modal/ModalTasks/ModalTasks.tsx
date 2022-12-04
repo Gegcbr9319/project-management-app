@@ -58,7 +58,7 @@ export interface ICreateTaskModalProps {
 }
 
 export interface IEditTaskModalProps {
-  type: 'edit task';
+  type: 'edit task' | 'view task';
   boardId: string;
   users?: string[];
   owner?: string;
@@ -180,12 +180,18 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 Edit Task
               </DialogTitle>
             )}
+            {type === 'view task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                View Task
+              </DialogTitle>
+            )}
             <TextField
               id="standard-basic"
               autoFocus
               label="Title"
               variant="outlined"
               defaultValue={titleEdit}
+              disabled={type === 'view task'}
               {...register('title', {
                 required: true,
                 minLength: 3,
@@ -197,8 +203,9 @@ export const ModalTasks: FC<IModalTasksProps> = ({
               label="Description"
               variant="outlined"
               multiline={true}
-              minRows={3}
-              maxRows={3}
+              minRows={type === 'view task' ? 5 : 3}
+              maxRows={type === 'view task' ? 5 : 3}
+              disabled={type === 'view task'}
               defaultValue={descriptionEdit}
               {...register('description')}
             />
@@ -210,6 +217,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 id="demo-multiple-chip"
                 multiple
                 value={personName}
+                disabled={type === 'view task'}
                 onChange={handleChange}
                 input={<OutlinedInput id="select-multiple-chip" label="Users" />}
                 renderValue={(selected) => (
@@ -237,9 +245,11 @@ export const ModalTasks: FC<IModalTasksProps> = ({
               >
                 Close
               </Button>
-              <Button variant="contained" type="submit" startIcon={<Send />}>
-                Send
-              </Button>
+              {type !== 'view task' && (
+                <Button variant="contained" type="submit" startIcon={<Send />}>
+                  Send
+                </Button>
+              )}
             </div>
           </form>
         </Dialog>
