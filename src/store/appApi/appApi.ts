@@ -381,6 +381,7 @@ export const appApi = createApi({
         url: 'tasksSet/' + options.boardId,
         method: 'GET',
       }),
+      providesTags: [{ type: 'Tasks', id: 'LIST' }],
     }),
 
     /**
