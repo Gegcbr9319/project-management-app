@@ -281,7 +281,7 @@ export const appApi = createApi({
     // Get Columns by list of columnId or in Boards where user is owner or one of invited
     getColumnsSetByIdsListOrUserId: build.query<IColumn[], IGetColumnsSetByParamOptions>({
       query: (options) => ({
-        url: 'columnSet',
+        url: 'columnsSet',
         method: 'GET',
         params: options.params,
       }),
@@ -289,7 +289,7 @@ export const appApi = createApi({
     // Change oreder of list of columns
     updateColumnsSet: build.mutation<IColumn[], IUpdateColumnsSetOptions>({
       query: (options) => ({
-        url: 'columnSet',
+        url: 'columnsSet',
         method: 'PATCH',
         body: options.body,
       }),
@@ -298,7 +298,7 @@ export const appApi = createApi({
     // Create set of Columns
     createColumnsSet: build.mutation<IColumn[], ICreateColumnsSetOptions>({
       query: (options) => ({
-        url: 'columnSet',
+        url: 'columnsSet',
         method: 'POST',
         body: options.body,
       }),
