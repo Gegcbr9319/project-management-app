@@ -70,19 +70,14 @@ export const BoardPage = () => {
         tasks
           ?.filter((task) => task.columnId === destination.droppableId)
           .sort((task1, task2) => task1.order - task2.order) || [];
-      console.log(JSON.stringify(tasksOrder));
       const draggedTask = tasksOrder.splice(source.index, 1)[0];
-      console.log(draggedTask, source.index, destination.index);
-      console.log(JSON.stringify(tasksOrder));
       tasksOrder.splice(destination.index, 0, draggedTask);
-      console.log(JSON.stringify(tasksOrder));
 
       const updatedTasksSet = tasksOrder.map(({ _id, columnId }: ITask, index) => ({
         _id,
         order: index,
         columnId,
       }));
-      console.log(JSON.stringify(updatedTasksSet));
 
       await updateTasksSet({
         body: updatedTasksSet,
