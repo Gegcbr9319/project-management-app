@@ -104,18 +104,16 @@ export function Column({ column }: ColumnProps): JSX.Element {
             </div>
           )}
         </div>
-        {tasks.length > 0 && (
-          <Droppable droppableId={columnId}>
-            {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
-              <div className={styles.tasks} {...droppableProps} ref={innerRef}>
-                {tasks.map((task) => (
-                  <Task key={task._id} task={task} />
-                ))}
-                {placeholder}
-              </div>
-            )}
-          </Droppable>
-        )}
+        <Droppable droppableId={columnId}>
+          {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
+            <div className={styles.tasks} {...droppableProps} ref={innerRef}>
+              {tasks.map((task) => (
+                <Task key={task._id} task={task} />
+              ))}
+              {placeholder}
+            </div>
+          )}
+        </Droppable>
         <IconButton color="info" onClick={handleCreateTask} size="large">
           <AddCircle />
         </IconButton>
