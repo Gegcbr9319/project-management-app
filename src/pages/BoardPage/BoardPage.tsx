@@ -32,7 +32,6 @@ export const BoardPage = () => {
   const columnsAdd = () => {
     setType('column');
     setCallingForm(true);
-    console.log(tasks.data);
   };
 
   const boardEditHandler = () => {
