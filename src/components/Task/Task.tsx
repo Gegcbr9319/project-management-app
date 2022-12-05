@@ -57,6 +57,11 @@ export function Task({ task }: TaskProps): JSX.Element {
             <div>
               <h3>{title}</h3>
               <p>{description ? description : 'Description is empty'}</p>
+              <div className={styles.users}>
+                {users.map((user) => {
+                  return <span key={user}>{user}</span>;
+                })}
+              </div>
             </div>
             <div>
               <IconButton

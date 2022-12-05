@@ -44,6 +44,11 @@
   }
 }
 
+.logo {
+  height: 1.5rem;
+  filter: invert(1)
+}
+
 .links {
   position: relative;
   display: flex;
@@ -141,6 +146,11 @@
 }
 
 .link {
+  &:has(h1){
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
   font-size: initial;
   border: none;
   background-color: transparent;
@@ -153,9 +163,18 @@
   text-transform: inherit;
   cursor: pointer;
   h1 {
+    display: flex;
     text-align: left;
     width: max-content;
     color: white;
+    transform: translateY(-4px);
+    font-size: 1rem;
+    position: relative;
+    span {
+      font-size: .6rem;
+      position: absolute;
+      transform: translate(0px, 15px);
+    }
     @media screen and (max-width: 400px) {
       font-size: 1rem;
     }
@@ -183,5 +202,28 @@
     padding: 0;
     width: min-content;
     pointer-events: all;
+  }
+}
+
+.right {
+  display: flex;
+  gap: 1.5rem;
+  height: 1.5rem;
+  & button {
+    min-width: auto;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  @media screen and (max-width: 600px) {
+    margin-right: 3rem;
+  }
+  @media screen and (max-width: 400px) {
+    margin-right: 2.5rem;
+    & button b {
+      font-size: 10px;
+      line-height: 1.2;
+      max-width: 42px;
+    }
   }
 }
