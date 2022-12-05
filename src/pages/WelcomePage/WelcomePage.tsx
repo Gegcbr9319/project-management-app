@@ -14,10 +14,6 @@ export function WelcomePage() {
   return (
     <div className={styles.pageWrapper}>
       <section className={styles.project}>
-        <h2 className={styles.start}>
-          Start your projects with our Project Manager. Use handy boards, lists, and cards. Manage
-          your projects, organize tasks, and build team spirit—all in one place.
-        </h2>
         <div className={styles.intro}>
           <div>
             <div className={styles.logo}>
@@ -30,8 +26,12 @@ export function WelcomePage() {
             <p> It’s a way of working together.</p>
           </div>
         </div>
+        <h2 className={styles.start}>
+          Start your projects with our Project Manager. Use handy boards, lists, and cards. Manage
+          your projects, organize tasks, and build team spirit—all in one place.
+        </h2>
         <div className={styles.buttons}>
-          <Button onClick={enterHandler} variant="contained" className={styles.button}>
+          <Button onClick={enterHandler} variant="contained" className={styles.button} size="large">
             Try It Now!
           </Button>
         </div>
@@ -67,7 +67,9 @@ export function WelcomePage() {
               className={styles.avatar}
             />
             <div>
-              <h3>Gegcbr9319</h3>
+              <h3>
+                Gegcbr9319<span> (team lead)</span>
+              </h3>
               <ul>
                 <li>Boards page</li>
                 <li>Board page - columns, tasks</li>
