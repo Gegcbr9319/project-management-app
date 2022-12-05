@@ -18,9 +18,11 @@ import { useSelector } from 'react-redux';
 import {
   AppState,
   useCreateTaskMutation,
+  useGetBoardByIdQuery,
   useGetTasksInColumnQuery,
   useGetUsersQuery,
   useUpdateTaskByIdMutation,
+  useUpdateBoardByIdMutation,
 } from 'store';
 import styles from '../Modal.module.scss';
 import { AuthState } from 'models';
@@ -92,21 +94,32 @@ export const ModalTasks: FC<IModalTasksProps> = ({
     columnId,
   });
 
+  const board = useGetBoardByIdQuery({ boardId });
+
   const { data } = useGetUsersQuery();
 
   const [createTask, createTaskResults] = useCreateTaskMutation();
   const [updateTask, updateTaskResults] = useUpdateTaskByIdMutation();
+  const [updateBoard] = useUpdateBoardByIdMutation();
 
   const [personName, setPersonName] = useState<string[]>(users ? users : []);
+
+  const [personKey, setPersonKey] = useState<string[]>(users ? users : []);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value
-    );
+
+    setPersonKey(typeof value === 'string' ? value.split(',') : value);
+    console.log(personKey);
+    const names: string[] = [];
+    data?.forEach((index) => {
+      if (personKey.includes(index._id)) {
+        names.push(index.name);
+        setPersonName(names);
+      }
+    });
   };
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
@@ -115,19 +128,28 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         body: {
           title: title,
           description: description,
-          users: personName,
+          users: personKey,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order: tasks && tasks.data ? tasks.data.length : 0,
         },
         columnId: columnId,
         boardId: boardId,
       });
+      await updateBoard({
+        boardId: board.data ? board.data._id : '',
+        body: {
+          title: board.data ? board.data.title : '',
+          description: board.data ? board.data.description : '',
+          owner: board.data ? board.data.owner : '',
+          users: personKey,
+        },
+      });
     } else if (type === 'edit task') {
       await updateTask({
         body: {
           title: title,
           description: description,
-          users: personName,
+          users: personKey,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order:
             tasks && tasks.data ? tasks.data.filter((tasks) => tasks._id === taskId)[0].order : 0,
@@ -136,6 +158,15 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         taskId: taskId ? taskId : '',
         columnId: columnId ? columnId : '',
         boardId: boardId,
+      });
+      await updateBoard({
+        boardId: board.data ? board.data._id : '',
+        body: {
+          title: board.data ? board.data.title : '',
+          description: board.data ? board.data.description : '',
+          owner: board.data ? board.data.owner : '',
+          users: personKey,
+        },
       });
     }
     setCallingForm(false);
@@ -205,7 +236,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
                 multiple
-                value={personName}
+                value={personKey}
                 disabled={type === 'view task'}
                 onChange={handleChange}
                 input={<OutlinedInput id="select-multiple-chip" label="Users" />}
@@ -219,7 +250,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 MenuProps={MenuProps}
               >
                 {data?.map((index) => (
-                  <MenuItem key={index._id} value={index.name}>
+                  <MenuItem key={index._id} value={index._id}>
                     {index.name}
                   </MenuItem>
                 ))}
