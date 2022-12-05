@@ -203,7 +203,12 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'Boards', id: 'LIST' }, 'Board'],
+      invalidatesTags: [
+        'Board',
+        { type: 'Boards', id: 'LIST' },
+        { type: 'Columns', id: 'LIST' },
+        { type: 'Tasks', id: 'LIST' },
+      ],
     }),
     // Get Boards by list of boardId
     getBoardsSetByIdsList: build.query<IBoard[], IGetBoardSetByIdsListOptions>({
@@ -276,12 +281,15 @@ export const appApi = createApi({
         url: 'boards/' + options.boardId + '/columns/' + options.columnId,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+      invalidatesTags: [
+        { type: 'Columns', id: 'LIST' },
+        { type: 'Tasks', id: 'LIST' },
+      ],
     }),
     // Get Columns by list of columnId or in Boards where user is owner or one of invited
     getColumnsSetByIdsListOrUserId: build.query<IColumn[], IGetColumnsSetByParamOptions>({
       query: (options) => ({
-        url: 'columnSet',
+        url: 'columnsSet',
         method: 'GET',
         params: options.params,
       }),
@@ -289,7 +297,7 @@ export const appApi = createApi({
     // Change oreder of list of columns
     updateColumnsSet: build.mutation<IColumn[], IUpdateColumnsSetOptions>({
       query: (options) => ({
-        url: 'columnSet',
+        url: 'columnsSet',
         method: 'PATCH',
         body: options.body,
       }),
@@ -298,7 +306,7 @@ export const appApi = createApi({
     // Create set of Columns
     createColumnsSet: build.mutation<IColumn[], ICreateColumnsSetOptions>({
       query: (options) => ({
-        url: 'columnSet',
+        url: 'columnsSet',
         method: 'POST',
         body: options.body,
       }),
@@ -381,6 +389,7 @@ export const appApi = createApi({
         url: 'tasksSet/' + options.boardId,
         method: 'GET',
       }),
+      providesTags: [{ type: 'Tasks', id: 'LIST' }],
     }),
 
     /**
