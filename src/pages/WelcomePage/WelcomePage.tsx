@@ -7,10 +7,6 @@ import { useNavigate } from 'react-router-dom';
 export function WelcomePage() {
   const navigate = useNavigate();
 
-  function joinHandler() {
-    navigate('/signup');
-  }
-
   function enterHandler() {
     navigate('/signin');
   }
@@ -35,16 +31,8 @@ export function WelcomePage() {
           </div>
         </div>
         <div className={styles.buttons}>
-          <Button
-            onClick={enterHandler}
-            variant="contained"
-            className={styles.button}
-            color="inherit"
-          >
-            SIGN IN
-          </Button>
-          <Button onClick={joinHandler} variant="contained" className={styles.button}>
-            SIGN UP
+          <Button onClick={enterHandler} variant="contained" className={styles.button}>
+            Try It Now!
           </Button>
         </div>
       </section>

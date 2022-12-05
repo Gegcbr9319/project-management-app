@@ -27,14 +27,7 @@ export function App() {
         <Navigation />
         <main className={styles.main}>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute redirectIf="authenticated">
-                  <WelcomePage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/" element={<WelcomePage />} />
             <Route
               path="/boards"
               element={
