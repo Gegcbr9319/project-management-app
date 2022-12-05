@@ -27,12 +27,7 @@ export function BoardSortingProvider({ children }: PropsWithChildren): JSX.Eleme
   const [updateColumnsSet] = useUpdateColumnsSetMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
 
-  const handleDragEnd = async ({
-    draggableId,
-    source,
-    destination,
-    type,
-  }: DropResult): Promise<void> => {
+  const handleDragEnd = async ({ source, destination, type }: DropResult): Promise<void> => {
     // nothing to work with yet
     if (!boardState) {
       return;
