@@ -102,24 +102,39 @@ export const ModalTasks: FC<IModalTasksProps> = ({
   const [updateTask, updateTaskResults] = useUpdateTaskByIdMutation();
   const [updateBoard] = useUpdateBoardByIdMutation();
 
-  const [personName, setPersonName] = useState<string[]>(users ? users : []);
-
-  const [personKey, setPersonKey] = useState<string[]>(users ? users : []);
+  const [personName, setPersonName] = useState<string[]>(
+    users
+      ? users.map((_id) => {
+          let name = '';
+          if (data) {
+            name = data.reduce((p, user) => (_id === user._id ? p + user.name : p + ''), '');
+          }
+          return name;
+        })
+      : []
+  );
+  const [personId, setPersonId] = useState<string[]>(users ? users : []);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
       target: { value },
     } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
 
-    setPersonKey(typeof value === 'string' ? value.split(',') : value);
-    console.log(personKey);
-    const names: string[] = [];
-    data?.forEach((index) => {
-      if (personKey.includes(index._id)) {
-        names.push(index.name);
-        setPersonName(names);
-      }
-    });
+  const onSelectClick = (e: React.MouseEvent<HTMLLIElement>) => {
+    const { _id, selected }: { _id: string; selected: boolean } = {
+      _id: (e.target as HTMLLIElement).id,
+      selected: !(e.target as HTMLOptionElement).selected,
+    };
+    const set = new Set<string>(personId);
+    if (selected) set.add(_id);
+    else set.delete(_id);
+    const newPersonId = [...set];
+    setPersonId(newPersonId);
   };
 
   const onSubmit = async ({ title, description }: IFormDataInput) => {
@@ -128,7 +143,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         body: {
           title: title,
           description: description,
-          users: personKey,
+          users: personId,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order: tasks && tasks.data ? tasks.data.length : 0,
         },
@@ -141,7 +156,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
           title: board.data ? board.data.title : '',
           description: board.data ? board.data.description : '',
           owner: board.data ? board.data.owner : '',
-          users: personKey,
+          users: personId,
         },
       });
     } else if (type === 'edit task') {
@@ -149,7 +164,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         body: {
           title: title,
           description: description,
-          users: personKey,
+          users: personId,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order:
             tasks && tasks.data ? tasks.data.filter((tasks) => tasks._id === taskId)[0].order : 0,
@@ -165,7 +180,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
           title: board.data ? board.data.title : '',
           description: board.data ? board.data.description : '',
           owner: board.data ? board.data.owner : '',
-          users: personKey,
+          users: personId,
         },
       });
     }
@@ -236,7 +251,7 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
                 multiple
-                value={personKey}
+                value={personName}
                 disabled={type === 'view task'}
                 onChange={handleChange}
                 input={<OutlinedInput id="select-multiple-chip" label="Users" />}
@@ -250,7 +265,12 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 MenuProps={MenuProps}
               >
                 {data?.map((index) => (
-                  <MenuItem key={index._id} value={index._id}>
+                  <MenuItem
+                    key={index._id}
+                    value={index.name}
+                    onClick={onSelectClick}
+                    id={index._id}
+                  >
                     {index.name}
                   </MenuItem>
                 ))}
