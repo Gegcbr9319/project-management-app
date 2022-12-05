@@ -8,6 +8,7 @@ import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
 import {
   setDeleteCallback,
   useDeleteColumnByIdMutation,
+  useDeleteTaskByIdMutation,
   useGetColumnsInBoardQuery,
   useGetTasksInColumnQuery,
   useUpdateColumnByIdMutation,
@@ -30,6 +31,11 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
   const [inputValue, setInputValue] = useState(title);
   const [updateColumn, updateColumnResults] = useUpdateColumnByIdMutation();
   const columns = useGetColumnsInBoardQuery({ boardId });
+  const tasks = useGetTasksInColumnQuery({
+    boardId,
+    columnId,
+  });
+  const [deleteTask] = useDeleteTaskByIdMutation();
 
   const inputHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -37,7 +43,6 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
 
   const tasksAdd = () => {
     setType('create task');
-
     setCallingForm(true);
   };
 
@@ -56,10 +61,10 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
     setInputColumn(false);
   };
 
-  const deleteCallback: DeleteCallback = useCallback(
-    async () => await deleteColumn({ boardId, columnId }),
-    [boardId, columnId, deleteColumn]
-  );
+  const deleteCallback: DeleteCallback = useCallback(async () => {
+    await deleteColumn({ boardId, columnId });
+    tasks.data?.map((index) => deleteTask({ boardId, columnId, taskId: index._id }));
+  }, [boardId, columnId, deleteColumn, deleteTask, tasks.data]);
 
   const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -129,6 +134,7 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
                     taskId={index._id}
                     boardId={boardId}
                     columnId={columnId}
+                    users={index.users}
                   />
                 );
               })}

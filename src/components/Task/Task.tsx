@@ -14,15 +14,24 @@ interface ITaskProps {
   taskId: string;
   boardId: string;
   columnId: string;
+  users: string[];
 }
 
-export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId }) => {
+export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, columnId, users }) => {
   const [callingForm, setCallingForm] = useState(false);
   const dispatch = useDispatch();
+  const [modalType, setModalType] = useState('');
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
 
-  const editTask = () => {
+  const editTask = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setCallingForm(true);
+    setModalType('edit');
+  };
+
+  const viewTask = () => {
+    setCallingForm(true);
+    setModalType('view');
   };
 
   const deleteCallback: DeleteCallback = useCallback(
@@ -38,10 +47,15 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
   return (
     <>
       {isLoading && <Loader />}
-      <div className={styles.task}>
+      <div className={styles.task} onClick={viewTask}>
         <div>
           <h3>{title}</h3>
           <p>{description ? description : 'Description is empty'}</p>
+          <div className={styles.users}>
+            {users?.map((index) => {
+              return <span key={index}>{index}</span>;
+            })}
+          </div>
         </div>
         <div>
           <IconButton
@@ -57,7 +71,7 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
           </IconButton>
         </div>
       </div>
-      {callingForm && (
+      {callingForm && modalType === 'edit' && (
         <ModalTasks
           type="edit task"
           setCallingForm={setCallingForm}
@@ -66,6 +80,19 @@ export const Task: FC<ITaskProps> = ({ title, description, taskId, boardId, colu
           columnId={columnId}
           titleEdit={title}
           descriptionEdit={description}
+          users={users}
+        />
+      )}
+      {callingForm && modalType === 'view' && (
+        <ModalTasks
+          type="view task"
+          setCallingForm={setCallingForm}
+          taskId={taskId}
+          boardId={boardId}
+          columnId={columnId}
+          titleEdit={title}
+          descriptionEdit={description}
+          users={users}
         />
       )}
     </>
