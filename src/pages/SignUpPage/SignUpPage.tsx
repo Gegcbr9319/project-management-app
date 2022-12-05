@@ -1,6 +1,6 @@
 import React from 'react';
 import { setToken, useSignInMutation, useSignUpMutation } from 'store';
-import { NewUserDto, Token, UserAuthDto } from 'models';
+import { NewUserDto, Token, UserAuthDto, UserDto } from 'models';
 import { Loader, UserForm } from 'components';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -24,15 +24,16 @@ export function SignUpPage() {
         submit={{
           text: 'Sign Up',
           callback: async (newUserData) => {
-            await signUp(newUserData as NewUserDto);
+            const _id = ((await signUp(newUserData as NewUserDto).unwrap()) as unknown as UserDto)
+              ?._id;
             const { login, password } = newUserData as UserAuthDto;
-
-            const signInResult = await signIn({ login, password }).unwrap();
-
-            if (signInResult) {
-              const token = new Token(signInResult.token);
-              dispatch(setToken(token));
-              navigate('/boards');
+            if (_id) {
+              const signInResult = await signIn({ login, password }).unwrap();
+              if (signInResult) {
+                const token = new Token(signInResult.token);
+                dispatch(setToken(token));
+                navigate('/boards');
+              }
             }
           },
         }}
