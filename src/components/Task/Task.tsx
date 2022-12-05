@@ -4,7 +4,7 @@ import { Delete, Edit } from '@mui/icons-material';
 import styles from './Task.module.scss';
 import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
 import { useDispatch } from 'react-redux';
-import { setDeleteCallback, useDeleteTaskByIdMutation } from 'store';
+import { setDeleteCallback, useDeleteTaskByIdMutation, useGetUsersQuery } from 'store';
 import { Loader } from 'components';
 import { DeleteCallback, ITask } from 'models';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
@@ -20,6 +20,7 @@ export function Task({ task }: TaskProps): JSX.Element {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState('');
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
+  const { data } = useGetUsersQuery();
 
   const handleEditTask = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -58,8 +59,10 @@ export function Task({ task }: TaskProps): JSX.Element {
               <h3>{title}</h3>
               <p>{description ? description : 'Description is empty'}</p>
               <div className={styles.users}>
-                {users.map((user) => {
-                  return <span key={user}>{user}</span>;
+                {data?.map((user) => {
+                  if (users.includes(user._id)) {
+                    return <span key={user._id}>{user.name}</span>;
+                  }
                 })}
               </div>
             </div>
