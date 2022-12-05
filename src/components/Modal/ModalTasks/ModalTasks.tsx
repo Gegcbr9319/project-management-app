@@ -18,9 +18,11 @@ import { useSelector } from 'react-redux';
 import {
   AppState,
   useCreateTaskMutation,
+  useGetBoardByIdQuery,
   useGetTasksInColumnQuery,
   useGetUsersQuery,
   useUpdateTaskByIdMutation,
+  useUpdateBoardByIdMutation,
 } from 'store';
 import styles from '../Modal.module.scss';
 import { AuthState } from 'models';
@@ -92,12 +94,26 @@ export const ModalTasks: FC<IModalTasksProps> = ({
     columnId,
   });
 
+  const board = useGetBoardByIdQuery({ boardId });
+
   const { data } = useGetUsersQuery();
 
   const [createTask, createTaskResults] = useCreateTaskMutation();
   const [updateTask, updateTaskResults] = useUpdateTaskByIdMutation();
+  const [updateBoard] = useUpdateBoardByIdMutation();
 
-  const [personName, setPersonName] = useState<string[]>(users ? users : []);
+  const [personName, setPersonName] = useState<string[]>(
+    users
+      ? users.map((_id) => {
+          let name = '';
+          if (data) {
+            name = data.reduce((p, user) => (_id === user._id ? p + user.name : p + ''), '');
+          }
+          return name;
+        })
+      : []
+  );
+  const [personId, setPersonId] = useState<string[]>(users ? users : []);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
@@ -109,25 +125,46 @@ export const ModalTasks: FC<IModalTasksProps> = ({
     );
   };
 
+  const onSelectClick = (e: React.MouseEvent<HTMLLIElement>) => {
+    const { _id, selected }: { _id: string; selected: boolean } = {
+      _id: (e.target as HTMLLIElement).id,
+      selected: !(e.target as HTMLOptionElement).selected,
+    };
+    const set = new Set<string>(personId);
+    if (selected) set.add(_id);
+    else set.delete(_id);
+    const newPersonId = [...set];
+    setPersonId(newPersonId);
+  };
+
   const onSubmit = async ({ title, description }: IFormDataInput) => {
     if (type === 'create task') {
       await createTask({
         body: {
           title: title,
           description: description,
-          users: personName,
+          users: personId,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order: tasks && tasks.data ? tasks.data.length : 0,
         },
         columnId: columnId,
         boardId: boardId,
       });
+      await updateBoard({
+        boardId: board.data ? board.data._id : '',
+        body: {
+          title: board.data ? board.data.title : '',
+          description: board.data ? board.data.description : '',
+          owner: board.data ? board.data.owner : '',
+          users: personId,
+        },
+      });
     } else if (type === 'edit task') {
       await updateTask({
         body: {
           title: title,
           description: description,
-          users: personName,
+          users: personId,
           userId: token?.decoded?.id ? token.decoded.id : '',
           order:
             tasks && tasks.data ? tasks.data.filter((tasks) => tasks._id === taskId)[0].order : 0,
@@ -136,6 +173,15 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         taskId: taskId ? taskId : '',
         columnId: columnId ? columnId : '',
         boardId: boardId,
+      });
+      await updateBoard({
+        boardId: board.data ? board.data._id : '',
+        body: {
+          title: board.data ? board.data.title : '',
+          description: board.data ? board.data.description : '',
+          owner: board.data ? board.data.owner : '',
+          users: personId,
+        },
       });
     }
     setCallingForm(false);
@@ -219,7 +265,12 @@ export const ModalTasks: FC<IModalTasksProps> = ({
                 MenuProps={MenuProps}
               >
                 {data?.map((index) => (
-                  <MenuItem key={index._id} value={index.name}>
+                  <MenuItem
+                    key={index._id}
+                    value={index.name}
+                    onClick={onSelectClick}
+                    id={index._id}
+                  >
                     {index.name}
                   </MenuItem>
                 ))}
