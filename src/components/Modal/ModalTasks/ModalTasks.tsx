@@ -13,7 +13,6 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { Theme, useTheme } from '@mui/material/styles';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import {
@@ -35,15 +34,6 @@ const MenuProps = {
     },
   },
 };
-
-function getStyles(name: string, personName: readonly string[], theme: Theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
 
 export interface ICreateTaskModalProps {
   type: 'create task';
@@ -82,7 +72,6 @@ export const ModalTasks: FC<IModalTasksProps> = ({
   type,
   boardId,
   users,
-  owner,
   columnId,
   taskId,
   titleEdit,

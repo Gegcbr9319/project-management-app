@@ -2,15 +2,12 @@ import React, { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextField, Button, Dialog, DialogTitle } from '@mui/material';
 import { Send, KeyboardArrowLeft } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
 import {
-  AppState,
   useCreateColumnMutation,
   useGetColumnsInBoardQuery,
   useUpdateColumnByIdMutation,
 } from 'store';
 import styles from '../Modal.module.scss';
-import { AuthState } from 'models';
 import { Loader } from 'components';
 
 export interface ICreateColumnProps {
@@ -51,7 +48,6 @@ export const ModalColumns: FC<IModalColumnsProps> = ({
     handleSubmit,
   } = useForm<IFormDataInput>();
 
-  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
   const columns = useGetColumnsInBoardQuery({ boardId });
 
   const [createColumn, createColumnResults] = useCreateColumnMutation();

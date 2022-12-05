@@ -1,4 +1,4 @@
-import { byOrder, SortedBoard, SortedColumn } from 'components';
+import { SortedBoard } from 'components';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import {
   useGetBoardByIdQuery,
@@ -18,7 +18,7 @@ export function BoardContextProvider({
 }: BoardContextProviderProps): JSX.Element {
   const { data: board, isLoading: isBoardLoading } = useGetBoardByIdQuery({ boardId });
   const { data: columns, isLoading: areColumnsLoading } = useGetColumnsInBoardQuery({ boardId });
-  const { data: tasks, isLoading: areTasksLoading } = useGetTaskSetByBoardIdQuery({ boardId });
+  const { data: tasks } = useGetTaskSetByBoardIdQuery({ boardId });
 
   const [boardState, setBoardState] = useState<SortedBoard | undefined>(undefined);
 
