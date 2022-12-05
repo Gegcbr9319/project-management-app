@@ -19,7 +19,7 @@ export function WelcomePage() {
     <div className={styles.pageWrapper}>
       <section className={styles.project}>
         <h2 className={styles.start}>
-          Start your projects with a our Project Manager. Use handy boards, lists, and cards. Manage
+          Start your projects with our Project Manager. Use handy boards, lists, and cards. Manage
           your projects, organize tasks, and build team spirit—all in one place.
         </h2>
         <div className={styles.intro}>
