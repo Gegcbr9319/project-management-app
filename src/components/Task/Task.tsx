@@ -14,14 +14,22 @@ interface TaskProps {
 }
 
 export function Task({ task }: TaskProps): JSX.Element {
-  const { _id: taskId, columnId, boardId, order, title, description } = task;
+  const { _id: taskId, columnId, boardId, order, title, description, users } = task;
 
   const [callingForm, setCallingForm] = useState(false);
   const dispatch = useDispatch();
+  const [modalType, setModalType] = useState('');
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
 
-  const handleEditTask = () => {
+  const handleEditTask = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setCallingForm(true);
+    setModalType('edit');
+  };
+
+  const handleViewTask = () => {
+    setCallingForm(true);
+    setModalType('view');
   };
 
   const deleteTaskCallback: DeleteCallback = useCallback(
@@ -39,7 +47,13 @@ export function Task({ task }: TaskProps): JSX.Element {
       {isLoading && <Loader />}
       <Draggable draggableId={taskId} index={order}>
         {({ draggableProps, dragHandleProps, innerRef }: DraggableProvided) => (
-          <div className={styles.task} {...draggableProps} {...dragHandleProps} ref={innerRef}>
+          <div
+            className={styles.task}
+            onClick={handleViewTask}
+            {...draggableProps}
+            {...dragHandleProps}
+            ref={innerRef}
+          >
             <div>
               <h3>{title}</h3>
               <p>{description ? description : 'Description is empty'}</p>
@@ -65,7 +79,7 @@ export function Task({ task }: TaskProps): JSX.Element {
           </div>
         )}
       </Draggable>
-      {callingForm && (
+      {callingForm && modalType === 'edit' && (
         <ModalTasks
           type="edit task"
           setCallingForm={setCallingForm}
@@ -74,6 +88,19 @@ export function Task({ task }: TaskProps): JSX.Element {
           columnId={columnId}
           titleEdit={title}
           descriptionEdit={description}
+          users={users}
+        />
+      )}
+      {callingForm && modalType === 'view' && (
+        <ModalTasks
+          type="view task"
+          setCallingForm={setCallingForm}
+          taskId={taskId}
+          boardId={boardId}
+          columnId={columnId}
+          titleEdit={title}
+          descriptionEdit={description}
+          users={users}
         />
       )}
     </>

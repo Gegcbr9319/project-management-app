@@ -22,7 +22,7 @@
   border-radius: 10px;
   border: 1.5px solidrgba(6, 6, 6, 0.56) !important;
   background-color: rgb(221, 237, 242) !important;
-  &>div {
+  & > div {
     width: 100%;
   }
 }
@@ -38,4 +38,8 @@
 .formP {
   padding: 0 !important;
   color: black !important;
+}
+
+.selected {
+  min-width: 100% !important;
 }
