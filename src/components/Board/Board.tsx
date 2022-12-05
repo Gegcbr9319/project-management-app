@@ -4,9 +4,14 @@ import { ArrowBackIosNew, Add, Delete, Edit } from '@mui/icons-material';
 import { Column, Loader, ModalColumns, ModalBoard, BoardContext, BoardState } from 'components';
 import { useNavigate } from 'react-router';
 import styles from './Board.module.scss';
-import { setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
-import { useDispatch } from 'react-redux';
-import { DeleteCallback } from 'models';
+import {
+  AppState,
+  setDeleteCallback,
+  useDeleteBoardByIdMutation,
+  useGetBoardByIdQuery,
+} from 'store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthState, DeleteCallback } from 'models';
 import { Droppable, DroppableProvided } from 'react-beautiful-dnd';
 
 export const Board = (): JSX.Element => {
@@ -21,7 +26,9 @@ export const Board = (): JSX.Element => {
   const dispatch = useDispatch();
   const [deleteBoard] = useDeleteBoardByIdMutation();
   const navigate = useNavigate();
+  const { data } = useGetBoardByIdQuery({ boardId });
   const [type, setType] = useState('');
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
   const handleCreateColumn = () => {
     setType('column');
@@ -86,6 +93,7 @@ export const Board = (): JSX.Element => {
                 color="warning"
                 size="small"
                 onClick={handleDeleteBoard}
+                disabled={data?.owner !== token?.decoded?.id}
               >
                 <Delete />
               </IconButton>
