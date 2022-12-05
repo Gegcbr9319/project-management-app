@@ -1,149 +1,127 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import { IconButton, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { AddCircle, Delete, Close, Send } from '@mui/icons-material';
 import styles from './Column.module.scss';
-import { Loader, ModalColumns, Task } from 'components';
+import { Loader, ModalColumns, SortedColumn, Task } from 'components';
 import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
-import {
-  setDeleteCallback,
-  useDeleteColumnByIdMutation,
-  useDeleteTaskByIdMutation,
-  useGetColumnsInBoardQuery,
-  useGetTasksInColumnQuery,
-  useUpdateColumnByIdMutation,
-} from 'store';
+import { setDeleteCallback, useDeleteColumnByIdMutation, useUpdateColumnByIdMutation } from 'store';
 import { DeleteCallback } from 'models';
+import { Draggable, DraggableProvided, Droppable, DroppableProvided } from 'react-beautiful-dnd';
 
-interface IColumnProps {
-  columnId: string;
-  title: string;
-  boardId: string;
+interface ColumnProps {
+  column: SortedColumn;
 }
 
-export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
+export function Column({ column }: ColumnProps): JSX.Element {
+  const { _id: columnId, boardId, title, order, tasks } = column;
+
   const dispatch = useDispatch();
   const [callingForm, setCallingForm] = useState(false);
   const [type, setType] = useState('');
-  const { data, isLoading } = useGetTasksInColumnQuery({ boardId: boardId, columnId: columnId });
-  const [deleteColumn, deleteColumnResults] = useDeleteColumnByIdMutation();
-  const [inputColunm, setInputColumn] = useState(false);
-  const [inputValue, setInputValue] = useState(title);
+  const [editable, setEditable] = useState(false);
+  const [newTitle, setNewTitle] = useState(title);
   const [updateColumn, updateColumnResults] = useUpdateColumnByIdMutation();
-  const columns = useGetColumnsInBoardQuery({ boardId });
-  const tasks = useGetTasksInColumnQuery({
-    boardId,
-    columnId,
-  });
-  const [deleteTask] = useDeleteTaskByIdMutation();
+  const [deleteColumn, deleteColumnResults] = useDeleteColumnByIdMutation();
 
-  const inputHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    setInputValue(event.target.value);
+  const handleChangeTitle = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setNewTitle(event.target.value);
   };
 
-  const tasksAdd = () => {
+  const handleCreateTask = () => {
     setType('create task');
     setCallingForm(true);
   };
 
-  const columnEdit = async () => {
+  const handleEditColumn = async () => {
     await updateColumn({
       boardId: boardId,
       columnId: columnId,
       body: {
-        title: inputValue,
-        order:
-          columns && columns.data
-            ? columns.data.filter((column) => column._id === columnId)[0].order
-            : 0,
+        title: newTitle,
+        order,
       },
     });
-    setInputColumn(false);
+    setEditable(false);
   };
 
-  const deleteCallback: DeleteCallback = useCallback(async () => {
-    await deleteColumn({ boardId, columnId });
-    tasks.data?.map((index) => deleteTask({ boardId, columnId, taskId: index._id }));
-  }, [boardId, columnId, deleteColumn, deleteTask, tasks.data]);
+  const deleteColumnCallback: DeleteCallback = useCallback(
+    async () => await deleteColumn({ boardId, columnId }),
+    [boardId, columnId, deleteColumn]
+  );
 
-  const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDeleteColumn = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    dispatch(setDeleteCallback(deleteCallback));
+    dispatch(setDeleteCallback(deleteColumnCallback));
   };
 
   return (
     <>
-      {(isLoading || deleteColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
-      <div className={styles.column}>
-        <div className={styles.button}>
-          {!inputColunm && (
-            <>
-              <button className={styles.h3} onClick={() => setInputColumn(true)}>
-                {title}
-              </button>
-              <IconButton color="warning" onClick={buttonDeleteHandler}>
-                <Delete />
-              </IconButton>
-            </>
-          )}
-          {inputColunm && (
-            <div className={styles.editInput}>
-              <TextField
-                className={styles.inputTitle}
-                id="outlined-basic"
-                autoFocus
-                size="small"
-                variant="outlined"
-                value={inputValue}
-                multiline={false}
-                onChange={inputHandler}
-              />
-              <div className={styles.inputButton}>
-                <IconButton
-                  className={styles.iconButton}
-                  color="warning"
-                  size="small"
-                  onClick={() => setInputColumn(false)}
-                >
-                  <Close />
-                </IconButton>
-                <IconButton
-                  className={styles.iconButton}
-                  color="info"
-                  size="small"
-                  onClick={columnEdit}
-                  disabled={inputValue.length < 3}
-                >
-                  <Send />
-                </IconButton>
-              </div>
-            </div>
-          )}
-        </div>
-        {data?.length !== 0 && (
-          <div className={styles.tasks}>
-            {data
-              ?.map((index) => index)
-              .sort((a, b) => a.order - b.order)
-              .map((index) => {
-                return (
-                  <Task
-                    key={index._id}
-                    title={index.title}
-                    description={index.description}
-                    taskId={index._id}
-                    boardId={boardId}
-                    columnId={columnId}
-                    users={index.users}
+      {(deleteColumnResults.isLoading || updateColumnResults.isLoading) && <Loader />}
+      <Draggable draggableId={columnId} index={order}>
+        {({ draggableProps, dragHandleProps, innerRef }: DraggableProvided) => (
+          <div className={styles.column} {...draggableProps} {...dragHandleProps} ref={innerRef}>
+            <div className={styles.button}>
+              {!editable && (
+                <>
+                  <button className={styles.h3} onClick={() => setEditable(true)}>
+                    {title}
+                  </button>
+                  <IconButton color="warning" onClick={handleDeleteColumn}>
+                    <Delete />
+                  </IconButton>
+                </>
+              )}
+              {editable && (
+                <div className={styles.editInput}>
+                  <TextField
+                    className={styles.inputTitle}
+                    id="column-title"
+                    autoFocus
+                    size="small"
+                    variant="outlined"
+                    value={newTitle}
+                    multiline={false}
+                    onChange={handleChangeTitle}
                   />
-                );
-              })}
+                  <div className={styles.inputButton}>
+                    <IconButton
+                      className={styles.iconButton}
+                      color="warning"
+                      size="small"
+                      onClick={() => setEditable(false)}
+                    >
+                      <Close />
+                    </IconButton>
+                    <IconButton
+                      className={styles.iconButton}
+                      color="info"
+                      size="small"
+                      onClick={handleEditColumn}
+                      disabled={newTitle.length < 3}
+                    >
+                      <Send />
+                    </IconButton>
+                  </div>
+                </div>
+              )}
+            </div>
+            <Droppable droppableId={columnId} direction="vertical" type="task">
+              {({ droppableProps, innerRef, placeholder }: DroppableProvided) => (
+                <div className={styles.tasks} {...droppableProps} ref={innerRef}>
+                  {tasks.map((task) => (
+                    <Task key={task._id} task={task} />
+                  ))}
+                  {placeholder}
+                </div>
+              )}
+            </Droppable>
+            <IconButton color="info" onClick={handleCreateTask} size="large">
+              <AddCircle />
+            </IconButton>
           </div>
         )}
-        <IconButton color="info" onClick={tasksAdd} size="large">
-          <AddCircle />
-        </IconButton>
-      </div>
+      </Draggable>
       {callingForm && type === 'edit column' && (
         <ModalColumns
           type="edit column"
@@ -163,4 +141,4 @@ export const Column: FC<IColumnProps> = ({ columnId, title, boardId }) => {
       )}
     </>
   );
-};
+}

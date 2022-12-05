@@ -7,20 +7,17 @@ export interface ITaskBase {
   users: string[];
 }
 
-export interface INewTask extends Omit<Omit<ITaskBase, 'boardId'>, 'columnId'> {
+export interface INewTask extends ITaskBase {
   userId: string;
 }
 
-export interface IEditTask extends Omit<ITaskBase, 'boardId'> {
-  userId: string;
+export interface IEditTask extends INewTask {
   columnId: string;
 }
 
-export type ITask = INewTask &
-  IId & {
-    boardId: string;
-    columnId: string;
-  };
+export interface ITask extends IId, IEditTask {
+  boardId: string;
+}
 
 export type IGetTasksInColumnOptions = IGetColumnByIdOptions;
 

@@ -2,14 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { Button } from '@mui/material';
 import { Delete, Update } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  setDeleteCallback,
-  useDeleteBoardByIdMutation,
-  useDeleteColumnByIdMutation,
-  useDeleteTaskByIdMutation,
-  useGetColumnsInBoardQuery,
-  useGetTaskSetByBoardIdQuery,
-} from 'store';
+import { setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
 import { Loader, ModalBoard } from 'components';
 import styles from './BoardPreview.module.scss';
 import { useDispatch } from 'react-redux';
@@ -29,10 +22,6 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
   const location = useLocation();
   const [callingForm, setCallingForm] = useState(false);
   const [deleteBoard, { isLoading }] = useDeleteBoardByIdMutation();
-  const columns = useGetColumnsInBoardQuery({ boardId: _id });
-  const tasks = useGetTaskSetByBoardIdQuery({ boardId: _id });
-  const [deleteColumn] = useDeleteColumnByIdMutation();
-  const [deleteTask] = useDeleteTaskByIdMutation();
 
   const buttonClickHandler = () => {
     navigate(location.pathname + '/' + _id);
@@ -43,15 +32,10 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
     setCallingForm(true);
   };
 
-  const deleteCallback: DeleteCallback = useCallback(async () => {
-    tasks.data?.map(async (index) => {
-      await deleteTask({ boardId: _id, columnId: index.columnId, taskId: index._id });
-    });
-    columns.data?.map(async (index) => {
-      await deleteColumn({ boardId: _id, columnId: index._id });
-    });
-    await deleteBoard({ boardId: _id });
-  }, [_id, columns.data, deleteBoard, deleteColumn, deleteTask, tasks.data]);
+  const deleteCallback: DeleteCallback = useCallback(
+    async () => await deleteBoard({ boardId: _id }),
+    [_id, deleteBoard]
+  );
 
   const buttonDeleteHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
