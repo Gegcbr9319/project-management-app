@@ -2,11 +2,11 @@ import React, { FC, useCallback, useState } from 'react';
 import { Button } from '@mui/material';
 import { Delete, Update } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
+import { AppState, setDeleteCallback, useDeleteBoardByIdMutation } from 'store';
 import { Loader, ModalBoard } from 'components';
 import styles from './BoardPreview.module.scss';
-import { useDispatch } from 'react-redux';
-import { DeleteCallback } from 'models';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthState, DeleteCallback } from 'models';
 
 interface IBoardPreview {
   title: string;
@@ -22,6 +22,7 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
   const location = useLocation();
   const [callingForm, setCallingForm] = useState(false);
   const [deleteBoard, { isLoading }] = useDeleteBoardByIdMutation();
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
 
   const buttonClickHandler = () => {
     navigate(location.pathname + '/' + _id);
@@ -67,7 +68,7 @@ export const BoardPreview: FC<IBoardPreview> = ({ title, description, _id, users
             variant="outlined"
             startIcon={<Delete />}
             onClick={buttonDeleteHandler}
-            disabled={isLoading}
+            disabled={isLoading || owner !== token?.decoded?.id}
             size="small"
             color="warning"
             className={styles.buttonsButton}
