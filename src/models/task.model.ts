@@ -3,9 +3,7 @@ import { IGetBoardByIdOptions, IGetColumnByIdOptions, IId } from 'models';
 export interface ITaskBase {
   title: string;
   order: number;
-  //boardId: string;
   description: string;
-  //columnId: string;
   users: string[];
 }
 
@@ -18,7 +16,11 @@ export interface IEditTask extends Omit<ITaskBase, 'boardId'> {
   columnId: string;
 }
 
-export type ITask = INewTask & IId;
+export type ITask = INewTask &
+  IId & {
+    boardId: string;
+    columnId: string;
+  };
 
 export type IGetTasksInColumnOptions = IGetColumnByIdOptions;
 
