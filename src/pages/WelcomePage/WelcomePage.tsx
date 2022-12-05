@@ -61,12 +61,13 @@ export function WelcomePage() {
             />
             <div>
               <h3>badikgit</h3>
-              <p>
-                Далеко-далеко за словесными, горами в стране гласных и согласных живут рыбные
-                тексты. Собрал деревни коварных продолжил ipsum на берегу решила родного, рукопись
-                семантика свой сих несколько путь мир, гор единственное первую жаренные.
-                Реторический.
-              </p>
+              <ul>
+                <li>Front page</li>
+                <li>API interaction</li>
+                <li>Confirm Delete Modal</li>
+                <li>App Structure</li>
+                <li>Сommon design</li>
+              </ul>
             </div>
           </div>
           <div className={styles.card}>
@@ -79,11 +80,13 @@ export function WelcomePage() {
             />
             <div>
               <h3>Gegcbr9319</h3>
-              <p>
-                Далеко-далеко за словесными, горами в стране гласных и согласных живут рыбные
-                тексты. Щеке несколько имеет страна, маленький гор они которой, своих о правилами
-                буквенных рекламных раз безорфографичный текст что! Диких, маленькая маленький.
-              </p>
+              <ul>
+                <li>Boards page</li>
+                <li>Board page - columns, tasks</li>
+                <li>Boards management</li>
+                <li>Tasks managemet</li>
+                <li>Modal boxes (creating/edition boards, columns, tasks)</li>
+              </ul>
             </div>
           </div>
           <div className={styles.card}>
@@ -96,12 +99,14 @@ export function WelcomePage() {
             />
             <div>
               <h3>malashonock</h3>
-              <p>
-                Далеко-далеко за словесными, горами в стране гласных и согласных живут рыбные
-                тексты. Обеспечивает первую ты, себя, переписывается строчка образ, встретил текстов
-                не подпоясал взгляд подзаголовок предупредила имени свою продолжил путь! Пор,
-                приставка?
-              </p>
+              <ul>
+                <li>Sign in/up pages</li>
+                <li>Profile page</li>
+                <li>Routing</li>
+                <li>Project Architecture</li>
+                <li>Backend error handling</li>
+                <li>Drag-n-Drop</li>
+              </ul>
             </div>
           </div>
         </div>
