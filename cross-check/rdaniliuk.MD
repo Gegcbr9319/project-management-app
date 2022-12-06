@@ -1,5 +1,5 @@
-- PR Link: []()
-- Deploy: []()
+- PR Link: [https://github.com/rdaniliuk/project-management-app/pull/2]()
+- Deploy: [https://umbrella-3044.onrender.com/]()
 
 > ## Points: --/60
 > Common comment exsample
