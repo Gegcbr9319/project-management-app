@@ -3,26 +3,24 @@
 
 ### Welcome route - max 7 points
 
-- [ ] The welcome page should contain general information about the developer, project, and course. **1 point**
-- [ ] In the upper right corner there are 2 buttons: Sign In and Sign Up. **1 point**
+- [x] The welcome page should contain general information about the developer, project, and course. **1 point**
+- [x] In the upper right corner there are 2 buttons: Sign In and Sign Up. **1 point**
 - [ ] If login token is valid and unexpired, change buttons Sign In and Sign Up on "Go to Main Page" button. **2 points**
 - [ ] When the token expires - the user should be redirected to the "Welcome page" automatically. **2 points**
-- [ ] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
-> comments text
-> 
+- [x] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
+> 1. Sign In и Sign Up остаются и не заменяютсяна "Go to Main Page", ссылка на Boards присутствует без входа.
+> !!! TODO придумать способ проверить пункт 4
 
 ### Sign In / Sign Up  - max 8 points
 
 - [ ] Buttons for Sign In / Sign Up / Sign Out are everywhere where they should be **2 points**
-- [ ] Form fields should be implemented according to the backend API. Validation should be implemented. **4 points**
+- [x] Form fields should be implemented according to the backend API. Validation should be implemented. **4 points**
 - [ ] Upon successful login, the user should be redirected to "Main route" **1 point**
 - [ ] If user already logged in and he try to reach this routes - he should be redirected to Main route. **1 point**
-> comments text
-> 
+> 1. Имплементация полей не совсем соответствует бэкенду, у вас login почему-то email, но за это не сняли.
+> 2. Остальные не выполнены
 
 ### Main route - max 8 points
-> comments text
-> 
 
 - [ ] Board creation functionality **2 points**
 - [ ] Displays all created boards as a list/grid **1 point**
