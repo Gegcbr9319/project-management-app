@@ -1,5 +1,5 @@
-PR Link: https://github.com/AmelianceSkyMusic/project-management-app/pull/6
-Deploy: https://rsspma.netlify.app/
+- PR Link: https://github.com/AmelianceSkyMusic/project-management-app/pull/6
+- Deploy: https://rsspma.netlify.app/
 
 ### Welcome route - max 7 points
 
@@ -8,6 +8,8 @@ Deploy: https://rsspma.netlify.app/
 - [ ] If login token is valid and unexpired, change buttons Sign In and Sign Up on "Go to Main Page" button. **2 points**
 - [ ] When the token expires - the user should be redirected to the "Welcome page" automatically. **2 points**
 - [ ] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
+> comments text
+> 
 
 ### Sign In / Sign Up  - max 8 points
 
@@ -15,14 +17,20 @@ Deploy: https://rsspma.netlify.app/
 - [ ] Form fields should be implemented according to the backend API. Validation should be implemented. **4 points**
 - [ ] Upon successful login, the user should be redirected to "Main route" **1 point**
 - [ ] If user already logged in and he try to reach this routes - he should be redirected to Main route. **1 point**
+> comments text
+> 
 
 ### Main route - max 8 points
+> comments text
+> 
 
 - [ ] Board creation functionality **2 points**
 - [ ] Displays all created boards as a list/grid **1 point**
 - [ ] Each board in the list is displayed with a small preview of available information (title, description, etc). By clicking an element the user navigates to the board item (Board route). There's also a button for board deletion. **1 point**
 - [ ] When trying to delete the board, we should receive a confirmation modal. The confirmation modal must be a generic component (one for the entire application). **1 points**
 - [ ] The user profile editing functionality is implemented. **3 points**
+> comments text
+> 
 
 ### Board route - max 26 points
 
@@ -38,6 +46,8 @@ Deploy: https://rsspma.netlify.app/
 - [ ] The task must have a delete task button. On click: confirmation modal -> delete.  **1 points**
 - [ ] At the top of the column should be Title. When you click on it, it should become an input, with Submit and Cancel buttons near it. After entering text in the input and clicking Submit - the Title of the column should change. **2 points**
 - [ ] The column should have a delete button. By clicking -> confirmation modal -> when approving -> deleting. **1 points**
+> comments text
+>
 
 ### General requirements - max 11 points
 
@@ -46,7 +56,8 @@ Deploy: https://rsspma.netlify.app/
 - [ ] Backend is deployed and publicly available **2 points**
 - [ ] Sticky header **2 points**
 - [ ] Extra scope same complexity as Global search **2 points**
-
+> comments text
+> 
 
 ### Penalties
 - [ ] React default favicon **- 1 points**
@@ -54,3 +65,5 @@ Deploy: https://rsspma.netlify.app/
 - [ ] The presence in the console of the results of the console.log execution - **- 2 points** for each
 - [ ] @ts-ignore or any usage (search through github repo) - **- 1 point** for each
 - [ ] Making commits after the deadline - **- 20 points**  
+> comments text
+> 
