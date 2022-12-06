@@ -1,5 +1,5 @@
-- PR Link: []()
-- Deploy: []()
+- PR Link: https://github.com/EugeneTsalko/project-management-app/pull/12
+- Deploy: https://kanban-app-rsschool.netlify.app/
 
 > ## Points: --/60
 > Common comment exsample
