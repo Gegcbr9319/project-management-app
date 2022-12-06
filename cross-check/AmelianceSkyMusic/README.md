@@ -1,6 +1,12 @@
 - PR Link: https://github.com/AmelianceSkyMusic/project-management-app/pull/6
 - Deploy: https://rsspma.netlify.app/
 
+> ## Points: 2/60
+> Основной отзыв:
+> 1. Регистрация есть, но не понятно происходит ли авторизация.
+> 2. Основной функционал досок не работает или не возможно проверить из-за нерабочей авторизации.
+
+
 ### Welcome route - max 7 points
 
 - [x] The welcome page should contain general information about the developer, project, and course. **1 point**
@@ -8,8 +14,10 @@
 - [ ] If login token is valid and unexpired, change buttons Sign In and Sign Up on "Go to Main Page" button. **2 points**
 - [ ] When the token expires - the user should be redirected to the "Welcome page" automatically. **2 points**
 - [x] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
-> 1. Sign In и Sign Up остаются и не заменяютсяна "Go to Main Page", ссылка на Boards присутствует без входа.
-> - !!! TODO придумать способ проверить пункт 4
+> Отзыв по разделу:
+> 1. Sign In и Sign Up остаются и не заменяютсяна "Go to Main Page", ссылка на Boards присутствует без входа, не понятно происходит ли вход.
+> - (!!!TODO) При авторизации в localstorage записывается токен. Можно проверить останется ли он там по истечении его срока действия и произойдёт ли перенаправление
+> > SCORE: + 3
 
 ### Sign In / Sign Up  - max 8 points
 
@@ -17,8 +25,10 @@
 - [x] Form fields should be implemented according to the backend API. Validation should be implemented. **4 points**
 - [ ] Upon successful login, the user should be redirected to "Main route" **1 point**
 - [ ] If user already logged in and he try to reach this routes - he should be redirected to Main route. **1 point**
+> Отзыв по разделу:
 > 1. Имплементация полей не совсем соответствует бэкенду, у вас login почему-то email, но за это не сняли.
-> 2. Остальные не выполнены
+> 2. Остальные остальные пункты не выполнены
+> > SCORE: + 1
 
 ### Main route - max 8 points
 
@@ -27,8 +37,9 @@
 - [ ] Each board in the list is displayed with a small preview of available information (title, description, etc). By clicking an element the user navigates to the board item (Board route). There's also a button for board deletion. **1 point**
 - [ ] When trying to delete the board, we should receive a confirmation modal. The confirmation modal must be a generic component (one for the entire application). **1 points**
 - [ ] The user profile editing functionality is implemented. **3 points**
-> comments text
-> 
+> Отзыв по разделу:
+> 1. Кнопки создания доски нет, досок нет, не возможно проверить. Весь раздел пока не засчитан.
+> > SCORE: + 0
 
 ### Board route - max 26 points
 
@@ -44,24 +55,27 @@
 - [ ] The task must have a delete task button. On click: confirmation modal -> delete.  **1 points**
 - [ ] At the top of the column should be Title. When you click on it, it should become an input, with Submit and Cancel buttons near it. After entering text in the input and clicking Submit - the Title of the column should change. **2 points**
 - [ ] The column should have a delete button. By clicking -> confirmation modal -> when approving -> deleting. **1 points**
-> comments text
->
+> Отзыв по разделу:
+> 1. Не возможно проверить. Весь раздел пока не засчитан
+> > SCORE: + 0
 
 ### General requirements - max 11 points
 
 - [ ] Backend error handling - (Not found, unhandled rejection, etc) should be performed in a user-friendly way (toast, pop-up or anything else you implement). **4 points**
 - [ ] Localization **1 point**
-- [ ] Backend is deployed and publicly available **2 points**
+- [x] Backend is deployed and publicly available **2 points**
 - [ ] Sticky header **2 points**
 - [ ] Extra scope same complexity as Global search **2 points**
-> comments text
-> 
+> Отзыв по разделу:
+> 1. Кнопка локализации есть, но не работает, пункт не засчитан полностью
+> > SCORE: + 2
 
 ### Penalties
 - [ ] React default favicon **- 1 points**
 - [ ] The presence of errors and warnings in the console  **- 2 points** for each
 - [ ] The presence in the console of the results of the console.log execution - **- 2 points** for each
 - [ ] @ts-ignore or any usage (search through github repo) - **- 1 point** for each
-- [ ] Making commits after the deadline - **- 20 points**  
-> comments text
-> 
+- [ ] Making commits after the deadline - **- 20 points** 
+> Отзыв по разделу:
+> 1. Присутствуют выводы в консоль данных при попытке смены языка(-2) и попытке входа или регистрации (-2)
+> > SCORE: -4
