@@ -1,5 +1,5 @@
-- PR Link: [https://github.com/Alex99like/management-app/pull/45]()
-- Deploy: [https://management-project-application-5lfl.vercel.app/]()
+- PR Link: https://github.com/Alex99like/management-app/pull/45
+- Deploy: https://management-project-application-5lfl.vercel.app/
 
 > ## Points: --/60
 > Common comment exsample
