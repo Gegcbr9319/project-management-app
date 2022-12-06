@@ -9,7 +9,7 @@
 - [ ] When the token expires - the user should be redirected to the "Welcome page" automatically. **2 points**
 - [x] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
 > 1. Sign In и Sign Up остаются и не заменяютсяна "Go to Main Page", ссылка на Boards присутствует без входа.
-> !!! TODO придумать способ проверить пункт 4
+> - !!! TODO придумать способ проверить пункт 4
 
 ### Sign In / Sign Up  - max 8 points
 
