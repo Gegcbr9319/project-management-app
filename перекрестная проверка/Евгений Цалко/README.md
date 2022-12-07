@@ -11,9 +11,8 @@
 - [x] If login token is valid and unexpired, change buttons Sign In and Sign Up on "Go to Main Page" button. **2 points**
 - [x] When the token expires - the user should be redirected to the "Welcome page" automatically. **2 points**
 - [x] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
-
->
-
+> Отзыв по разделу: нельзя перенести задачу в другой столбец
+> > SCORE: 7
 
 ### Sign In / Sign Up  - 8 points
 
@@ -21,6 +20,8 @@
 - [x] Form fields should be implemented according to the backend API. Validation should be implemented. **4 points**
 - [x] Upon successful login, the user should be redirected to "Main route" **1 point**
 - [x] If user already logged in and he try to reach this routes - he should be redirected to Main route. **1 point**
+> Отзыв по разделу: нельзя перенести задачу в другой столбец
+> > SCORE: 8
 
 
 ### Main route -  8 points
@@ -30,6 +31,8 @@
 - [x] Each board in the list is displayed with a small preview of available information (title, description, etc). By clicking an element the user navigates to the board item (Board route). There's also a button for board deletion. **1 point**
 - [x] When trying to delete the board, we should receive a confirmation modal. The confirmation modal must be a generic component (one for the entire application). **1 points**
 - [x] The user profile editing functionality is implemented. **3 points**
+> Отзыв по разделу: нельзя перенести задачу в другой столбец
+> > SCORE: 8
 
 ### Board route -  21points
 
@@ -46,10 +49,9 @@
 - [x] At the top of the column should be Title. When you click on it, it should become an input, with Submit and Cancel buttons near it. After entering text in the input and clicking Submit - the Title of the column should change. **2 points**
 - [x] The column should have a delete button. By clicking -> confirmation modal -> when approving -> deleting. **1 points**
 > Отзыв по разделу: нельзя перенести задачу в другой столбец
->
-> > SCORE: 
+> > SCORE: 16
 
-### General requirements - 10 points
+### General requirements - 11 points
 
 - [x] Backend error handling - (Not found, unhandled rejection, etc) should be performed in a user-friendly way (toast, pop-up or anything else you implement). **4 points**
 - [x] Localization **1 point**
@@ -57,7 +59,8 @@
 - [x] Sticky header **2 points**
 - [ ] Extra scope same complexity as Global search **2 points**
 > Отзыв по разделу:  у вас не глобальный поиск, это поиск только по задачам одной доски, по этому 1 балл
->
+> - Отзыв badikgit: Да, доп. функционал не глобальны поиск, а поиск по задачам на доске, но не согласен со снятием балла именно по этой причине, так как делается отдельный запрос на сервер на получение тасок, как это было бы при глобальном поиске. Т.е. сложность на мой взгляд соответствует сложности реализации глобального поиска, который был приведён только в качестве примера, там тоже вполне возможно было бы уложиться в 1 запрос. Но у меня скорее вопрос к не продуманности реализации, а именно отсутствию рабочей возможности сброса результата этого поиска без перезагрузки страницы или повторного входа на неё, хотя вроде как и есть крестик, и отправлятся пустой запрос. Также добавление этого дополнительного функционала в момент отображения поиска может привести к проблемам неочевидности формирования порядка колонок, т.к. у пользователя доступна возможность в этом режиме создать ещё одну колонку, она отобразится, как последняя в данный момент, но при обновлении боарда нет гарантии что она останется последней когда видны все колонки или будет на месте на котором она была в момент создания. Возможно лучшим решением было бы блокировать возможность создания колонок, пока показываются результаты поиска. Именно по этим причинам я бы снял 1 балл, за непродумманность вариантов использования, раз добавляется функционал, который может привести к непоняткам в основном функционале формирования колонок доски. 
+> > SCORE: 10
 
 
 ### Penalties
