@@ -9,7 +9,7 @@
 - [x] The welcome page should contain general information about the developer, project, and course. **1 point**
 - [x] In the upper right corner there are 2 buttons: Sign In and Sign Up. **1 point**
 - [x] If login token is valid and unexpired, change buttons Sign In and Sign Up on "Go to Main Page" button. **2 points**
-- [] When the token expires - the user should be redirected to the "Welcome page" automatically. **1/2 points**
+- [ ] When the token expires - the user should be redirected to the "Welcome page" automatically. **1/2 points**
 > Проверка токена производится единожды при монтировании компонента App - если токен истечет посреди сессии, автоматический редирект не произойдет
 - [x] Pressing the Sign In / Sign up button redirects a user to the route with the Sign In / Sign up form. **1 point**
 
