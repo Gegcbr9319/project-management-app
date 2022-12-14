@@ -5,7 +5,14 @@ import { AddCircle, Delete, Close, Send } from '@mui/icons-material';
 import styles from './Column.module.scss';
 import { Loader, ModalColumns, SortedColumn, Task } from 'components';
 import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
-import { setDeleteCallback, useDeleteColumnByIdMutation, useUpdateColumnByIdMutation } from 'store';
+import {
+  setDeleteCallback,
+  useDeleteColumnByIdMutation,
+  useUpdateBoardByIdMutation,
+  useUpdateColumnByIdMutation,
+  useGetBoardByIdQuery,
+  useGetTaskSetByBoardIdQuery,
+} from 'store';
 import { DeleteCallback } from 'models';
 import { Draggable, DraggableProvided, Droppable, DroppableProvided } from 'react-beautiful-dnd';
 
@@ -21,8 +28,17 @@ export function Column({ column }: ColumnProps): JSX.Element {
   const [type, setType] = useState('');
   const [editable, setEditable] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
+  const tasksBoard = useGetTaskSetByBoardIdQuery({ boardId });
+  const [updateBoard] = useUpdateBoardByIdMutation();
+  const board = useGetBoardByIdQuery({ boardId });
   const [updateColumn, updateColumnResults] = useUpdateColumnByIdMutation();
   const [deleteColumn, deleteColumnResults] = useDeleteColumnByIdMutation();
+
+  const usersTasks = tasksBoard.data?.filter((task) => task.columnId !== columnId) || [];
+  const boardUsers = usersTasks.reduce((accumulator, currentValue) => {
+    currentValue.users.forEach((userId: string) => accumulator.add(userId));
+    return accumulator;
+  }, new Set<string>());
 
   const handleChangeTitle = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setNewTitle(event.target.value);
@@ -45,10 +61,18 @@ export function Column({ column }: ColumnProps): JSX.Element {
     setEditable(false);
   };
 
-  const deleteColumnCallback: DeleteCallback = useCallback(
-    async () => await deleteColumn({ boardId, columnId }),
-    [boardId, columnId, deleteColumn]
-  );
+  const deleteColumnCallback: DeleteCallback = useCallback(async () => {
+    await deleteColumn({ boardId, columnId });
+    await updateBoard({
+      boardId: boardId,
+      body: {
+        title: board.data ? board.data.title : '',
+        description: board.data ? board.data.description : '',
+        owner: board.data ? board.data.owner : '',
+        users: [...boardUsers],
+      },
+    });
+  }, [board.data, boardId, boardUsers, columnId, deleteColumn, updateBoard]);
 
   const handleDeleteColumn = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

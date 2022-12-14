@@ -23,6 +23,7 @@ import {
   useGetUsersQuery,
   useUpdateTaskByIdMutation,
   useUpdateBoardByIdMutation,
+  useGetTaskSetByBoardIdQuery,
 } from 'store';
 import styles from '../Modal.module.scss';
 import { AuthState } from 'models';
@@ -95,6 +96,8 @@ export const ModalTasks: FC<IModalTasksProps> = ({
   });
 
   const board = useGetBoardByIdQuery({ boardId });
+
+  const tasksBoard = useGetTaskSetByBoardIdQuery({ boardId });
 
   const { data } = useGetUsersQuery();
 
@@ -174,13 +177,19 @@ export const ModalTasks: FC<IModalTasksProps> = ({
         columnId: columnId ? columnId : '',
         boardId: boardId,
       });
+      const usersTasks = tasksBoard.data?.filter((task) => task._id !== taskId) || [];
+      const boardUsers = usersTasks.reduce((accumulator, currentValue) => {
+        currentValue.users.forEach((userId: string) => accumulator.add(userId));
+        return accumulator;
+      }, new Set<string>());
+      personId.forEach((userId) => boardUsers.add(userId));
       await updateBoard({
         boardId: board.data ? board.data._id : '',
         body: {
           title: board.data ? board.data.title : '',
           description: board.data ? board.data.description : '',
           owner: board.data ? board.data.owner : '',
-          users: personId,
+          users: [...boardUsers],
         },
       });
     }
