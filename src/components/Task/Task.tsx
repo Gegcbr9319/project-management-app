@@ -4,7 +4,14 @@ import { Delete, Edit } from '@mui/icons-material';
 import styles from './Task.module.scss';
 import { ModalTasks } from 'components/Modal/ModalTasks/ModalTasks';
 import { useDispatch } from 'react-redux';
-import { setDeleteCallback, useDeleteTaskByIdMutation, useGetUsersQuery } from 'store';
+import {
+  setDeleteCallback,
+  useDeleteTaskByIdMutation,
+  useGetTaskSetByBoardIdQuery,
+  useGetUsersQuery,
+  useUpdateBoardByIdMutation,
+  useGetBoardByIdQuery,
+} from 'store';
 import { Loader } from 'components';
 import { DeleteCallback, ITask } from 'models';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
@@ -21,6 +28,15 @@ export function Task({ task }: TaskProps): JSX.Element {
   const [modalType, setModalType] = useState('');
   const [deleteTask, { isLoading }] = useDeleteTaskByIdMutation();
   const { data } = useGetUsersQuery();
+  const tasksBoard = useGetTaskSetByBoardIdQuery({ boardId });
+  const [updateBoard] = useUpdateBoardByIdMutation();
+  const board = useGetBoardByIdQuery({ boardId });
+
+  const usersTasks = tasksBoard.data?.filter((task) => task._id !== taskId) || [];
+  const boardUsers = usersTasks.reduce((accumulator, currentValue) => {
+    currentValue.users.forEach((userId: string) => accumulator.add(userId));
+    return accumulator;
+  }, new Set<string>());
 
   const handleEditTask = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -33,10 +49,18 @@ export function Task({ task }: TaskProps): JSX.Element {
     setModalType('view');
   };
 
-  const deleteTaskCallback: DeleteCallback = useCallback(
-    async () => await deleteTask({ boardId, columnId, taskId }),
-    [boardId, columnId, taskId, deleteTask]
-  );
+  const deleteTaskCallback: DeleteCallback = useCallback(async () => {
+    await deleteTask({ boardId, columnId, taskId });
+    await updateBoard({
+      boardId: boardId,
+      body: {
+        title: board.data ? board.data.title : '',
+        description: board.data ? board.data.description : '',
+        owner: board.data ? board.data.owner : '',
+        users: [...boardUsers],
+      },
+    });
+  }, [deleteTask, boardId, columnId, taskId, updateBoard, board.data, boardUsers]);
 
   const handleDeleteTask = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
