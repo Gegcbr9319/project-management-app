@@ -1,0 +1,11 @@
+.content {
+  & div div:has(h2) {
+    margin: 0 2rem !important;
+    @media screen and (max-width: 600px) {
+      margin: 0 1rem !important;
+    }
+  }
+}
+.actions {
+  padding: 0 1.5rem 1.5rem 1.5rem !important;
+}

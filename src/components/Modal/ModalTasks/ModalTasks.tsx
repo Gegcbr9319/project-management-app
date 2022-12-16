@@ -1,0 +1,308 @@
+import React, { FC, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import {
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  Box,
+  Chip,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
+import { Send, KeyboardArrowLeft } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
+import {
+  AppState,
+  useCreateTaskMutation,
+  useGetBoardByIdQuery,
+  useGetTasksInColumnQuery,
+  useGetUsersQuery,
+  useUpdateTaskByIdMutation,
+  useUpdateBoardByIdMutation,
+  useGetTaskSetByBoardIdQuery,
+} from 'store';
+import styles from '../Modal.module.scss';
+import { AuthState } from 'models';
+import { Loader } from 'components';
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: 'auto',
+      width: 250,
+    },
+  },
+};
+
+export interface ICreateTaskModalProps {
+  type: 'create task';
+  boardId: string;
+  users?: string[];
+  owner?: string;
+  columnId: string;
+  taskId?: string;
+  titleEdit?: string;
+  descriptionEdit?: string;
+  setCallingForm: (item: boolean) => void;
+}
+
+export interface IEditTaskModalProps {
+  type: 'edit task' | 'view task';
+  boardId: string;
+  users?: string[];
+  owner?: string;
+  columnId: string;
+  taskId: string;
+  titleEdit: string;
+  descriptionEdit: string;
+  setCallingForm: (item: boolean) => void;
+}
+
+interface IFormDataInput {
+  title: string;
+  description: string;
+}
+
+export type IModalTasksProps = ICreateTaskModalProps | IEditTaskModalProps;
+
+const errorTitleMesage = 'More than 2 letters';
+
+export const ModalTasks: FC<IModalTasksProps> = ({
+  type,
+  boardId,
+  users,
+  columnId,
+  taskId,
+  titleEdit,
+  descriptionEdit,
+  setCallingForm,
+}) => {
+  const {
+    register,
+    reset,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<IFormDataInput>();
+
+  const { token } = useSelector(({ auth }: AppState): AuthState => auth);
+
+  const tasks = useGetTasksInColumnQuery({
+    boardId,
+    columnId,
+  });
+
+  const board = useGetBoardByIdQuery({ boardId });
+
+  const tasksBoard = useGetTaskSetByBoardIdQuery({ boardId });
+
+  const { data } = useGetUsersQuery();
+
+  const [createTask, createTaskResults] = useCreateTaskMutation();
+  const [updateTask, updateTaskResults] = useUpdateTaskByIdMutation();
+  const [updateBoard] = useUpdateBoardByIdMutation();
+
+  const [personName, setPersonName] = useState<string[]>(
+    users
+      ? users.map((_id) => {
+          let name = '';
+          if (data) {
+            name = data.reduce((p, user) => (_id === user._id ? p + user.name : p + ''), '');
+          }
+          return name;
+        })
+      : []
+  );
+  const [personId, setPersonId] = useState<string[]>(users ? users : []);
+
+  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
+
+  const onSelectClick = (e: React.MouseEvent<HTMLLIElement>) => {
+    const { _id, selected }: { _id: string; selected: boolean } = {
+      _id: (e.target as HTMLLIElement).id,
+      selected: !(e.target as HTMLOptionElement).selected,
+    };
+    const set = new Set<string>(personId);
+    if (selected) set.add(_id);
+    else set.delete(_id);
+    const newPersonId = [...set];
+    setPersonId(newPersonId);
+  };
+
+  const onSubmit = async ({ title, description }: IFormDataInput) => {
+    if (type === 'create task') {
+      await createTask({
+        body: {
+          title: title,
+          description: description,
+          users: personId,
+          userId: token?.decoded?.id ? token.decoded.id : '',
+          order: tasks && tasks.data ? tasks.data.length : 0,
+        },
+        columnId: columnId,
+        boardId: boardId,
+      });
+      await updateBoard({
+        boardId: board.data ? board.data._id : '',
+        body: {
+          title: board.data ? board.data.title : '',
+          description: board.data ? board.data.description : '',
+          owner: board.data ? board.data.owner : '',
+          users: personId,
+        },
+      });
+    } else if (type === 'edit task') {
+      await updateTask({
+        body: {
+          title: title,
+          description: description,
+          users: personId,
+          userId: token?.decoded?.id ? token.decoded.id : '',
+          order:
+            tasks && tasks.data ? tasks.data.filter((tasks) => tasks._id === taskId)[0].order : 0,
+          columnId: columnId ? columnId : '',
+        },
+        taskId: taskId ? taskId : '',
+        columnId: columnId ? columnId : '',
+        boardId: boardId,
+      });
+      const usersTasks = tasksBoard.data?.filter((task) => task._id !== taskId) || [];
+      const boardUsers = usersTasks.reduce((accumulator, currentValue) => {
+        currentValue.users.forEach((userId: string) => accumulator.add(userId));
+        return accumulator;
+      }, new Set<string>());
+      personId.forEach((userId) => boardUsers.add(userId));
+      await updateBoard({
+        boardId: board.data ? board.data._id : '',
+        body: {
+          title: board.data ? board.data.title : '',
+          description: board.data ? board.data.description : '',
+          owner: board.data ? board.data.owner : '',
+          users: [...boardUsers],
+        },
+      });
+    }
+    setCallingForm(false);
+  };
+
+  const resetForm = () => {
+    setPersonName([]);
+    setCallingForm(false);
+    reset();
+  };
+
+  return (
+    <>
+      {(createTaskResults.isLoading || updateTaskResults.isLoading) && <Loader />}
+      <div>
+        <Dialog
+          className={styles.divForm}
+          open={Boolean(type)}
+          onClose={resetForm}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+            {type === 'create task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                Create new Task
+              </DialogTitle>
+            )}
+            {type === 'edit task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                Edit Task
+              </DialogTitle>
+            )}
+            {type === 'view task' && (
+              <DialogTitle id="alert-dialog-title" className={styles.formP}>
+                View Task
+              </DialogTitle>
+            )}
+            <TextField
+              id="standard-basic"
+              autoFocus
+              label="Title"
+              variant="outlined"
+              defaultValue={titleEdit}
+              disabled={type === 'view task'}
+              {...register('title', {
+                required: true,
+                minLength: 3,
+              })}
+            />
+            {errors?.title && <p> {errorTitleMesage}</p>}
+            <TextField
+              id="standard-basic"
+              label="Description"
+              variant="outlined"
+              multiline={true}
+              minRows={type === 'view task' ? 5 : 3}
+              maxRows={type === 'view task' ? 5 : 3}
+              disabled={type === 'view task'}
+              defaultValue={descriptionEdit}
+              {...register('description')}
+            />
+            <div>
+              <InputLabel id="demo-multiple-chip-label">Users</InputLabel>
+              <Select
+                className={styles.selected}
+                labelId="demo-multiple-chip-label"
+                id="demo-multiple-chip"
+                multiple
+                value={personName}
+                disabled={type === 'view task'}
+                onChange={handleChange}
+                input={<OutlinedInput id="select-multiple-chip" label="Users" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {data?.map((index) => (
+                  <MenuItem
+                    key={index._id}
+                    value={index.name}
+                    onClick={onSelectClick}
+                    id={index._id}
+                  >
+                    {index.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+            <div className={styles.formButtons}>
+              <Button
+                variant="contained"
+                color="inherit"
+                startIcon={<KeyboardArrowLeft />}
+                onClick={resetForm}
+              >
+                Close
+              </Button>
+              {type !== 'view task' && (
+                <Button variant="contained" type="submit" startIcon={<Send />}>
+                  Send
+                </Button>
+              )}
+            </div>
+          </form>
+        </Dialog>
+      </div>
+    </>
+  );
+};

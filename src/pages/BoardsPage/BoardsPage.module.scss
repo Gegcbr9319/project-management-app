@@ -1,0 +1,45 @@
+.button {
+  height: 190px !important;
+  width: 248px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  justify-content: center !important;
+  background-color: #444 !important;
+  color: white !important;
+  border-radius: 14px !important;
+  transition: 0.35s !important;
+  font-size: 24px !important;
+  position: static !important;
+  box-shadow: 0 2px 8px -2px black !important;
+  & span {
+    margin: 0;
+  }
+}
+
+.button:hover {
+  cursor: pointer !important;
+  background-color: rgb(0, 0, 0) !important;
+}
+
+.boards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  gap: 35px;
+  max-width: 100%;
+  flex-wrap: wrap;
+  padding: 1rem 0;
+}
+
+.pageWrapper {
+  padding: 0.5rem 2rem;
+  background-color: rgb(91, 91, 91);
+  color: white;
+  height: 100%;
+  @media screen and (max-width: 600px) {
+    padding: 0.5rem 1rem;
+  }
+}

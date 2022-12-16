@@ -1,0 +1,90 @@
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  gap: 2rem;
+  padding: .5rem 2rem;
+  background-color: #444;
+  color: white;
+  @media screen and (max-width: 600px) {
+    padding: .5rem 1rem;
+  }
+  @media screen and (max-width: 670px) {
+    justify-content: unset;
+    align-items: unset;
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    align-items: center;
+    font-size: 1rem;
+    gap: .5rem;
+    & span {
+      justify-self: end;
+      padding-right: .5rem;
+    }
+  }
+}
+
+.logoLink {
+  @media screen and (max-width: 670px) {
+    width: min-content;
+    justify-self: end;
+  }
+}
+
+.logo {
+  height: 2rem;
+  filter: invert(1);
+  cursor: pointer;
+  @media screen and (max-width: 670px) {
+    height: 1.5rem;
+  }
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1rem;
+  @media screen and (max-width: 670px) {
+    gap: 0.5rem;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    & a {
+      width: fit-content;
+    }
+  }
+}
+
+.github {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  img {
+    height: 2rem;
+    @media screen and (max-width: 670px) {
+      height: 1rem;
+    }
+  }
+}
+
+.github,
+.logoLink {
+  position: relative;
+  &::after {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 0;
+    width: 90%;
+    height: 0.02rem;
+    transition: 0.3s;
+  }
+  &:hover::after {
+    box-shadow: 0px 0px 20px 2px white;
+    background-color: rgba($color: #fff, $alpha: 0.20);
+  }
+}

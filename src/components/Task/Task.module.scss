@@ -1,0 +1,63 @@
+.title {
+  text-align: center;
+  height: 20px;
+  margin-bottom: 5px;
+}
+
+.task {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px -2px black;
+  background-color: rgba($color: #222, $alpha: 0.4);
+  max-width: 255px;
+  width: 100%;
+  & h3,
+  & p {
+    width: 100%;
+    max-width: 154px;
+    text-align: left;
+    font-size: 16px;
+    padding: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 1.5rem;
+    word-break: break-word;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+  & p {
+    font-style: italic;
+    color: #555;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    height: auto;
+  }
+  & > div:has(button) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.button {
+  & svg {
+    font-size: 1rem;
+  }
+}
+
+.users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  & span {
+    background-color: rgb(114, 114, 114);
+    border-radius: 2rem;
+    padding: 0 5px;
+    font-size: 12px;
+    //box-shadow: 0 2px 5px -2px rgb(254, 253, 253);
+  }
+}
